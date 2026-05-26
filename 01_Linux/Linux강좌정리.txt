@@ -233,7 +233,7 @@ Linux 강의정리
 	      sudo apt install terminator
 		  
 		  
-     자. 윈도우에서 원격으로 ubuntu에 접속하자.
+     자. 윈도우에서 원격으로 ubuntu에 접속하자. ( Powershell로 )
 	 
 	   - SSH(Secure Shell) 프로그램이 필요함.
 	    
@@ -242,7 +242,7 @@ Linux 강의정리
 		  sudo systemctl start ssh    # server 시작  
 		  sudo systemctl enable ssh   # 재부팅시 자동 실행
 		  
-	   -윈도우 Powershello로 접속하자.
+	   -윈도우 Powershell로 접속하자.
 	   
 	      ping 172.16.8.10  # 접속여부 확인용도
 		  
@@ -267,10 +267,11 @@ Linux 강의정리
 		 ssh user1@172.16.8.10                
 		 user1@172.16.8.10's password: 1234   <== 비번만 입력하면 되는 이유는 window에서 원격지 정보가 저장되어 있음.
 						
-						                          C:\Users\User\.ssh\known_hosts 파일에 원격지 정보가 저장되어있음.
+						                          C:\Users\User\.ssh\known_hosts 파일에 원격지 정보
+												  (서버 IP 및 지문)가 저장되어있음.
 												  필요시 삭제가능.
 		///////////////////////////////////////////////////////////////////////////////////////////////										       
 												
 												  
 		 
-		
+		차. 윈도우에서 원격으로 ubuntu에 접속하자. ( MobaXterm GUI 툴 이용 )
