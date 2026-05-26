@@ -275,3 +275,84 @@ Linux 강의정리
 												  
 		 
 		차. 윈도우에서 원격으로 ubuntu에 접속하자. ( MobaXterm GUI 툴 이용 )
+		
+		  
+		  MobaXterm > Session > SSH > 
+		  
+		   Remote Host: 1721.16.8.10
+		   User name: user1
+		   port : 22
+		   
+		   OK 클릭해서 연결함.
+		   
+		 ==> 로그인방법은 항상 비밀번호를 입력해야됨.
+		   
+	///////////////////////////////////////////////////////////////////////////////
+
+	   카. pem (Privacy Enhanced Mail) 파일 이용.
+	   
+	    - 비밀번호 입력없이 로그인 가능한 방법임. 
+		- 비대칭키를 활용하는 방법.
+	   
+	    - 전체 아키텍처
+		
+		  서버(ubuntu)  <------------------------------------ 클라이언트(window)
+		  
+
+
+		  
+		  a. 서버에서 공개키(public Key)와 개인키(private key)를 생성.
+		  b. 서버에는 공개키(public key)를 저장하고
+		     클라이언트에는 개인키(private key)저장.
+			 
+		  c. 클라이언트가 서버에 접속할 때 비밀번호 대신에 개인키를 이용해서 접속시도함.
+		  d. 서버에서는 클라이언트가 제공한 개인키와 공개키를 이용해서 key pair 검증함.
+		     맞으면 로그인성공, 틀리면 로그인 실패.
+			 
+		# 작업하기
+		
+		 # ubuntu에서 작업하기
+		   
+		    1)공개키와 개인키 생성.
+			
+			 ssh-keygen  -q  -N  ""  -f  ubuntu_user1_key.pem
+		 
+			 ==> ubuntu에 다음과 같은 2개의 파일이 생성됨.
+			     ubuntu_user1_key.pem      ( 개인키, 클라이언트인 윈도우에 저장) 
+				 ubuntu_user1_key.pem.pub  ( 공개키, 서버에 저장 )
+		 
+		    
+			2) 공개키를 지정된 파일에 덮어쓰기
+			
+			  cat ubuntu_user1_key.pem.pub > ~/.ssh/authorized_keys
+			  
+			  cat .ssh/authorized_keys
+			  ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPwhfK4Zvsnv/aJC6QRdQPv1QoimNVhaknRfzAprgK6R user1@ubuntu
+
+            3) 공개키 파일의 권한을 낮춰야 됨.
+			  
+			   chmod 600 ~/.ssh/authorized_keys
+			   
+		 
+		    4) 클라이언트에 개인키 저장하기.
+			 
+			   MobaXterm에서  파일선택 > 오른쪽 클릭 > download 선택하면 윈도우에 다운로드됨.
+			   
+		 
+		 # 윈도우에서 작업하기
+			 
+		  MobaXterm > Session > SSH > 
+		  
+		     Remote Host: 1721.16.8.10
+		   User name: user1
+		   port : 22
+		   
+		   입력하고  > Advanced SSH Setting > Use Private Key에서 다운로드 받은 ubuntu_user1_key.pem 선택 > OK
+		   
+	 타. 스냅샷 만들기
+	 
+	     VMware > VM > Snapshot > Take Snapshot 선택 > 이름지정: 설정완료
+		 
+		 필요할 때,  스냅샷이용해서 복구 가능.
+		 
+-------------------------------------------------------------------------------------------------------
