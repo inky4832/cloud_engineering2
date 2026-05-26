@@ -46,7 +46,7 @@ Linux 강의정리
 	    - ubuntu, Kali Linux
 	    - 설치와 설정이 매우 쉽다.
 		- 사용자 친화적임
-		- 패키지 관리자: apt install 패키지명
+		- 패키지 관리자: apt install 패키지명 ( 일반 사용자 사용불가. root 권한으로 실행해야됨) 
 		- 패키지 형식: *.deb
 	 
 	 다. 레드햇 계열
@@ -219,3 +219,45 @@ Linux 강의정리
 			
 			//////////
 			만약 172.16.8.200 인경우 서브넷1과는 같은 네트워크가되고 서브넷2는 다른네트워크가 된다고 할 수 있음.
+			
+	
+	 사. 모든 응용프로그램 업데이터
+	     - 일반사용자 실행불가. 관리자만 가능함.
+		 - 관리자로 명령어를 실행하는 방법은 sudo 지정해야 됨.
+		 
+		  sudo apt update
+		  sudo apt full-upgrade  ( apt upgrade: 기존패키지에 그냥 덮어씀. full-upgrade: 기존 패키지가 삭제가능성 있음 ) 
+		  
+	 아.  터미널 설치 
+	   
+	      sudo apt install terminator
+		  
+		  
+     자. 윈도우에서 원격으로 ubuntu에 접속하자.
+	 
+	   - SSH(Secure Shell) 프로그램이 필요함.
+	    
+		  sudo apt install openssh-server 
+		  sudo systemctl status ssh   # server 상태 확인 
+		  sudo systemctl start ssh    # server 시작  
+		  sudo systemctl enable ssh   # 재부팅시 자동 실행
+		  
+	   -윈도우 Powershello로 접속하자.
+	   
+	      ping 172.16.8.10  # 접속여부 확인용도
+		  
+		  ssh user1@172.16.8.10
+		  .../
+		       (Yes/no/fingerprint)? yes  <== ubuntu에 .ssh폴더가 자동으로 생성됨
+			   
+		  
+	      ssh user1@172.16.8.10
+		  user1@ubuntu~$
+		  cd    # 홈디렉터리로 가기
+		  ls -al  # 자세하게 목록보기 ( 숨김폴더 포함 )
+		            .ssh 숨김폴더 생성되고
+					그 안에 authorized_keys 파일이 생성됨.
+					현재는 비어있음.
+					
+		 cd .ssh
+         cat authorized_keys   # 파일내용 보기		 
