@@ -407,3 +407,40 @@ Linux 강의정리
 					 변경가능. ( export PS1="변경값" )
 		
    -------------------------------------------------------------------------
+  
+ 2. 일반사용자에서 관리자로 변경하는 방법.
+ 
+   1) 한번만 관리자로 변경해서 실행 ( 초보자에게 권장 )
+   
+      문법: sudo 명령어
+	 
+	   ex.  sudo apt update
+	        sudo apt install openssh-server
+			
+			
+   2) root로 쉘 변경 ( $ -----> # )
+   
+      a. 현재 사용자 경로를 유지하고 관리자로 변경하는 방법.
+	  
+	  문법:   sudo -s ( sudo su 와 비슷 )
+	  
+	     root@ubuntu:/home/user1# pwd
+         /home/user1
+
+	     root@ubuntu:/home/user1# apt update  <== sudo 없이 실행가능.
+		 
+		 
+	  b. root 계정으로 변경하는 방법.
+
+       문법:   sudo su -	  
+	   
+	      root@ubuntu:~# pwd
+          /root
+
+	
+		 
+   3) root 계정 인증한 캐시 삭제.
+   
+      문법:  sudo -k
+	  
+	----------------------------------------------
