@@ -1204,7 +1204,12 @@ Linux 강의정리
 		  cat m.txt  m_copy.txt      # 내용이 똑같은지 확인.
 		  
 		   echo "world" >> m.txt # 원본파일 수정. append 
-		  
+		   cat m.txt  m_copy.txt      # 내용이 똑같은지 확인.
+		   
+		   rm m.txt  # 원본 삭제. 하드링크 삭제 안됨(유지됨), 링크갯수가 1개로 줄어듬
+           1060500 -rw-rw-r-- 1 user1 user1   12 May 28 14:27 m_copy.txt
+		   
+		 --------------------------------------------
    
 20) 소프트링크 ( soft link )
 
