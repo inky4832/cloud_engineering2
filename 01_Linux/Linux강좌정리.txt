@@ -1036,5 +1036,47 @@ Linux 강의정리
 			   rm -rf dir1/    # 중첩 디렉터리는 반드시 -rf 지정한다.
 			   
 ------------------------------------------------------------------------
+
+17) 파일 및 디렉터리 찾기
+
+  문법:    find 경로(상대/절대) [옵션]  대상(타겟)
 			   
-			   
+  옵션: 			   
+      -name   :   이름검색 ( 대소문자 구분)
+	▪-iname :   이름검색( 대소문자 무시)
+	▪-type f   :   파일
+	▪-type d  :  디렉터리
+	▪-size  크기 :  파일크기기준
+	▪-user 사용자: 사용자기준
+	▪-exec  명령어:  명령어실행
+	▪-delete  :   삭제
+	▪-ls     :  find후에 ls 실행
+	▪-maxdepth n    : 깊이 제한
+	
+
+    실습>
+	     mkdir projects
+		 touch projects/report.txt
+		 touch projects/todo.txt
+		 touch projects/todo2.txt
+		 touch projects/error.log
+		 touch projects/alert.log		 
+		 
+		 echo "todo" >> projects/todo.txt
+		 echo "error" >> projects/error.log
+		 echo "alert" >> projects/alert.log	 
+		 
+		 tree projects
+		 
+		 find projects -name  todo.txt
+		 find projects -name  TODO.txt  # 대소문자 구별됨.
+		 
+		 find projects -iname  TODO.txt  # 대소문자 무시
+		 
+		  find projects -name  to*.txt   # 와일드카드 사용 가능.
+		  
+		 find projects -name  todo2.txt -delete  # 찾아서 삭제
+		 
+		 sudo find /etc -name  passwd -ls    # 권한 설정 가능, 중첩디렉터리 조회가능, 조회 후 ls 실행가능
+		       298857      4 -rw-r--r--   1 root     root         2907 May 26 14:31 /etc/passwd
+               264578      4 -rw-r--r--   1 root     root           92 Feb 22  2024 /etc/pam.d/passwd
