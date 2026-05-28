@@ -1211,5 +1211,45 @@ Linux 강의정리
 		   
 		 --------------------------------------------
    
-20) 소프트링크 ( soft link )
+20) 소프트 링크 ( soft link )
 
+   개념: 바로가기 기능. ( 윈도우에서는 바로가기 기능은 원본이 삭제되면 바로가기 아이콘이 깨짐 )
+
+   문법: 
+         ln -s 원본 대상
+		 
+   특징: 
+        디렉터리 지정가능.
+		inode가 다름.
+		원본수정하면 서로 영향을 미침.
+		원복 삭제하면 소프트링크가 깨짐 ( ls 입력시 빨간색으로 출력됨, 해결: rm 소프트링크) 
+		
+   목적:
+        경로단축
+		
+	  실습:
+	  
+	       echo "hello" > m2.txt # 원본파일
+
+		   ln -s m2.txt  m2_copy.txt # 소프트 링크
+	  
+	       cat m2.txt  m2_copy.txt      # 내용이 똑같은지 확인.
+	  
+	  
+	      ls -il  # -i 는 inode 확인 ( 서로 다름 )
+		  
+	      1060644 lrwxrwxrwx 1 user1 user1    6 May 28 14:44 m2_copy.txt -> m2.txt
+          1060643 -rw-rw-r-- 1 user1 user1    6 May 28 14:43 m2.txt
+
+
+
+          echo "world" >> m2.txt # 원본파일 수정. append 
+		  
+		  cat m2.txt  m2_copy.txt      # 내용이 똑같은지 확인.
+		  
+		  
+		   rm m2.txt  # 원본 삭제.
+		   
+		    ls -il  # 깨져서 출력됨. 해결: 소프트링크 파일 삭제
+			
+		   rm m2_copy.txt  # 소프트링크 파일 삭제
