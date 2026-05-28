@@ -1253,3 +1253,17 @@ Linux 강의정리
 		    ls -il  # 깨져서 출력됨. 해결: 소프트링크 파일 삭제
 			
 		   rm m2_copy.txt  # 소프트링크 파일 삭제
+
+
+		 # 디렉터리 사용.
+		   
+		    mkdir temp
+			touch temp/test.txt
+			
+			ls -al temp
+			
+			ln -s temp temp2 # temp디렉터리에 해당하는 temp2 소프트링크 생성
+			
+			ls -al temp2
+			
+------------------------------------------------------------------
