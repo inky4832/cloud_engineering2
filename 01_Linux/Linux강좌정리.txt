@@ -1350,8 +1350,10 @@ Linux 강의정리
 			 
 			ls -lhs /etc | head  -n 20
 			
-			cat -n /var/log/auth.log   |  grep  "authentication failure"
-			cat -n /var/log/auth.log   |  grep  "authentication failure"  | wc -l  
+			# /var/log/auth.log 파일이 text가 아닌 바이너리 파일임.확인 방법: file /var/log/auth.log 
+			# grep 에서는 -a 옵션을 지정해서 바이너리파일을 text로 변경할 수 있음.
+			cat -n /var/log/auth.log   |  grep -a "authentication failure"  
+			cat -n /var/log/auth.log   |  grep -a  "authentication failure"  | wc -l  
 			
 			////////////////////////////////////////
 			 # word count
