@@ -819,9 +819,37 @@ Linux 강의정리
    -특징: 파일이 없으면 생성하고 있으면, 생성시간이 변경됨.
    
        ex. touch report.txt  
-	       touch logs        # 리눅스는 확장자가 중요하지 않음.
+	       touch  logs   # 리눅스는 확장자가 중요하지 않음.
 		   
 	  실습1:
+	        touch  logs
 	        touch report.txt 
 			stat report.txt  # 통계정보. 타임스탬프 확인 가능
 			touch report.tx  # 시간이 변경됨.
+			
+
+13) 디렉터리 생성
+  
+     -문법:  mkdir [옵션]  디렉터리 디렉터리2  ...
+	 
+	 -옵션:
+	 
+	      -p : 계층적인 디렉터리 생성 가능.
+		  -v : verbose. 특정 명령을 실행시 더 자세하게 과정을 보여주는 옵션.
+		  
+		  
+		  ex.  
+		      mkdir main  sub
+		      mkdir  -p  first/second/third
+			  
+		 실습1:
+		 
+		     mkdir logs # 오류발생. 이전에 touch  logs 로 인해서 충돌발생.
+			 
+			 mkdir -v logs2 
+			  mkdir: created directory 'logs2'
+
+			 mkdir  -p  first/second/third
+			 tree first  # 계층구조 보기
+		
+	
