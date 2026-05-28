@@ -851,5 +851,48 @@ Linux 강의정리
 
 			 mkdir  -p  first/second/third
 			 tree first  # 계층구조 보기
-		
 	
+	
+14. 파일 및 디렉터리 복사
+
+      문법:  
+	        cp [옵션]  원본  대상(타겟)
+		
+	  특징:
+	         원본 및 대상: 파일이거나 디렉터리가 될 수 있음.
+			 원본:  여러개 지정 가능
+			 
+			 ex.
+			 
+			     cp  원본파일   타겟파일
+				 cp  원본파일1  원본파일2 ..  타겟디렉터리
+				 cp -r 디렉터리 원본파일1  원본파일2 ..  타겟디렉터리
+				 
+	  옵션: 
+	  
+	       -i  : interactive 가능.
+		   -p  : 원본파일의 속성(mode,소유자,시간)까지 유지되어 복사됨.
+		   -r  : 원본에 디렉터리가 있는 경우. recursive
+		   
+		
+		실습:
+		      cp /etc/passwd     ./users.txt  
+			  cp /etc/passwd     ./logs2/users.txt  # 타겟에 복사될 디렉터리 포함가능.
+			  
+			  cp -i /etc/passwd     ./users.txt  # 덮어쓰기 전에 물어봄.
+			  
+			  cp   hello.txt   users.txt   first/   # 있으면 복사되고 없으면 오류출력됨.
+			  
+			  cp  -r log2 users.txt  first/  # 원본이 디렉터리인 경우에는 -r 옵션 필수.
+			  
+		실습2:  -p 실습방법
+		
+		      -users.txt 의 소유자를 확인하자. <== user1 이 소유자.
+			  
+			  -관리자 권한으로 복사
+			  
+			    sudo cp users.txt  u.txt  <== u.txt 의 소유자?  root 임.
+				
+				sudo cp -p users.txt  u2.txt  <== u2.txt 의 소유자?  user1 임.
+				
+	-----------------------------------------------------------------------------------
