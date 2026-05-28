@@ -1004,3 +1004,34 @@ Linux 강의정리
 
 
 				mv  dir1/dir3/a.txt  dir1/dir3/aaa.txt
+				
+-------------------------------------------------------------------------		
+
+16) 파일 및 디렉터리 삭제
+
+   -문법:
+         rm [옵션] 경로/파일  경로/파일  ....  
+		 
+   -옵션:
+           -i  : interactive 가능.
+		   -f  : force (무조건)
+		   -r  : 중첩 디렉터리까지 포함.
+		   
+		 
+		실습1:
+		      dir1
+				├── dir2
+				├── dir3
+				│   └── aaa.txt 
+				└── dir4
+					├── a.txt
+					└── b.txt
+					
+		       rm dir1/dir3.aaa.txt
+			   rm -i dir1/dir4/a.txt
+			   
+			   rm dir1/dir2  dir1/dir4/b.txt
+			   
+			   rm -rf dir1/
+			   
+			   
