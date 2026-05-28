@@ -955,7 +955,7 @@ Linux 강의정리
 			 mv   dir1/dir2/dir3  dir1/
 			 
 			 
-		실습4: 존재하는 파일이 있는 경우에는
+		실습4: 존재하는 파일이 있는 경우
 		
 		     touch dir1/dir3/a.txt
 
@@ -972,3 +972,21 @@ Linux 강의정리
 
              mv -n dir1/dir2/a.txt    dir1/dir3/a.txt  # 대상 파일이 존재하면 덮어쓰지 않음.
 				mv: not replacing 'dir1/dir3/a.txt'		
+				
+		실습5: 원본이 타겟보다 더 최신인 경우에만 처리.
+		
+		  dir1
+			├── dir2
+			│   ├── a.txt
+			│   └── b.txt
+			└── dir3
+				└── a.txt       
+		        
+				dir4    # 가장 최신
+		
+		    
+			 mkdir  dir1/dir4
+			 mv  dir1/dir2/a.txt   dir1/dir4
+			 
+			 mv -u dir1/dir2/b.txt   dir1/dir4
+			 
