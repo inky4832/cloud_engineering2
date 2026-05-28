@@ -1027,11 +1027,14 @@ Linux 강의정리
 					├── a.txt
 					└── b.txt
 					
-		       rm dir1/dir3.aaa.txt
+		       rm dir1/dir3/aaa.txt
 			   rm -i dir1/dir4/a.txt
 			   
-			   rm dir1/dir2  dir1/dir4/b.txt
+			   rm dir1/dir2  dir1/dir4/b.txt # 오류발생. dir1/dir2 중첩형태 때문에. b.txt는 삭제됨.
+			   rm -ri dir1/dir2  dir1/dir4/b.txt # 오류발생. dir1/dir2 중첩형태 때문에
 			   
-			   rm -rf dir1/
+			   rm -rf dir1/    # 중첩 디렉터리는 반드시 -rf 지정한다.
+			   
+------------------------------------------------------------------------
 			   
 			   
