@@ -973,22 +973,42 @@ Linux 강의정리
              mv -n dir1/dir2/a.txt    dir1/dir3/a.txt  # 대상 파일이 존재하면 덮어쓰지 않음.
 				mv: not replacing 'dir1/dir3/a.txt'		
 				
-		실습5: 원본이 타겟보다 더 최신인 경우에만 처리. ( 나중에 다시 설명 )
+		실습5: 원본이 타겟보다 더 최신인 경우에만 처리. ( 타겟에 반드시 mv하고자 하는 파일이 존재해야됨)
 		
 		  dir1
 			├── dir2
 			│   ├── a.txt
 			│   └── b.txt
-			└── dir3
-				└── a.txt       
-		        
+	
 				dir4    # 가장 최신
-		
+				  a.txt 
+		          b.txt
 		    
 			 mkdir  dir1/dir4
 			 mv  dir1/dir2/a.txt   dir1/dir4
 			 
 			 mv -u dir1/dir2/b.txt   dir1/dir4
+			 
+			 /////////////////////
+			 // -u 옵션 실습하기위한 설정작업.
+			 mkdir -p dir1/dir2
+			 mkdir -p dir1/dir4
+			 
+			 touch dir1/dir2/a.txt
+			 touch dir1/dir2/b.txt
+			 
+			 touch dir1/dir4/a.txt
+			 touch dir1/dir4/b.txt
+
+			 //실습1  dir1/dir2/a.txt 원본파일을 최신파일로 만들기
+			 touch dir1/dir2/a.txt  # 최신날짜로 변경됨.
+			 
+			  mv -u dir1/dir2/a.txt  dir1/dir4  # 실행결과는 mv 됨.
+			 
+			 //실습2: dir1/dir4/b.txt 타겟을 최신으로 만들기
+			 touch dir1/dir4/b.txt 
+			 
+			 mv -u dir1/dir2/b.txt  dir1/dir4  # 실행결과는 mv 안됨.
 			 
 		
 		실습6:  파일이름 변경가능
@@ -1318,4 +1338,31 @@ Linux 강의정리
 	 
 //////////////////////////////////////////////////////////////////////////////////////////
 	 
-	 
+22. 파이프 (Pipes)
+
+  문법:
+         명령어1 | 명령어2
+  
+  동작:  명령어1의 출력결과를 명령어2의 입력으로 전달함.
+
+       ex.
+	         ps-ef | grep java   # 현재 java 가 실행중인지를 찾음.
+			 
+			ls -lhs /etc | head  -n 20
+			
+			cat -n /var/log/auth.log   |  grep  "authentication failure"
+			cat -n /var/log/auth.log   |  grep  "authentication failure"  | wc -l  
+			
+			////////////////////////////////////////
+			 # word count
+			 wc -l : 라인수
+			 wc -w : 단어수
+			 wc -m : 문자수
+			 wc -c : 바이트수
+			 
+			 ex. wc -l  /etc/passwd
+			////////////////////////////
+
+
+
+23. 리다이렉션 ( redirection )
