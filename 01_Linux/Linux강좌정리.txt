@@ -1051,7 +1051,7 @@ Linux 강의정리
 	▪-exec  명령어:  명령어실행
 	▪-delete  :   삭제
 	▪-ls     :  find후에 ls 실행
-	▪-maxdepth n    : 깊이 제한
+	▪-maxdepth n    : 깊이 제한, 다른 옵션보다 가장 먼저 사용해야됨. 양수만 가능
 	
 
     실습>
@@ -1080,3 +1080,19 @@ Linux 강의정리
 		 sudo find /etc -name  passwd -ls    # 권한 설정 가능, 중첩디렉터리 조회가능, 조회 후 ls 실행가능
 		       298857      4 -rw-r--r--   1 root     root         2907 May 26 14:31 /etc/passwd
                264578      4 -rw-r--r--   1 root     root           92 Feb 22  2024 /etc/pam.d/passwd
+
+		 
+		 find /etc -type d  # 디렉터리만 찾기
+		 find /etc -type f  # 파일만 찾기
+		 
+		 
+		 find projects -name  "*.log" -exec 명령어 \;  # \와 ; 필수
+		 
+		 find projects -name  "*.log" -exec cat {} \; # {}는 find된 파일이 치환되는 영역포시
+		 find projects -name  "*.log" -exec rm {} \;
+ 		 
+		 -maxdepth
+		 sudo find /etc -name  passwd -ls  # 검색결과는 2개 (/etc/passwd, /etc/pam.d/passwd )
+         sudo find /etc -maxdepth 1 -name  passwd -ls  	 # 검색결과 1개	 (/etc/passwd ) 
+		 
+		------------------------------------------------------------------------------------
