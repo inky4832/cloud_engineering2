@@ -1186,6 +1186,25 @@ Linux 강의정리
 		한쪽이 삭제되면 수정과 다르게 다른쪽에는 영향이 없음.
 		( 삭제의미는 inode 참조하는 링크를 삭제하는 것이다.)
 		
+  - 목적:
+       백업용도( 하나가 삭제가 되고 나머지 유지 )
+	   보안이슈 ( 중요한 파일명을 노출하지 않을 수 있음 )
+	   
+	   
+	실습:
+          echo "hello" > m.txt # 원본파일
 
+		   ln m.txt  m_copy.txt # 하드링크
+	   
+	      ls -il  # -i 는 inode 확인
+	      
+			1060500 -rw-rw-r-- 2 user1 user1    6 May 28 14:23 m_copy.txt
+			1060500 -rw-rw-r-- 2 user1 user1    6 May 28 14:23 m.txt
+
+		  cat m.txt  m_copy.txt      # 내용이 똑같은지 확인.
+		  
+		   echo "world" >> m.txt # 원본파일 수정. append 
+		  
+   
 20) 소프트링크 ( soft link )
 
