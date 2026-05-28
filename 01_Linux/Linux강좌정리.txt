@@ -1303,3 +1303,19 @@ Linux 강의정리
 			  tar -xzvf  파일명.tar.gz  <== 기본적으로 현재 디렉터리에 풀림.
 			  
 			   tar -xzvf  파일명.tar.gz -C 폴더  <== 지정된 폴더에 풀림
+			   
+	 실습>
+			
+			tar -czvf  projects.tar.gz  projects/
+	 
+		    rm -rf projects  # projects 폴더 삭제
+	 
+	 
+	            
+	        tar -xzvf  projects.tar.gz  
+			
+			tar -xzvf  projects.tar.gz -C  temp
+	 
+//////////////////////////////////////////////////////////////////////////////////////////
+	 
+	 
