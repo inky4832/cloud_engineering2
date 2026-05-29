@@ -1366,5 +1366,34 @@ Linux 강의정리
 			////////////////////////////
 
 
-
+//////////////////////////////////////////////////////////////////////////////////////////
+	 
 23. 리다이렉션 ( redirection )
+   ////////////////////////////////////
+       #표준입력/표준출력/표준에러
+			  
+			  file /dev/stdin  # 0번 ( 표준입력) 자바의 System.in 동일
+			  file /dev/stdout # 1번 (표준출력)  자바의 System.out.println 동일
+			  file /dev/stderr # 2번 (표준에러)  자바의 System.err.println 동일
+   //////////////////////////////////////
+
+   동작: 명령어의 입출력의 방향을 바꾸는 방법.
+        일반적으로 콘솔의 출력되는 방향을 파일로 출력되도록 방향을 바꿈.
+		ㄴ
+	문법:  
+	       명령어 > 파일            ( <  : 표준입력
+		                            >, >> : 표준출력(정상출력)
+											> 의미: 덮어쓰기
+											>> 의미:추가(append)
+                          		    2>  :표준에러(비정상,오류출력)
+									
+		ex.
+		      		ls > file.txt  # 덮어쓰기
+					ifconfig >> ifconfig.txt  # 추가(append)
+					ifconfig | grep  ether  > MAC.txt
+					wc -l  < file.txt  # 입력 리다이렉션
+					
+					ls  text.txt   wrong.txt  2> error.txt  # ls실행했을 때 출력되는 오류를 저장.
+					
+					ls  text.txt   wrong.txt > success.txt  2> error.txt # ls 실행했을때 출력되는 정상출력과
+					                                                       오류 출력을 분리해서 저장.
