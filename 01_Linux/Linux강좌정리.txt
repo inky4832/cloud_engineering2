@@ -1402,4 +1402,36 @@ Linux 강의정리
 	실습>
       	    ls > file.txt # 덮어쓰기. 파일이 없으면 생성.
 			
-			ls >> file.txt
+			ls >> file.txt  # 추가(append)
+			
+			
+			ifconfig | grep  ether  > MAC.txt는
+			
+			wc -l  < file.txt   # file.txt 읽어서 라인수 출력
+			
+			# 정상출력과 에러출력 분리하기.
+			
+			  #1. 정상출력만 있는 경우
+			    
+				 ls file.txt  > out.txt
+			
+			  #2. 비정상출력만 있는 경우
+			   
+  			    ls wrong.txt > error.txt	# 오류가 났음에도 불구하고 표준출력(정상출력)인 > 사용했기 때문에 리다이렉션이 안됨.
+				 ls: cannot access 'worng.txt': No such file or directory
+
+
+                ls wrong.txt 2> error.txt   # 오류용 2> 사용했기 때문에 정상적으로 리다이렉션이 됨.
+				
+			#2. 정상출력과 비정상출력 모두 있는 경우
+			
+				==> 동작방식은 정상출력값은 out2.txt에 정상적으로 리다이렉션이 되고
+				    오류출력값을 그냥 콘솔에 출력됨.
+					
+			      ls file.txt wrong.txt > out2.txt   
+				  ls: cannot access 'worng.txt': No such file or directory
+				  
+				==> 동작방식은 오류출력값은 error2.txt에 정상적으로 리다이렉션이 되고
+				    정상출력값을 그냥 콘솔에 출력됨.
+				   ls file.txt wrong.txt 2> error2.txt  
+                   file.txt
