@@ -1711,11 +1711,65 @@ Linux 강의정리
 		      u+w   : 파일소유자에게 쓰기 권한 부여.
 			  u+rwx : 파일소유자에게 읽기,쓰기,실행 권한 부여.
 			  
-			  g-w :
-			  o+r :
-			  u+x, o+rwx :
-			  a+x:
-			  u=rxw, o-w:
-			  
+			  g-w :   파일소유자가 속한그룹에서 쓰기권한 취소
+			  o+r :   기타 사용자에게 읽기 권한 부여.
+			  u+x, o+rwx :  파일소유자에게는 실행권한 부여하고  기타사용자에게 읽기,쓰기,실행 권한 부여
+			  a+x:       :  모든 사용자에게 실행권한 부여.
+			  u=rxw, o-w:  : 파일소유자는 읽기,쓰기,실행 권한 부여되고 기타 사용자는 쓰기 권한 취소
+			  ug=rwx  :   u=rwx, g=rwx 와 동일.
+			  o=       :   기타 사용자 권한 모두 취소
+       
+	    라. 명령어
+		
+		문법:
+		 
+		     chmod u+w 파일
   
+		  실습>
+			    touch exam.txt
+		       
+			   #권한 초기화
+			   chmod 000 exam.txt
+			   
+			   chmod u+w  exam.txt
+			   
+			    chmod u+rwx  exam.txt
+				
+               chmod o+r  exam.txt 
+  
+				chmod ug=rwx  exam.txt
+				
+				chmod u=rwx exam.txt
+				
+				chmod g= exam.txt 
+				
+				
+				chmod ug=rwx, o=  exam.txt ( 오류발생)
+				chmod ug=rwx,o=  exam.txt ( 띄어쓰기 안됨 )
+				
+				
   3) 파일접근권한 변경2 - 숫자 이용  (*****************)
+  
+      -개념: 권한이 있으면 1, 없으면 0으로 표기하고 나중에 10진수로 표기.
+	  
+	    ex.
+			r: r--:100 ==>4
+		    w: -w-: 010 ==> 2
+			x: --x: 001  ==> 1
+		
+			원본: rwxr--r-x
+				
+		     rwx: 111 표기 : 7
+				            2진수를 10진수로 표기법: 
+							
+
+			 r--: 100 표기 : 4
+			 
+			 r-x: 101 표기   5
+			 
+			 
+			 => chmod 745 exam.txt==>  rwxr--r-x
+			   
+			    chmod 641 exam.txt==>  rw-r----x
+				
+				chmod 600 exam.txt==>  rw-------
