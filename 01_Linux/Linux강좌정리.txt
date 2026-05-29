@@ -1579,8 +1579,37 @@ Linux 강의정리
 			
 	3) 사용자 그룹
 	
-	  개념: 여러 사용자들을 묶어서 관리하기 위한 방법.
-	  그룹정보:
+	  -개념: 여러 사용자들을 묶어서 관리하기 위한 방법.
+	  -그룹정보:
 	  
 	       /etc/group 관리
 	
+	       ex.  cat /etc/group
+		   
+		        user1:x:1000:
+				
+				user1: 그룹명
+				x: 암호화된 비번
+				1000: 그룹ID ( GID )
+
+       -그룹종류
+	   
+	      가. Primary Group
+		    - 사용자의 기본그룹
+			
+			- 명령어:  id 사용자명
+			
+			   $id user1
+			   uid=1000(user1) gid=1000(user1) 
+			   groups=1000(user1), <== 기본그룹
+			        4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),100(users),114(lpadmin) <== 추가그룹
+
+		  나. Secondary Group
+		    - 사용자의 추가그룹
+			
+			-명령어: groups 사용자명
+			  
+			    $ groups user1
+				user1 : user1 adm cdrom sudo dip plugdev users lpadmin
+			
+	----------------------------------------------------------------------------
