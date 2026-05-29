@@ -1548,6 +1548,11 @@ Linux 강의정리
 	 나. root 사용자.
 		- 어떤 경로,명령어 모두 작업이 가능.
 		- 일반사용자와 분리해서 관리하기 위해서  /home 디렉터리가 아닌 /root 가 홈디렉터리로 관리됨.
+		- 관리자만 할 수 있는 역할: 
+		   사용자생성/삭제
+		   패키지설치/삭제
+		   ...
+		   
 		
    2) 사용자 정보 관리 파일
    
@@ -1613,3 +1618,41 @@ Linux 강의정리
 				user1 : user1 adm cdrom sudo dip plugdev users lpadmin
 			
 	----------------------------------------------------------------------------
+	
+   4) 사용자 생성/비번설정/사용자삭제
+   
+      문법: 
+	        sudo useradd [옵션] 사용자명  # 사용자 생성
+			sudo passwd 사용자명         # 비번설정
+			
+			sudo userdel -r 사용자명		# 사용자 삭제
+			
+			
+	  옵션:  
+	        -m:   홈디렉터리 생성. 지정하지 않으면 홈디렉터리 생성안됨.
+			     기본적으로 /home/사용자명으로 생성됨.
+				 
+			-d : 명시적으로 홈디렉터 설정.
+			-s : 사용하고자하는 쉘 지정.  기본은 /bin/sh
+			-G : 추가 그룹 지정.
+			-g : 기본 그룹 지정.
+			
+		ex.
+		    sudo useradd -m  user2  # 홈디렉터리 생성. /home/user2
+			sudo passwd user2 
+			sudo tail -n 5 /etc/shadow  # 비번확인
+
+
+			sudo useradd -m  -d  /home/project/user3    user3 # 홈디렉터리 생성( 경로는 /home/project/user3 )
+			
+			# 먼저 dev 그룹 생성하자.
+			sudo groupadd dev 
+			sudo useradd -m -g  dev   user4  #  홈디렉터리 생성. Primary Group을 dev로 지정.
+			id user4   
+			
+			sudo useradd -m  -G  sudo,users user5 #  홈디렉터리 생성. Secondray Group을 sudo, users 로 지정.
+			
+			sudo useradd -m  -s  /bin/bash  user6
+			
+		    sudo useradd -m  -s  /bin/bash  사용자명
+			
