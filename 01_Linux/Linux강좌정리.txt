@@ -2064,9 +2064,51 @@ Linux 강의정리
      - 권한 변경
 	   chmod 700 test.sh
 	   
-	  $./test.sh
+	  $./test.sh    #  그냥 test.sh 는 안됨.
 	 
 	  $ bash test.sh
 	  $ source test.sh
 	 
-	 
+-----------------------------------------
+   4) 변수 (variable)
+
+     가. 변수선언
+ 
+        문법:   변수=값 # 공백없이 지정.  변수 = 값 는 오류남.
+		  
+		    ex. name=kim
+			    age=30
+				
+	나. 변수 사용
+
+	   문법:  $변수명 또는 ${변수명} <== 중괄호
+
+       ex. 
+	     콘솔에 출력:  echo $name
+				     echo ${age}
+					 
+		 포맷지정:   echo "이름:$name "  <== 반드시 " " 사용. $name 을 실제 변수값으로 치환
+		           echo '이름:$name '  <== $name 을 치환안함.
+				   
+				   echo "name: $name , age: $age "
+				   
+		//////////////////////////////////////////
+		 $(명령어) <== 소괄호
+		
+		  문법:
+		      변수명=$(명령어)
+			  
+			 ex.
+			 
+			     today=$(date)
+				 list=$(ls)
+				 result=$(cat -n /var/log/auth.log   |  grep -a "authentication failure"  )
+			     result2=$(ping -c 2 8.8.8.8)
+				 
+				 echo $today
+				 echo $list
+				 echo $result
+		      
+				
+		
+		///////////////////////////////////////////
