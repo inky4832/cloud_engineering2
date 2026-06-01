@@ -1948,6 +1948,8 @@ Linux 강의정리
 		 ps -ef | grep wget   # PID 찾기
 		 
 	     kill -9 49603   # wget 종료
+		 
+		 kill -9 wget    # 프로세스명으로도 종료 가능.
 		
 	실습2> Kali 리눅스 ( background )
 	
