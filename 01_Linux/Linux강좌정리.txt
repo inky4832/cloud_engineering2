@@ -1,5 +1,7 @@
 Linux 강의정리 
 
+https://www.vandyke.com/products/securecrt/
+
 /////////////////////////////////
 1 장. 리눅스 기초
 /////////////////////////////////
@@ -2378,4 +2380,118 @@ Linux 강의정리
 				   70 ~ 79 : C 학점
 				   나머지:   F 학점
 				   
-				   
+					#!/bin/bash
+
+					read -p  "점수 입력" num
+					echo $num
+					if [[ $num -ge 90 ]]; then
+					  echo "A .. "
+					elif [[ $num -ge 80 ]]; then
+					  echo "B .. "
+					elif [[ $num -ge 70 ]]; then
+					  echo "C .. "
+					else
+					  echo "D .."
+					fi
+				 
+				    chmod 700 test5.sh
+					./test5.sh
+					
+					
+	---------------------------------------------------------------------
+
+37. case 문
+
+
+  문법:
+         case  변수 in
+		 
+		  패턴1)
+		    문장
+			;;
+			
+	      패턴2)
+		    문장
+			;; 
+			
+		  *)
+		    문장
+			;;
+		esac
+		
+		 ex.  fruit="apple"
+		 
+		     case $fruit in
+			 
+			   apple)
+			     echo "apple"
+				 ;;
+			
+			   banana)
+			      echo "banana"
+				 ;;
+				
+				*)
+				 echo "default"
+				 ;;
+			 esac
+			 
+			 
+	---------------------------------------------------------------------
+
+38. 반복문
+
+
+     문법1> 반복할 목록이 있는 경우
+
+          for 변수 in 목록  # 1 2 3 , {1..5} , A B "C D"
+          do 
+             문장
+          done			 
+		  
+		    ex. 
+			
+			   for n in 1 2 3 4 5 # 나열
+			   do 
+			     echo $n
+			   done
+			   
+			   for n in {1..5}  # 범위지정, 중괄호  {1..10..2}  1부터 10까지 2step
+			   do 
+			     echo $n
+			   done
+			   
+			    for n in A B "C D"  # 문자열 
+			   do 
+			     echo $n
+			   done
+			   
+	 문법2> 일반 for
+	 
+	 
+	      for((i=1;i<=5;i++))
+		  do
+		    echo $i
+		  done
+	 
+	  문법4> 일반 for + break
+	 
+	 
+	      for((i=1;i<=5;i++))
+		  do
+		    if [[ $i -eq  3 ]];then 
+			 break
+			fi
+		    echo $i
+		  done
+	 
+	 -------------------------------------------------------------------
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
