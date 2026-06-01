@@ -1950,6 +1950,9 @@ Linux 강의정리
 	     kill -9 49603   # wget 종료
 		 
 		 kill -9 wget    # 프로세스명으로도 종료 가능.
+		 
+		 kill -9 %wg     # 프로세스명 일부분만 지정 가능
+		
 		
 	실습2> Kali 리눅스 ( background )
 	
@@ -1958,3 +1961,25 @@ Linux 강의정리
 		jobs # 백그라운드/중지된 프로세스 확인
 		
 		kill %1 # [1] 작업을 의미  # wget 종료
+		
+--------------------------------------------------------------------------------------
+
+30. init 프로세스(systemd 와 동일개념)와 런레벨
+
+
+   실습1> 현재 런레벨 확인.
+
+         systemctl get-default
+			graphical.target  # GUI 환경, init 5
+			
+
+   실습2> 모드변경 1 - 임시적으로 
+   
+	      sudo init 3
+		  sudo init  5 
+		  
+   실습3> 모드변경 2 - 영구적으로 		  
+   
+    
+	     GUI모드:  systemctl set-default  graphical.target
+		 CUI모드:  systemctl set-default  multi-user.target (*)
