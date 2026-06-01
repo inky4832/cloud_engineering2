@@ -1913,4 +1913,46 @@ Linux 강의정리
 		   crontab -u user1 -r  # user1 사용자의 cron 삭제
 ----------------------------------------------------------------------------		   
 		   
-		   
+29. http에서 파일 다운로드
+
+  1) wget 설치
+  
+     sudo apt update
+	 sudo apt install wget -y
+	 
+  2) 명령어
+    
+	 wget -b   URL   # 백그라운드로다운로드                        
+	▪ wget -c  URL        #  이어받기, -c 는continue                    
+	▪ wget -r   URL      # 링크를따라가면재귀적으로다운로드                    
+	
+	▪ wget -P 디렉터리 URL      # 특정디렉터리에저장 (대문자P)
+	▪ wget -O 파일명 URL        #  다른 이름으로저장   
+	▪ wget --show-progress  URL  # 진행율 확인   
+	▪ wget --limit-rate=10K  URL # 속도제한,  초당10k로제한        
+	▪ wget -I    down.txt   # URL 목록파일로지정( 여러개지정가능
+	  
+	 
+	실습1> Kali 리눅스 ( foreground )
+	
+		wget --show-progress https://cdimage.kali.org/kali-2026.1/kali-linux-2026.1-installer-amd64.iso
+
+	    ctrl + z # 강제중지
+		
+		# 이어받기
+		wget  -c https://cdimage.kali.org/kali-2026.1/kali-linux-2026.1-installer-amd64.iso
+		
+		
+		# 다운로드 종료
+		
+		 ps -ef | grep wget   # PID 찾기
+		 
+	     kill -9 49603   # wget 종료
+		
+	실습2> Kali 리눅스 ( background )
+	
+		wget  https://cdimage.kali.org/kali-2026.1/kali-linux-2026.1-installer-amd64.iso & 
+		
+		jobs # 백그라운드/중지된 프로세스 확인
+		
+		kill %1 # [1] 작업을 의미  # wget 종료
