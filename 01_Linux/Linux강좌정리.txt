@@ -2011,10 +2011,27 @@ Linux 강의정리
 	cat /etc/shells  # 현재 리눅스에 설치된 쉘목록
 	
 	  # /etc/shells: valid login shells
-		/bin/sh
-		/usr/bin/sh
-		/bin/bash
-		/usr/bin/bash
-		/bin/rbash
+	  
+		/bin/sh          # 표준 (기능이 떨어짐) 
+		/usr/bin/sh      # /bin/sh의 링크
+		
+		/bin/bash		 # 현재 쉘 ( sh보다 기능이 많음 )
+					       ex. echo {1..10}, arr=(1,2,3) 등 지원됨.
+						   
+		/usr/bin/bash    # /bin/bash 링크
+		
+		/bin/rbash       # 기능이 제한된 쉘
 		/usr/bin/rbash
-		/usr/bin/dash
+		
+		/usr/bin/dash    # 매우 가볍움. 속도가 빠름. ( bash 기능지원안됨 )
+		
+
+ 4) 쉘 확인
+  
+    echo $SHELL
+	
+	echo $0
+	
+	tail -n 5 /etc/passwd
+	
+	
