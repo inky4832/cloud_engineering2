@@ -2537,3 +2537,61 @@ https://www.vandyke.com/products/securecrt/
 			 f2 <== 호출.
 	 
 	 
+  문법3: 파라미터 전달
+  
+  
+         function 함수명(){
+			$1,$2 ... 파라미터 얻음
+		 }
+		 
+	   호출: 함수명 값1 값2
+	   
+	    ex. 
+		
+		     function f3(){
+			   echo "$1, $2, $#, $@"
+			 }
+			 f3 one two
+			 
+  문법4: 리턴 
+  
+      가. 숫자를 리턴하는 경우
+	  
+			function 함수명(){
+				
+			   return 숫자
+		    }
+		
+		   리턴값 받기:
+		    
+			  함수명
+		      변수=$? 또는 echo $?
+	  
+		 실습>
+		       function f6(){
+			     return 100
+				}
+			
+				f6
+				echo $?
+				
+				f6
+				result=$?
+				echo $result
+			    echo $result
+				
+				f6
+				result=$?+100  # 100 + 100 출력됨. 연결됨
+
+				f6
+				result=$(($?+100))  # 200 출력됨.  $((산술연산)) 문법 이용.
+
+				
+	  
+	  나. 문자를 리턴하는 경우
+	  
+	       function 함수명(){
+				
+			   echo "문자"
+		    }
+	  
