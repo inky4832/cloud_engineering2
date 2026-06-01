@@ -1983,3 +1983,38 @@ Linux 강의정리
     
 	     GUI모드:  systemctl set-default  graphical.target
 		 CUI모드:  systemctl set-default  multi-user.target (*)
+		 
+  실습4> 종료 및 재부팅
+   
+   
+       sudo init 0  : 종료
+	   sudo init 6 :  재부팅
+--------------------------------------------------------------------
+31. 쉘(shell)
+
+  1)개념
+    - 사용자의 명령을 받아서 OS의 커널에 전달해서 실행하도록 하는 프로그램.
+    
+	
+  2) 구조
+  
+     응용프로그램 ( vim, ... )
+     --------------------------
+     쉘(shell)
+    ----------------------------------
+     리눅스커널 ( 프로세스 관리, 메모리 관리 등)
+    --------
+      h/W
+	  
+ 3) 쉘 종류
+    
+	cat /etc/shells  # 현재 리눅스에 설치된 쉘목록
+	
+	  # /etc/shells: valid login shells
+		/bin/sh
+		/usr/bin/sh
+		/bin/bash
+		/usr/bin/bash
+		/bin/rbash
+		/usr/bin/rbash
+		/usr/bin/dash
