@@ -149,4 +149,39 @@ Docker 강좌 정리
   3) 설치확인
 	  docker version
 	  
+  4)Docker Desktop 실행 ( docker daemon 실행 )
+  
+  5)VSC IDE 툴 실행 + 
+  
 	 --------------------------------------------
+
+ 5. hello-world 이미지 실행
+  
+    1) docker run hello-world 실행
+	
+	   -내부 동작 순서
+	     가.  로컬에서 hello-world 이미지를 찾음.
+		     ( 있으면 실행(Container로 만듬)
+			  없으면 docker hub에서 다운로드 됨.
+		 나.  없기 때문에 docker hub에서 다운로드 됨.
+         다. 다운로드 된 이미지 이용해서 컨테이너 생성.		 
+		 라. 실행하고 메시지 출력후 종료.
+			  
+	  - 로컬 이미지 정보 확인
+	    
+		 docker images
+		 
+		 IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
+         hello-world:latest   0e760fdfbc48       25.9kB         9.49kB    U   
+		 
+		 hello-world -  이미지명
+		 latest   - 태그(tag: 버전이라고 생각하자). 지정하지 않으면 자동으로 latest 가 붙음.
+		            latest라고 해서 가장 최신버전의 파일이라고 생각하면 안됨. 
+					그냥 tag명으로 지정된 값일뿐이다.
+					따라서 명시적으로 버전 지정을 권장함.
+					
+		ID (0e760fdfbc48_ : 로컬에 있는 이미지 Id값으로서, 식별자용.			
+					
+		 CONTENT SIZE : 실제 이미지 크기
+		 DISK USAGE: 이미지 관리하기위한 디스크 크기.
+		 
