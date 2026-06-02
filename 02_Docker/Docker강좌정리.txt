@@ -128,3 +128,25 @@ Docker 강좌 정리
 			 => 영속성을 가지기 위해서 볼륨(volume, host에 임의 파일이용 )사용.
 			    
 ---------------------------------------------------------
+4. Docker 환경구축
+
+   1) 윈도우용 Docker Desktop 설치.
+   
+        https://www.docker.com
+		
+		https://docs.docker.com/reference/cli/docker/
+		https://docs.docker.com/reference/compose-file/
+		https://docs.docker.com/reference/dockerfile/
+		
+  2) Docker Desktop언인스톨
+  
+	 가. 제어판 > Docker 언인스톨
+	 나. C:\Users\User\.docker 삭제
+	 다 .C:\ProgramData\DockerDesktop 삭제
+	 라. C:\Users\User\AppData\Roaming\Docker 삭제
+	 마. C:\Users\User\AppData\Local\Docker 삭제
+	 
+  3) 설치확인
+	  docker version
+	  
+	 --------------------------------------------
