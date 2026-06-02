@@ -185,3 +185,26 @@ Docker 강좌 정리
 		 CONTENT SIZE : 실제 이미지 크기
 		 DISK USAGE: 이미지 관리하기위한 디스크 크기.
 		 
+		 EXTRA : 이미지 사용여부.
+		 
+	 - 컨테이너 정보 확인
+	 
+	    docker ps : 실행중인 컨테이너 정보 출력.
+		
+		
+		docker ps -a : 실행중 + 종료된 포함해서 컨테이너 정보 출력.
+		
+		CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS          PORTS     NAMES
+1b19d3e3018f   hello-world   "/hello"   22 minutes ago   Exited (0) 22 minutes ago       kind_chaplygin  
+
+    
+	    CONTAINER ID : 실행중인 컨테이너를 식별하기 위한 식별자
+		IMAGE:  컨터이너를 만든 템플릿(틀) 이미지.
+		command : 명령어
+		CREATED:  컨테이너가 생성된 시간.
+		STATUS:  컨테이너 상태 (  created, running, stop, exited )
+		PORTS: 외부에서 접근할 때 사용하는 포트번호
+		NAMES : 컨테이너 이름.
+		
+		*식별자로 사용: CONTAINER ID, NAMES
+-----------------------------------------------------------------------------
