@@ -96,5 +96,20 @@ Docker 강좌 정리
 			 버전관리
 	  
 	다. image
+	  - 컨테이너를 만들기 위한 틀 역할 담당.
+	  - 구성요소:
+	          OS(base 이미지 ex. ubuntu ...)
+			  실행환경
+			  라이브러리
+			  설정파일
+			  app
+	      ==> 위 구성요소들이 포함될수 있다.
+		  
+	  -특징:
+	        Read-Only(******)
+			실행되지 않는 정적파일(static)
+			레이어 아키텍쳐(Layer Architecture)로 구성됨. 즉 여러 layer로 구성됨.(*********)
+			
+	    
 	
 	라. container
