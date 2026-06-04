@@ -426,3 +426,65 @@ Docker 강좌 정리
 					
 		        docker image history nginx  --format "{{.ID}}: {{.CreatedBy}}"			
 	-----------------------------------------------------------------------------------
+	4) 원본image에 새로운 참조명 설정 (별칭)
+	 
+	    -개념:  기존 이미지에 새로운 이름(tag 추가) 을 부여하는 명령어.
+		
+		-특징:  이미지 ID는 동일(**************)
+                단지 이름만 다름.
+
+                 ex.  nginx:latest (원본)
+				           |
+						   |
+						 이미지 ID: a123456789
+							|
+							|
+					  my-nginx:v1  (별칭)	
+		      
+	   
+	   -문법: 
+	   
+	         docker image tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+			 
+			 별칭: docker tag
+			 
+	   -용도: 버전관리 및 프로파일(ex. prod/dev/test ) 관리용.
+			 docker hub에 업로드 할때 주로 사용됨.( 업로드할때 이름이 정해져 있음. )
+	
+		ex. 
+			   docker tag   nginx:latest   nginx:v1
+			   docker tag   nginx:latest   nginx:v2
+			   docker tag   nginx:latest   nginx:dev
+			   docker tag   nginx:latest   nginx:test
+			   
+			   docker images  # 이미지 ID가 동일 (***********)
+			   
+			        nginx:latest         5aca99593157        241MB           66MB    U   
+					nginx:v1             5aca99593157        241MB           66MB    U   
+					nginx:v2             5aca99593157        241MB           66MB    U   
+			   
+	-----------------------------------------------------------------------------------
+	
+     5) docker image 삭제
+	 
+	    -개념:  로컬에 있는 docker image 삭제
+	
+	    -특징:  컨테이너로 실행중이면 삭제 불가.
+		      반드시 실행중인 컨테이너를 중지하고 삭제까지 하고 
+			  나중에 image 삭제 가능.
+			  
+	   
+	   -문법: 
+	   
+	         docker image rm [OPTIONS] IMAGE [IMAGE...]
+			 
+			 별칭: docker image remove,  docker rmi (*)
+			 
+			 
+		-옵션:
+		
+		       docker rmi 0e760fdfbc48  # 이미지 ID
+			   
+			   docker rmi 5aca99593157  # 동일한 이미지 ID가진  TAG가 여러개인 경우는 삭제 불가.
+			     Error response from daemon: conflict: unable to delete 5aca99593157 (must be forced) - image is referenced in multiple repositories
+			   
