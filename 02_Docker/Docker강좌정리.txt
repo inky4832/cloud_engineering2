@@ -594,7 +594,7 @@ Docker 강좌 정리
 			docker pull -q ubuntu@sha256:786a8b558f7be160c6c8c4a54f9a57274f3b4fb1491cf65146521ae77ff1dc54
 			
 	--------------------------------------------------------------------------------
-	9 ) 이미지 업로드 전 로그인 하기
+	9 ) 이미지 업로드 전 로그인 및 로그아웃
 	
 	   
 	   -개념:  업로드하기 위해서는 인증작업이 필요. ( 로그인 )
@@ -603,7 +603,7 @@ Docker 강좌 정리
 	   -문법: 
 	   
 	        docker login [OPTIONS] [SERVER]
-			 
+			docker logout 
 	
       - 옵션	
 	  
@@ -613,7 +613,8 @@ Docker 강좌 정리
 		   
 		   
 		  
-		 ex.   
+		 ex1.    명시적인 password 이용
+		 
 			  # 먼저 docker desktop 로그아웃하기
 			  
 			  # 콘솔에서 docker hub에 로그인
@@ -627,3 +628,25 @@ Docker 강좌 정리
 			     
 				 Login Succeeded
 		-------------------------------------------- 명시적인 password 입력해서 로그인 했음.
+		
+		 ex2.    token 이용
+			
+			  # docker hub에서 token 생성하기
+			     docker hub > 오른쪽 상단 아이콘 > Account Settings 
+				  >  Personal access tokens > Generate new tokens > 토큰생성.
+				  
+				  토큰생성후에는 사용법을 가이드함.
+				  1) RUN
+				    docker login -u kyongyeolin
+					
+				  2) password 항목에 다음 token 사용함.
+				  dckr_pat_7coQmOEubunT4GdhjTngiqTcZG
+		 
+			  # 먼저 docker desktop 로그아웃하기
+			  
+		--------------------------------------------------------------------------------	  
+		 
+			  
+			  
+			  
+			  
