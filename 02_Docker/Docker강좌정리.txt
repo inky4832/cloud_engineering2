@@ -569,6 +569,9 @@ Docker 강좌 정리
        -개념:  Registry(docker hub)에서 Docker 이미지를 로컬로 다운로드하는 명령어.
 			  인증이 필요없음. 즉 누구나 다운로드 가능.
 	   
+	   -특징: 
+	          다운로드만 되고 실행은 안됨.
+			  ( docker run 은 다운로드+ 실행 )
 	   
 	   -문법: 
 	   
@@ -586,4 +589,41 @@ Docker 강좌 정리
 	 ex.
 	        docker pull ubuntu
 			
-			docker pull ubuntu:24.04
+			docker pull -q ubuntu:24.04
+			
+			docker pull -q ubuntu@sha256:786a8b558f7be160c6c8c4a54f9a57274f3b4fb1491cf65146521ae77ff1dc54
+			
+	--------------------------------------------------------------------------------
+	9 ) 이미지 업로드 전 로그인 하기
+	
+	   
+	   -개념:  업로드하기 위해서는 인증작업이 필요. ( 로그인 )
+	   
+	   
+	   -문법: 
+	   
+	        docker login [OPTIONS] [SERVER]
+			 
+	
+      - 옵션	
+	  
+	       -u, --username: 사용자명 
+		   
+		   -p, --password : 비밀번호 또는 Token(권장)
+		   
+		   
+		  
+		 ex.   
+			  # 먼저 docker desktop 로그아웃하기
+			  
+			  # 콘솔에서 docker hub에 로그인
+			  
+		       docker login -u inky4832@gmail.com     # -p 지정할려면 비밀번호도 반드시 입력필요.
+			     password: 
+				 
+				 Login Succeeded
+				 
+			   docker login -u inky4832@gmail.com -p 비밀번호 
+			     
+				 Login Succeeded
+		-------------------------------------------- 명시적인 password 입력해서 로그인 했음.
