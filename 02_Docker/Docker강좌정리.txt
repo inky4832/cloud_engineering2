@@ -563,3 +563,27 @@ Docker 강좌 정리
 				  
 				docker images  # 로드된 이미지 확인
 	--------------------------------------------------------------
+	
+  8) docker hub에서 로컬로 docker image 내려받기
+  
+       -개념:  Registry(docker hub)에서 Docker 이미지를 로컬로 다운로드하는 명령어.
+			  인증이 필요없음. 즉 누구나 다운로드 가능.
+	   
+	   
+	   -문법: 
+	   
+	        docker image pull [OPTIONS] NAME[:TAG|@DIGEST]
+			 
+			 
+			 별칭: docker pull
+			 
+		-옵션:
+		
+		     -a, --all-tags :  저장소에 있는 모든 이미지 다운로드 ( tag가 다른 이미지 포함)
+			 
+			 -q, --quiet : 이미지 다운로드할 때 상세정보 출력 안함.
+			 
+	 ex.
+	        docker pull ubuntu
+			
+			docker pull ubuntu:24.04
