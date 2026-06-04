@@ -543,10 +543,23 @@ Docker 강좌 정리
 	   
 	   -문법: 
 	   
-	         docker image save [OPTIONS] IMAGE [IMAGE...]
-			 =>  docker image save -o  경로/파일명.tar  이미지명
+	        docker image load [OPTIONS]  경로/파일명.tar
 			 
-			 별칭: docker save
+			 
+			 별칭: docker load
 			 
 		-옵션:
-		       -o, --output	 : 기본 표준출력(콘솔) 대신에 파일에 출력..
+		       -i, --input : 기본 표준입력(키보드) 대신에 파일에서 읽기
+			   
+			
+		   ex.
+		        # 기존 이미지 삭제
+				 docker rmi nginx
+				 
+				# nginx.tar 로부터 로드하기
+
+				docker image load -i  nginx.tar
+				  Loaded image: nginx:latest
+				  
+				docker images  # 로드된 이미지 확인
+	--------------------------------------------------------------
