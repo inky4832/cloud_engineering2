@@ -268,4 +268,63 @@ Docker 강좌 정리
 				   untagged 이미지: 하나의 이미지를 docker tag 명령어로 리눅스의 하드링크처럼
 				                  여러 버전을 만들수 있음.
 								  이 경우에 특정 버전을 삭제하면 진짜 이미지가 삭제되는 것이 아니고
+								  untagged 상태로 남게된다.
 								  
+				  dangling 이미지: 동일한 이미지(이미지:TAG)를 다시 빌드할 때,
+				                기존 이미지가 태그를 잃게됨. 
+								이런 이미지를 의미함.
+								 <none>:<none> 포맷을 가짐.
+								)
+								  
+			  -q, --quiet :  이미지 ID만 출력
+			  
+			  --no-trunc  : 정보를 절삭하지 말고 전체 표시.
+			  
+			  --digests :  Docker hub에 있는 이미지 식별자
+			  
+			  -f, --filter : 조건으로 필터링 가능.
+			                https://docs.docker.com/reference/cli/docker/image/ls/#filter 참조할것
+							 ex.  --filter "before=image1"
+							 
+			  --format : 출력 형식 지정.
+			             https://docs.docker.com/reference/cli/docker/image/ls/#format 참조할 것. 
+			            기본은 table 형식임.
+							//////////////////////////////////////////////
+							 다음과 같은 속성 사용 가능.
+							  Placeholder	      Description
+								.ID	               Image ID
+								.Repository	       Image repository
+								.Tag	           Image tag
+								.Digest	           Image digest
+								.CreatedSince	   Elapsed time since the image was created
+								.CreatedAt	       Time when the image was created
+								.Size	           Image disk size
+							//////////////////////////////////////////////
+						ex. --format "{{.ID}}: {{.Repository}}"
+		실습:
+		      docker image ls  
+			  docker image ls  -a
+			  docker images
+			  docker images -a 
+			  
+			  docker images -q   # 한꺼번에 이미지 삭제할 때 .   
+			  
+			  docker images --no-trunc
+			   REPOSITORY    TAG           IMAGE ID                                                                  CREATED        SIZE
+				nginx         1.30-alpine   sha256:5f979dcfed4ce6461873f087   12 days ago    93.6MB
+				nginx         latest        sha256:5aca99593157f4ae539a5dec   12 days ago    241MB
+				hello-world   latest        sha256:0e760fdfbc48ba8041e7c6db   2 months ago   25.9kB
+							   
+							   
+			 docker images --digests 
+			 
+			 docker images -f  "before=nginx:latest"  # nginx:latest 이전에 만든 이미지 조회
+			 docker images -f  "since=nginx:latest"   # nginx:latest 이후에 만든 이미지 조회
+			 
+			 docker image ls -f  "before=nginx:latest" 
+			 
+			 
+			 docker images --format  json 
+			 docker images --format "{{.ID}}: {{.Repository}}"
+			 docker images --format "{{.ID}} ,,,, {{.Repository}} ,,,, s{{.Tag}}"
+		---------------------------------------------------------------------------
