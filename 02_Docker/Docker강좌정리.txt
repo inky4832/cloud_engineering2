@@ -670,7 +670,56 @@ Docker 강좌 정리
 			      hub.docker.com 가서  google 선택 > 자동으로 로그인됨.
 		--------------------------------------------------------------------------------	  
 		 
+		
+	10) 이미지 업로드	  
+	
+		-개념:  로컬에 있는 Docker 이미지를 registry(docker hub)에 업로드하는 명령어.
+	   
+	    -특징: 
+		       docker hub에 있는 저장소이름과 로컬에 있는 이미지명이 동일해야됨(***************)
+	   
+	   -문법: 
+	   
+	        docker image push [OPTIONS] NAME[:TAG]
+			별칭: docker push
+	
+      - 옵션	
+	  
+	       
+		     -a, --all-tags :  로컬에 있는 모든 이미지 업로드 ( tag가 다른 이미지 포함)
+			 
+			 -q, --quiet : 이미지 업로드할 때 상세정보 출력 안함.
 			  
 			  
+		실습>
+		    가. hub.docker.com에서 로그인.
+			나. 저장소 생성
+			
+			   repository > create repository > 저장소명: my-app-nginx-repo, public 지정
+			   
+			   저장소 push 경로를 제공함.
+			   
+			   docker push kyongyeolin/my-app-nginx-repo:tagname
+			   
+			다. 이미지 태깅 ( 별칭 생성 )
+			
+			   docker tag ubuntu:latest  kyongyeolin/my-app-nginx-repo:v1
+			   
+			마. 로그인 
+			
+			    docker login -u inky4832@gmail.com
+				  password: 
+				  
+		
+			바. push 
+			
+			   docker push  kyongyeolin/my-app-nginx-repo:v1
+			   
+			사. 로컬 이미지 삭제하고 pull
 			  
-			  
+			    docker rmi kyongyeolin/my-app-nginx-repo:v1
+				
+				docker pull kyongyeolin/my-app-nginx-repo:v1
+				
+			
+		------------------------------------------------------------
