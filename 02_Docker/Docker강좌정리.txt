@@ -328,3 +328,44 @@ Docker 강좌 정리
 			 docker images --format "{{.ID}}: {{.Repository}}"
 			 docker images --format "{{.ID}} ,,,, {{.Repository}} ,,,, s{{.Tag}}"
 		---------------------------------------------------------------------------
+		
+    2) 이미지 세부 정보(metadata ) 조회
+	
+	   -개념: 로컬에 저장된 Docker 이미지의 세부 정보(metadata ) 조회 ( json 형식 )
+	   
+	   -문법: 
+	   
+	         docker image inspect [OPTIONS] IMAGE [IMAGE...]
+			 
+			 별칭: docker inspect
+			 
+		-옵션:
+		       -f, --format : 출력 형식 지정.
+			 
+	
+	    ex.
+		
+		    docker image inspect nginx    # nginx:latest 동일
+			docker image inspect nginx hello-world
+			docker  inspect nginx 
+			     [
+					{
+						"Id": "sha256:5aca99593157f4ae539a5dec1092a0ad8762f8e2eb1789085a13a0f5622369f6",
+						"RepoTags": [
+							"nginx:latest"
+						],
+						"RepoDigests": [
+							"nginx@sha256:5aca99593157f4ae539a5dec1092a0ad8762f8e2eb1789085a13a0f5622369f6"
+						],
+						"Comment": "buildkit.dockerfile.v0",
+						"Created": "2026-05-22T18:24:53.550013706Z",
+						"Config": {
+							"ExposedPorts": {
+								"80/tcp": {}
+							},
+							
+							
+			docker image inspect nginx -f "{{.Id}}"
+			docker image inspect nginx -f "{{.RepoTags}}"
+			docker image inspect nginx -f "{{.Config.ExposedPorts}}"
+			docker image inspect nginx -f "{{.Id}} {{.Config.ExposedPorts}}"
