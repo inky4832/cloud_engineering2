@@ -476,7 +476,7 @@ Docker 강좌 정리
 	   
 	   -문법: 
 	   
-	         docker image rm [OPTIONS] IMAGE [IMAGE...]
+	         docker image rm [OPTIONS] IMAGE [IMAGE...] # 이미지 ID, 이미지명:tag 
 			 
 			 별칭: docker image remove,  docker rmi (*)
 			 
@@ -494,11 +494,59 @@ Docker 강좌 정리
 			   
 			   
 			   docker rmi nginx:v1 # 동일한 이미지 ID가진  TAG가 여러개인 경우는 이미지명으로 삭제.
-			     Untagged: nginx:v1  # 실제 삭제가 된것이 아니고 untagged 로 출력됨.
+			     Untagged: nginx:v1  # 실제 삭제가 된것이 아니고 untagged 로 출력됨. tag만 삭제된것임.
 				 
 			   docker rmi nginx:v2
-			     Untagged: nginx:v2  # 실제 삭제가 된것이 아니고 untagged 로 출력됨.
+			     Untagged: nginx:v2  # 실제 삭제가 된것이 아니고 untagged 로 출력됨. tag만 삭제된것임.
 				 
-			   docker rmi nginx:latest # 마지막 남은 이미지를 삭제할 때 진짜로 삭제됨.
+			   docker rmi nginx:latest # 마지막 남은 이미지를 삭제할 때 진짜로 삭제됨. tag와 이미지 모두 삭제된것임.
 			     Untagged: nginx:latest
 				 Deleted: sha256:5aca99593157f4ae539a5dec1092a0ad8762f8e2eb1789085a13a0f5622369f6
+---------------------------------------------------------------------------------------
+
+   6) docker image를 파일로 저장
+   
+   
+       -개념: 로컬에 있는 Docker 이미지를  tar archive ( tar 및 압축 )파일로 저장하는 명령어.
+	   
+	   -문법: 
+	   
+	         docker image save [OPTIONS] IMAGE [IMAGE...]
+			 =>  docker image save -o  경로/파일명.tar  이미지명
+			 
+			 별칭: docker save
+			 
+		-옵션:
+		       -o, --output	 : 기본 표준출력(콘솔) 대신에 파일에 출력..
+			   
+		
+		  ex. 
+		  
+		       docker save -o  nginx.tar   nginx
+			   docker save -o  ../nginx.tar   nginx
+			   
+			   docker save nginx > nginx2.tar  
+			   
+			   docker save myimage:latest | gzip > myimage_latest.tar.gz # 리눅스에 실습하자.
+			   
+			==> -o 와 > 했을 때 크기 차이?
+                 강사님 save를 쓰면 Docker가 직접 바이너리로 저장하는데, 리다이렉션을 쓰면 PowerShell이 
+				 바이너리 데이터를 UTF-16으로 변환한다고 합니다. 
+				 이때 인코딩 오버헤드때문에 파일 크기가 증가한다고 하네요.
+				 리눅스에서만 동일함. ( 확인하자 )
+				 
+	----------------------------------------------------------------------------------------
+	 7) 파일로 저장된 docker image를 로드하기
+   
+   
+       -개념: 로컬에 있는 Docker 이미지를  tar archive ( tar 및 압축 )파일로 저장하는 명령어.
+	   
+	   -문법: 
+	   
+	         docker image save [OPTIONS] IMAGE [IMAGE...]
+			 =>  docker image save -o  경로/파일명.tar  이미지명
+			 
+			 별칭: docker save
+			 
+		-옵션:
+		       -o, --output	 : 기본 표준출력(콘솔) 대신에 파일에 출력..
