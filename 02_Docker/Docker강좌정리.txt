@@ -594,7 +594,7 @@ Docker 강좌 정리
 			docker pull -q ubuntu@sha256:786a8b558f7be160c6c8c4a54f9a57274f3b4fb1491cf65146521ae77ff1dc54
 			
 	--------------------------------------------------------------------------------
-	9 ) 이미지 업로드 전 로그인 및 로그아웃
+	9) 이미지 업로드 전 로그인 및 로그아웃
 	
 	   
 	   -개념:  업로드하기 위해서는 인증작업이 필요. ( 로그인 )
@@ -644,6 +644,30 @@ Docker 강좌 정리
 		 
 			  # 먼저 docker desktop 로그아웃하기
 			  
+		///////////////////////////////////////////////
+     	//////////////////////////////////////////
+		 구글계정으로 로그인방법
+		    
+			    가. console 작업
+				
+				    # docker login   #  -u 입력하면 안됨.
+					
+					 docker login
+
+					USING WEB-BASED LOGIN
+
+					i Info → To sign in with credentials on the command line, use 'docker login -u <username>'
+
+
+					Your one-time device confirmation code is: GLGP-RHJM
+					Press ENTER to open your browser or submit your device code here: https://login.docker.com/activate
+
+					Waiting for authentication in the browser…
+			
+               나. enter 
+               다.   confirm 클릭
+			   라.  docker desktop가서 signin 클릭 > 자동으로 로그인됨.
+			      hub.docker.com 가서  google 선택 > 자동으로 로그인됨.
 		--------------------------------------------------------------------------------	  
 		 
 			  
