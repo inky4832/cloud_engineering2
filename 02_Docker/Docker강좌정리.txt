@@ -721,5 +721,60 @@ Docker 강좌 정리
 				
 				docker pull kyongyeolin/my-app-nginx-repo:v1
 				
-			
+	
+	    여기까지가 docker image와 관련된 명령어였음.
+		
 		------------------------------------------------------------
+
+------------------------------------------------------------------------//////////////////////////
+2장. Docker 명령어2
+//////////////////////////
+
+  1.  container 명령어
+  
+     -특징: 읽기/쓰기 가능(read/write)
+	       하나의 이미지에서 여러 개 생성가능.
+		   휘발성( 컨테이너에서 했던 모든작업들은 일시적임.
+				  따라서 컨테이너 수정작업들을 파일에 저장해서 영속성을 획득해야됨.( 볼륨:volume 이라고 함)
+		         )
+		   외부에서 직접 접근이 불가(해결: 포트매핑(port forwarding) -p 외부포크:내부포트 )
+		   	
+			
+	1) 컨테이너 생성
+	
+	   -개념: 로컬에 있는 Docker 이미지를 사용하여 컨테이너를 생성.
+	   
+	   -문법: 
+	        	docker container create [OPTIONS] IMAGE [COMMAND] [ARG...]
+				
+				별칭:  docker create
+		
+	   -옵션:		
+	         --name:  컨테이너 이름.  (지정하지 않으면 랜덤하게 설정됨 )
+			 -p, --publish:  포트매핑 
+			 -e, --env : 환경변수 설정 
+			 --env-file : 환경변수 설정된 파일일기
+			 -v, --volume: 볼륨연결 ( host의 임의 파일과 연결 )
+			 
+			 --network : 동일한 네트워크로 묶기 위해서 사용함.
+			 
+		ex. 
+		
+		        docker create --name my-nginx  nginx 
+				
+				docker create --name my-nginx2 -p 1234:80  nginx 
+				
+			    docker create --name some-mysql -e MYSQL_ROOT_PASSWORD=1234 mysql:8.3
+
+			    docker create --name some-mysql2 
+				-e MYSQL_ROOT_PASSWORD=1234  
+				-v /my/own/datadir:/var/lib/mysql  mysql:8.3
+				
+				# 서로 다른 컨테이너들을 동일 네트워크로 묶는 방법. 묶으면 컨테이너명으로 접근이 가능해짐(**********)
+				docker network create full-stack
+				docker create --name my-nginx3 -network full-stack mysql 
+				docker create --name my-nginx3 -network full-stack myboot 
+				docker create --name my-nginx3 -network full-stack myvuejs 
+				
+				docker inspect some-mysql2
+				
