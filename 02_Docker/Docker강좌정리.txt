@@ -369,3 +369,60 @@ Docker 강좌 정리
 			docker image inspect nginx -f "{{.RepoTags}}"
 			docker image inspect nginx -f "{{.Config.ExposedPorts}}"
 			docker image inspect nginx -f "{{.Id}} {{.Config.ExposedPorts}}"
+		------------------------------------------------------
+		
+     3) docker image레이블정보와레이어수행명령(****), 크기정보조회
+	 
+	   -개념:  Docker 이미지가 어떤 레이어들로 구성되어 있는지, 
+	          각 레이덜의 실제 명령어 출력.
+	   
+	   -문법: 
+	   
+	         docker image history [OPTIONS] IMAGE
+			 
+			 별칭: docker history
+			 
+		-옵션:
+		       --format : 출력 형식 지정.
+						////////////////////////////////////////
+						  Placeholder	Description
+							.ID	Image ID
+							.CreatedSince	Elapsed time since the image was created if --human=true, otherwise timestamp of when image was created
+							.CreatedAt	Timestamp of when image was created
+							.CreatedBy	Command that was used to create the image
+							.Size	Image disk size
+							.Comment	Comment for image
+			            ////////////////////////////////////////
+						ex. --format "{{.ID}}: {{.CreatedSince}}"
+						
+						  Placeholder	Descrip
+			   -q, --quiet :  이미지 ID만 출력
+			  
+			  --no-trunc  : 정보를 절삭하지 말고 전체 표시.
+			   
+		 ex. 
+		        docker image history nginx
+				       docker image history nginx
+					IMAGE          CREATED       CREATED BY                                       SIZE      COMMENT
+					5aca99593157   12 days ago   CMD ["nginx" "-g" "daemon off;"]                 0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   STOPSIGNAL SIGQUIT                               0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   EXPOSE map[80/tcp:{}]                            0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   ENTRYPOINT ["/docker-entrypoint.sh"]             0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   COPY 30-tune-worker-processes.sh /docker-ent…   16.4kB    buildkit.dockerfile.v0
+					<missing>      12 days ago   COPY 20-envsubst-on-templates.sh /docker-ent…   12.3kB    buildkit.dockerfile.v0
+					<missing>      12 days ago   COPY 15-local-resolvers.envsh /docker-entryp…   12.3kB    buildkit.dockerfile.v0
+					<missing>      12 days ago   COPY 10-listen-on-ipv6-by-default.sh /docker…   12.3kB    buildkit.dockerfile.v0
+					<missing>      12 days ago   COPY docker-entrypoint.sh / # buildkit           8.19kB    buildkit.dockerfile.v0
+					<missing>      12 days ago   RUN /bin/sh -c set -x     && groupadd --syst…   87.1MB    buildkit.dockerfile.v0
+					<missing>      12 days ago   ENV DYNPKG_RELEASE=1~trixie                      0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   ENV PKG_RELEASE=1~trixie                         0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   ENV ACME_VERSION=0.4.1                           0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   ENV NJS_RELEASE=1~trixie                         0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   ENV NJS_VERSION=0.9.9                            0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   ENV NGINX_VERSION=1.31.1                         0B        buildkit.dockerfile.v0
+					<missing>      12 days ago   LABEL maintainer=NGINX Docker Maintainers <d…   0B        buildkit.dockerfile.v0
+					<missing>      2 weeks ago   # debian.sh --arch 'amd64' out/ 'trixie' '@1…   87.4MB    debuerreotype 0.17
+					
+					
+		        docker image history nginx  --format "{{.ID}}: {{.CreatedBy}}"			
+	-----------------------------------------------------------------------------------
