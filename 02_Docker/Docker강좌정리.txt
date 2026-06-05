@@ -1040,9 +1040,42 @@ Docker 강좌 정리
 	   -개념:   실행중인 컨테이너 내부에서 명령을 추가로 실행
 	   
 	   -문법: 
-	        	docker container ls [OPTIONS]
+	        	docker container exec [OPTIONS] CONTAINER COMMAND [ARG...]
 				
 				
-				별칭:  docker container list, docker container ps, docker ps			
+				별칭:  docker exec	
 				
 	  -옵션: 		
+	  
+	  -d, --detach : 백그라운드 실행
+	  -i, --interactive : 표준입력 활성화
+	  -t, --tty  : 모니터 할당
+	  -e, --env:  환경변수 설정
+	  --env-file : 환경변수 설정
+	  
+	  -w, --workdir : 명령어가 실행되는 작업디렉터리.
+	  
+	  ex. 
+			# 실습하기 위한 사전준비
+	       docker run -d --name my-nginx -p 1234:80  nginx
+		   docker run -d --name my-ubuntu  ubuntu:24.04 sleep infinity # sleep infinity 지정해서 종료지연하기
+		   
+		   docker run -d --name my-mysql -e MYSQL_ROOT_PASSWORD=1234  mysql:8.3
+		   docker run -d --name my-redis  redis
+		   
+		   # 실습시작.
+		   
+		     # 방법1: 명시적으로 접속하지 않고 명령어만 실행.
+			 
+		     docker exec my-nginx ls  #  nginx 파일 목록 조회
+			 # docker exec my-nginx ps -ef  #  nginx 파일 목록 조회, $PATH 못찾음.
+			 docker exec my-nginx pwd   # 현재 작업디렉터리
+			 
+			 docker exec my-ubuntu ls 
+			 docker exec my-ubuntu ps -ef 
+			 docker exec my-ubuntu env
+			 
+			 docker exec my-ubuntu touch test.txt
+			 
+			 #
+		   
