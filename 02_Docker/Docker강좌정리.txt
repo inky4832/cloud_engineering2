@@ -983,7 +983,11 @@ Docker 강좌 정리
 							 ex. docker ps --filter status=running # created|running|paused|restarting|exited|dead
 							     docker ps --filter ancestor=ubuntu  # image, image:tag, image:tag@digest, id
 								 docker ps --filter before=ubuntu  
-
+								 docker ps -f since=6e63f6ff38b0
+								 docker ps --filter volume=/data
+								 docker ps --filter network=net1
+								 docker ps --filter publish=80
+								 docker ps --filter "name=nostalgic"  # 컨테이너이름 검색
 
 	 ex. 						 
 	       docker ps
@@ -996,3 +1000,13 @@ Docker 강좌 정리
 		   docker ps -l     #  가장 최근에 생성된 컨테이너
 		   
 		   docker ps -n 2    # 최근에 생성된 2개의 컨테이너
+		   
+		   
+		   docker ps --filter status=running
+		   docker ps --filter status=exited
+		   
+		   docker pause my-nginx2
+		   docker ps --filter status=paused
+		   
+		   docker ps --filter ancestor=nginx  # 실행중인 image명이 nginx 조회
+		   docker ps --filter "name=my-ubuntu"  # 컨테이너명이 my-ubuntu 조회.
