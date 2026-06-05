@@ -1068,14 +1068,27 @@ Docker 강좌 정리
 		     # 방법1: 명시적으로 접속하지 않고 명령어만 실행.
 			 
 		     docker exec my-nginx ls  #  nginx 파일 목록 조회
-			 # docker exec my-nginx ps -ef  #  nginx 파일 목록 조회, $PATH 못찾음.
+			 # docker exec my-nginx ps -ef  #  nginx 프로세스 조회, $PATH 못찾음.
 			 docker exec my-nginx pwd   # 현재 작업디렉터리
 			 
-			 docker exec my-ubuntu ls 
-			 docker exec my-ubuntu ps -ef 
-			 docker exec my-ubuntu env
+			 docker exec my-ubuntu ls      #  ubuntu 파일 목록 조회
+			 docker exec my-ubuntu ps -ef  #  ubuntu 프로세스 조회,
+			 docker exec my-ubuntu env      #  ubuntu 환경변수 조회,
 			 
-			 docker exec my-ubuntu touch test.txt
+			 docker exec my-ubuntu touch test.txt   #  ubuntu test.txt 파일 생성
 			 
-			 #
-		   
+			 
+			 # 방법2: 명시적으로 접속해서 명령어 실행.
+			 
+			  docker exec -it my-nginx bash  # ngnix 직접 접근
+			  root@b2b1e08ed950:/# ls		 # exit로 빠져나오기
+				
+			  docker exec -it  my-ubuntu bash # ubuntu 직접 접근
+			  root@b2b1e08ed950:/#            # exit로 빠져나오기
+			  
+			  docker exec -it  my-mysql bash  # mysql 직접 접근
+			    bash-4.4# mysql -u root -p
+				   password: 1234   
+				mysql> show databases;
+				
+		 -----------------------------------------------------------------------------
