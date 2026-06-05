@@ -944,9 +944,21 @@ Docker 강좌 정리
 			
 			
 			docker run -d --name my-nginx3 -p 1236:80 -e MY_HOST=myapp -e MY_NAME=inky  nginx
-			
 			# docker exec -it my-nginx3 "echo hello"  # 실행중인 컨테이너 $PATH 미설정으로 실행안됨.
-			
 			docker exec -it  my-nginx3 bash    # 만약에 bash가 안되면 sh 지정하자.    
 			root@30e763d1e899:/# echo $MY_HOST 
-			myapp			
+			  myapp			
+			  
+		
+		    docker network ls
+		    docker network create full-stack 
+			# mysql에서 MYSQL_ROOT_PASSWORD 환경변수는 필수임.
+			docker run -d --name my-mysql -e MYSQL_ROOT_PASSWORD=1234 --network full-stack mysql:8.3
+			
+			
+			docker run -d --name my-nginx4 -p 1237:80 --rm nginx # 중지하면 삭제까지 됨.
+			docker stop my-nginx4
+			docker ps -a  # my-nginx4 없어야 됨.
+			
+	---------------------------------------------------------------------------------------------
+			
