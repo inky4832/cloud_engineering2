@@ -832,3 +832,27 @@ Docker 강좌 정리
 	          -s, --signal : 컨테이너에 보내는 신호. 실제종료하기 전 준비작업 위한 용도.		
 			  -t, --timeout : 컨테이너 실제 종료되기 전 wait 시간 ( 단위: seconds )
 							  Linux: 10초, Window: 30초
+							  
+		- 종료 내부 동작
+
+				1단계: 종료신호(SIGTERM)전달 <== DB연동,파일연동 중 작업이 손상되지 않도록 하기 위함.
+				2단계: 어플리케이션이 정리 작업 수행
+				3단계: 일정시간 대기(  Linux:10초, Window:30초)
+				4단계: 종료안되면 SIGKILL 전달
+				5단계: 종료.
+		
+		  ex.
+		       docker ps
+			   
+			   docker stop f916eea5608e # 컨테이너 ID
+			   
+			   docker stop  some-mysql  my-nginx2  # 여러개 지정 가능
+			   
+			   docker stop -t 20  my-nginx  # 20초뒤 종료됨.
+			   
+			   # 모두 컨테이너 종료
+			   
+			   docker ps -q 이용
+			   
+			   
+	
