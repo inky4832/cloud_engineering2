@@ -818,4 +818,17 @@ Docker 강좌 정리
 				root@2b0ce5e89870:/# apt update   # exit로 빠져나옴.
 				
 	-------------------------------------------------------------------------------------------------			
-									
+	3) 컨테이너 종료(stop)
+	
+	   -개념:  실행(Running)중인 컨테이너를 정상적으로 종료( Graceful Shutdown)하는 명령어.
+	   
+	   -문법: 
+	        	docker container stop [OPTIONS] CONTAINER [CONTAINER...]
+				
+				별칭:  docker stop
+		
+	   -옵션:		
+	   
+	          -s, --signal : 컨테이너에 보내는 신호. 실제종료하기 전 준비작업 위한 용도.		
+			  -t, --timeout : 컨테이너 실제 종료되기 전 wait 시간 ( 단위: seconds )
+							  Linux: 10초, Window: 30초
