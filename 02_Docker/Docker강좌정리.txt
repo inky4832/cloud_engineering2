@@ -989,6 +989,19 @@ Docker 강좌 정리
 								 docker ps --filter publish=80
 								 docker ps --filter "name=nostalgic"  # 컨테이너이름 검색
 
+			--format : 원하는 형식으로 출력.
+			             //////////////////////////////////////////////
+							 다음과 같은 속성 사용 가능.
+							  Placeholder	      Description
+								.ID	               Container  ID
+								.Image             Image ID
+								.CreatedAt	       Time when the image was created
+								.RunningFor 	   경과시간
+								.Ports 			    expose한 포트번호
+								.State              Container status (for example; "created", "running", "exited").
+								.Status			    서비스 상태 ( 서비스 가능여부 )
+								.Size	           Image disk size
+							//////////////////////////////////////////////
 	 ex. 						 
 	       docker ps
 		   docker ps -a
