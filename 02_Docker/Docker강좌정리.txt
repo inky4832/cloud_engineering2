@@ -900,6 +900,7 @@ Docker 강좌 정리
 	5) 컨테이너 run
 	
 	   -개념:   이미지를 기반으로 컨테이너 생성하고 실행하는 명령어.
+			    기본은 포그라운드로 실행됨.
 				
 				run = pull + create + start 
 	   
@@ -911,6 +912,7 @@ Docker 강좌 정리
 				
 	  -옵션: 
 	        --name:  컨테이너 이름.  (지정하지 않으면 랜덤하게 설정됨 )
+			-d, --detach : 백그라운드로 실행됨.
 			 -p, --publish:  포트매핑 
 			 -e, --env : 환경변수 설정 
 			 --env-file : 환경변수 설정된 파일일기
@@ -925,3 +927,26 @@ Docker 강좌 정리
 			 --rm : 컨테이너 종료시 자동삭제됨.
 			 
 			 
+	  ex. 
+	      # 실습전에 모두 컨테이너와 이미지 삭제함.
+		  
+		    docker run hello-world
+			
+			docker run --name my-ubuntu  -it  ubuntu bash
+			 root@38d29f1de328:/#  							 # exit 하면 빠져나오기.
+			 
+			 
+			 
+			docker run --name my-nginx -p 1234:80  nginx   # 포그라운로 실행, 웹브라우저에서 요청가능 (http://localhost:1234)
+			
+			docker run -d --name my-nginx2 -p 1235:80  nginx # 백그라운드로 실행, 웹브라우저에서 요청가능 (http://localhost:1235)
+			
+			
+			
+			docker run -d --name my-nginx3 -p 1236:80 -e MY_HOST=myapp -e MY_NAME=inky  nginx
+			
+			# docker exec -it my-nginx3 "echo hello"  # 실행중인 컨테이너 $PATH 미설정으로 실행안됨.
+			
+			docker exec -it  my-nginx3 bash    # 만약에 bash가 안되면 sh 지정하자.    
+			root@30e763d1e899:/# echo $MY_HOST 
+			myapp			
