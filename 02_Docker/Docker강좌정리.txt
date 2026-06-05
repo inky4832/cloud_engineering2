@@ -791,3 +791,31 @@ Docker 강좌 정리
 	  목적: 실제 실행전에 검토할 목적으로 사용함.
   	  
 		------------------------------------------------------------------------------------
+		
+	2) 컨테이너 시작(start)
+	
+	   -개념:  중지(Stopped)되거나 Created된 컨테이너를 실행하는 명령어.
+			 기본은 백그라운드로 실행.
+	   
+	   -문법: 
+	        	docker container start [OPTIONS] CONTAINER [CONTAINER...]
+				
+				별칭:  docker start
+		
+	   -옵션:		
+	   
+	          a, --attach : 포그라운드로 실행.
+			  
+		ex. 
+		
+		      docker start f916eea5608e  # 컨테이너 ID
+			  
+			  docker start my-nginx2  some-mysql  # 한번에 여러개 지정 가능.
+			  
+			  
+			  docker create --name my-ubuntu  -it  ubuntu bash  # 나중에 start하면 bash로 접속가능    
+			  docker start	-ai my-ubuntu 		
+				root@2b0ce5e89870:/# apt update   # exit로 빠져나옴.
+				
+	-------------------------------------------------------------------------------------------------			
+									
