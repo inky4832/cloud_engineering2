@@ -1092,3 +1092,53 @@ Docker 강좌 정리
 				mysql> show databases;
 				
 		 -----------------------------------------------------------------------------
+	------------------------------------------------------------------------------------------------			
+	8) 컨테이너와 호스트간 파일 복사
+	
+	   -개념:   컨테이너와 호스트간 파일 및 디렉터리 복사하는 명령어.
+	   
+	   -문법: 
+				#  컨테이너 --------> HOST
+	        	docker container cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH
+				
+				#  HOST --------------> 컨테이너. 
+				docker cp [OPTIONS] SRC_PATH CONTAINER:DEST_PATH
+				
+				
+				별칭:  docker cp	
+				
+	  -옵션: 		
+	       -a, --archive: 이전 파일/디렉터리 정보(권한,gid,uid등)이 계승됨.
+		   -L , --follow-link :  심볼릭 링크를 복사할 때, 원본이 복사됨
+		   
+		  
+		    # HOST ----------> Container
+			
+			 현재디렉터리에 test.txt 파일 만들기
+			 
+			 docker cp  test.txt  my-ubuntu:/home
+			 
+			 docker exec -it  my-ubuntu bash  
+			 root> cd /home
+			 root> ls
+			 
+			# Container ------> HOST
+			
+			컨테이너 우부투에서 xyz.txt 생성
+			
+			docker exec my-ubuntu touch xyz.txt   # 파일 생성
+			docker exec my-ubuntu ls    		  # 확인
+			
+			docker cp  my-ubuntu:/xyz.txt  .
+			
+			///////////////////////////////////////
+		실습:  ngnix 의 홈페이지 변경.
+		
+		    # HOST ----------> Container
+			
+			현재디렉터리에 index.html 파일 만들기
+			
+			docker  cp   index.html      my-nginx:usr/share/nginx/html/index.html
+			
+			host 웹브라우저에서 http://localhost:1234 요청하면 변경사항이 반영됨.
+	--------------------------------------------------------	
