@@ -961,4 +961,38 @@ Docker 강좌 정리
 			docker ps -a  # my-nginx4 없어야 됨.
 			
 	---------------------------------------------------------------------------------------------
-			
+	------------------------------------------------------------------------------------------------			
+	6) 컨테이너 목록 보기
+	
+	   -개념:   현재 실행(Running,*)중인 컨테이너 목록을 조회하는 명령어.
+	   
+	   -문법: 
+	        	docker container ls [OPTIONS]
+				
+				
+				별칭:  docker container list, docker container ps, docker ps			
+				
+	  -옵션: 		
+	  
+	        -a, --all: 모든 컨테이너 조회 ( 실행중 + 종료됨(stoppend) + 생성됨(created) )
+			-q, --quiet : 컨테이너 ID만 조회 
+			-l, --latest : 가장 최근에 생성된 컨테이너 1개만 조회.
+	        -n, --last   : 최근에 생성된 n개의 컨테이너 조회. (  실행중 + 종료됨(stoppend) + 생성됨(created) 포함 )
+			--no-trunc : 전체 값 상세하게 출력.
+			-f, --filter	: 조건검색으로 필터링함.
+							 ex. docker ps --filter status=running # created|running|paused|restarting|exited|dead
+							     docker ps --filter ancestor=ubuntu  # image, image:tag, image:tag@digest, id
+								 docker ps --filter before=ubuntu  
+
+
+	 ex. 						 
+	       docker ps
+		   docker ps -a
+		   
+		   
+		   docker ps -q 
+		   # docker stop $(docker ps -q)  <== 실행중인 모든 컨테이너 종료
+		   
+		   docker ps -l     #  가장 최근에 생성된 컨테이너
+		   
+		   docker ps -n 2    # 최근에 생성된 2개의 컨테이너
