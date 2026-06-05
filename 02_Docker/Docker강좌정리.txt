@@ -1000,7 +1000,11 @@ Docker 강좌 정리
 								.Ports 			    expose한 포트번호
 								.State              Container status (for example; "created", "running", "exited").
 								.Status			    서비스 상태 ( 서비스 가능여부 )
-								.Size	           Image disk size
+								.Size	           Container  disk size
+								.Names				Container names.
+								.Networks          Names of the networks attached to this container.
+								
+								ex. docker ps --format "{{.ID}}: {{.Command}}"
 							//////////////////////////////////////////////
 	 ex. 						 
 	       docker ps
@@ -1023,3 +1027,8 @@ Docker 강좌 정리
 		   
 		   docker ps --filter ancestor=nginx  # 실행중인 image명이 nginx 조회
 		   docker ps --filter "name=my-ubuntu"  # 컨테이너명이 my-ubuntu 조회.
+		   
+		   
+		   docker ps --format "{{.ID}}: {{.Image}}: {{.State}} :{{.Status}} : {{.Names}}"
+		   
+	---------------------------------------------------------------------------------------------
