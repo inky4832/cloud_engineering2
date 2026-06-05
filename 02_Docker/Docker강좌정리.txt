@@ -851,8 +851,48 @@ Docker 강좌 정리
 			   docker stop -t 20  my-nginx  # 20초뒤 종료됨.
 			   
 			   # 모두 컨테이너 종료
-			   
 			   docker ps -q 이용
+			   docker stop $(docker ps -q)
 			   
 			   
+			   docker start f916eea5608e  # 중지된 컨테이너 다시 시작.
+			   
+		////////////////////////////////
+		  start vs restart
+		  
+		  -docker start: Created 또는 Stopped된 컨테이너를 다시 시작할 때 사용.
+		  -docker restart: 실행(Running)중인 컨테이너를 다시 시작 ( stop-->start )
+			   
+	-------------------------------------------------------------------
 	
+-------------------------------------------------------------------------------------------------			
+	4) 컨테이너 일시정지 및 재개
+	
+	   -개념:  실행(Running)중인 컨테이너를 일시적으로 정지하는 명령어.
+	   
+	   -문법: 
+	        	docker container pause CONTAINER [CONTAINER...]
+				별칭:  docker 	pause			
+				
+				docker container unpause CONTAINER [CONTAINER...]
+				별칭:  docker 	unpause			
+		
+		
+	      ex.  
+			    docker ps 
+				
+				docker pause f916eea5608e  # Status는 Up 4 minutes (Paused) 출력됨.
+				docker pause  my-nginx2 some-mysql
+				
+				
+				 docker unpause f916eea5608e my-nginx2 some-mysql # 모두 재개.
+				
+				
+	   -용도:  CPU 중지해야될 정도의 작업 처리 ( ex. 대용량 처리, AI 작업, 배치작업 등 )
+	   
+	    ////////////////////////////////
+		  stop vs pause
+		  
+		  -docker stop: 프로세스 종료. docker ps 출력안됨.
+		  -docker pause: 프로세스 중지. docker ps 출력됨 ( 단, status값에 (Paused) 출력됨. )
+	----------------------------------------------------------------------------------
