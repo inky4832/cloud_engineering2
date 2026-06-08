@@ -1277,8 +1277,10 @@ Docker 강좌 정리
 				 
 	    -실제사용경로: 
 						-v my-volume:/usr/lib
+		-이식성(다른곳에서 사용):  Docker 가 관리하기 때문에 이식성이 우수;
+		- 성능: Docker 가 관리하기 때문에 안정적.
+		- 목적: DB 데이터 (*****) ex. mysql
 		
-				  
 	2) 바인드마운트(Bind Mount)이용.
 	    -관리주체: 사용자(개발자) 가 관리.
 		          직접 host에 폴더 생성하고 경로 관리해야됨.(****)
@@ -1288,7 +1290,14 @@ Docker 강좌 정리
 				 윈도우: C:\cloud_engineering\Docker\tempDir
 				 Linux:  /home/user1/temp
 				 
-				 
 	    -실제사용경로: 
 						-v C:\cloud_engineering\Docker\tempDir:/usr/lib		 
-					    -v /home/user1/temp:/usr/lib		 			
+					    -v /home/user1/temp:/usr/lib		 	
+
+		-이식성(다른곳에서 사용): 개발자가 관리하기 때문에 이식성이 떨어짐.
+                              이유는 서버마다 경로가 다름.		
+		
+		- 성능:  host파일을 직접 접근하기 때문에 I/O 발생됨.
+		        따라서 성능이 떨어짐.
+				
+		- 목적: 개발코드 (******) 
