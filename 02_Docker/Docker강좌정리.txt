@@ -1692,15 +1692,25 @@ Docker 강좌 정리
 
 					CMD ["node", "app.js"] # 컨테이너에서 node app.js 실행
   
+			2)  image 생성
+			
+			    docker build -t my-front-app:v1  .   # -t 이미지명:tag
+				
+				docker images 
+				
+		    3) 컨테이너 생성
+			
+			    docker run -d --name my-app -p 8080:80   my-front-app:v1
   
   
-  
-  
-  
+            4) 웨브라우저에서 요청
+    
+               http://localhost:8080  
 		
 		
-	  
-	  
+	         5) welcome.html 수정
+			    반드시 새로운 이미지를 만들어서 컨테이너를 다시 생성해야 됨(***********************)
+	  -------------------------------------------------------------------------------------
 	  
 	  
 	  
