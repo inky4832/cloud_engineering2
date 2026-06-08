@@ -1435,8 +1435,9 @@ Docker 강좌 정리
 				
 			호스트에서 요청: http://localhost:1234  # hello world2~ 출력 
 			
-		바. 변경된 소스 수정 후 바로 반영됨 
-		  
+		바. 변경된 소스 수정 후 바로 반영됨  (****************)
+		    Volume 인 경우는 소스 수정후 다시 컨테이너에 cp 해야됨.
+			
 		    C:\cloud_engineering\Docker\tempDir\index.html 수정하기
 			
 			호스트에서 요청: http://localhost:1234  # 변경사항 바로 적용되어 출력 
