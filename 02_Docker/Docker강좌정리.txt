@@ -1648,7 +1648,53 @@ Docker 강좌 정리
                 https://docs.docker.com/build/building/multi-stage/
 
 			   
-			   
+----------------------------------------------------
+  실습1>  dockerfile_exam.zip ( 프런트엔드 기술. 현재는 JS 임. 나중에 vue.js로 대체됨 )
+
+
+
+FROM node:14-alpine
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 80
+
+CMD ["node", "app.js"]
+
+         # step1: Docker 없이 실행
+		 
+		     1) 의존성 설정.
+			    npm install
+				
+				실행결과는 node_modules폴더가 생성되고 여기에 의존성 파일이 저장됨.
+				이 폴더때문에 용량이 커짐.
+		     
+			 2) 실행
+			    node app.js
+				
+			 3) 웨브라우저에서 요청
+    
+               http://localhost:80  
+   			   
+	          4) welcome.html 수정하고 새로고침하면 바로 반영이 됨.
+
+			  
+		 # step2: Docker로  실행
+  
+  
+  
+  
+  
+  
+  
+  
+  
 		
 		
 	  
