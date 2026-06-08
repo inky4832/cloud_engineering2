@@ -1263,3 +1263,32 @@ Docker 강좌 정리
 				     |
 				  host의 저장소
 				
+---------------------------------------------
+ 2.  Docker에서 데이터를 영속성으로 관리하는 방법 2가지.
+ 
+     - 2개 모두 데이터를 영구적으로 보존이 가능함.
+	 - 차이점은 관리주체와 사용목적이 다름.
+ 
+    1) 볼륨(Volume) 이용.
+	    -관리주체: Docker 가 관리.
+		-생성방법:
+		         docker volume create 볼륨명
+				 ex. docker volume create my-volume
+				 
+	    -실제사용경로: 
+						-v my-volume:/usr/lib
+		
+				  
+	2) 바인드마운트(Bind Mount)이용.
+	    -관리주체: 사용자(개발자) 가 관리.
+		          직접 host에 폴더 생성하고 경로 관리해야됨.(****)
+				  
+		-생성방법:
+		         host에 실제 물리적인 디렉터리 생성
+				 윈도우: C:\cloud_engineering\Docker\tempDir
+				 Linux:  /home/user1/temp
+				 
+				 
+	    -실제사용경로: 
+						-v C:\cloud_engineering\Docker\tempDir:/usr/lib		 
+					    -v /home/user1/temp:/usr/lib		 			
