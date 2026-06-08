@@ -1572,3 +1572,62 @@ Docker 강좌 정리
 			 
 			 mysql> select * from mytest;  # 데이터 유지됨. (영속성 확보 )
 	------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+5장. Docker 이미지 직접 생성하기
+//////////////////////////	
+
+    1) IaC ( Infrastructure as Code )
+	  
+	  -개념: 사용자가 직접 개입하지 않고 코드 실행만으로 인프라를 구축하는 방법.
+	  
+	  -종류:
+	    
+		docker 기반: Dockerfile,  docker-compose.yaml
+		K8s   기반: Deployment, Service, Pod, ....  모두 yaml파일로 구축함.
+		AWS 기반:  terraform 이용해서 EC2, RDS, VPC 인프라 구축함.
+		
+	  -특징:
+         동일한 환경을 언제든지 재현 가능.
+		 Git 으로 버전관리 가능.
+		 자동화/표준화 쉽게 적용 가능.
+		 
+	2) Dockerfile 파일 
+	
+	 https://docs.docker.com/reference/dockerfile/
+	 
+	    1) 개념
+		 - Docker image를 생성하기 위한 템플릿	
+		 
+		2) 동작 프로세스
+		
+		    Dockerfile 
+			   |
+			 docker build 명령어 실행
+			    |
+		     docker 이미지 생성 ( 커스텀 이미지, base 이미지 필요함(***) )
+			    |
+			 docker run 명령어 실행
+			    |
+			 컨테이너 실행
+			 
+	3) 기본 구조 
+
+        FROM  base 이미지	ex. node:14-alpine, eclipse-temurin:21-jre
+
+		WORKDIR 작업디렉터리지정(여러작업들의 기준이 되는 경로) ex. /app
+
+		COPY 호스트파일을 컨테이너에 복사 ex. package.json   . ,  build/libs/*.jar app.jar
+
+		RUN 실행되는 명령어   ex. npm install ( 결과는 의존성이 설치. node_modules 폴더에 의존성이 저장됨.)
+
+		COPY 호스트파일을 컨테이너에 복사  ex. . .
+
+		EXPOSE 포트지정(실제 Port 사용불가,문서화)   ex. 80
+               실제 포트는 -p 1234:80 지정해야됨.
+			   
+		CMD 실행되는 명령어  ex. ["node", "app.js"]	 node app.js 동일
+				
+		ENTRYPOINT 	실행되는 명령어	
+			  
+			  
+			   
