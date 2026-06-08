@@ -1346,3 +1346,57 @@ Docker 강좌 정리
 				
 			ex. docker volume prune
 				
+-------------------------------------------------------
+   실습1> nginx와 Volume 
+   
+         #1) volume 사용전
+		 
+		      docker run -d --name my-nginx -p 1234:80  nginx
+			  
+			  호스트에서 요청: http://localhost:1234
+			  
+			  docker  cp   index.html      my-nginx:usr/share/nginx/html/index.html
+			
+			  호스트에서 요청: http://localhost:1234  # 홈페이지 변경됨.
+			  
+			  docker stop my-nginx
+			  docker rm my-nginx	
+			  docker ps -a
+			  
+			  
+			  docker run -d --name my-nginx -p 1234:80  nginx
+			  호스트에서 요청: http://localhost:1234  # 변경사항이 유지안됨( 휘발성: Ephemeral )
+			  
+		#2) volume 사용후
+		
+		     가. volume 생성 및 확인 
+			 
+			    docker volume create web-data
+				docker volume ls
+				docker volume inspect web-data
+				
+			 
+			나. nginx 생성 + 볼륨 지정
+			
+			    docker run -d --name my-nginx -p 1234:80 -v web-data:/usr/share/nginx/html  nginx
+				
+				호스트에서 요청: http://localhost:1234  # Welcome to nginx! 출력
+				
+			다. 홈페이지 변경 
+			
+			    docker  cp   index.html      my-nginx:usr/share/nginx/html/index.html
+				
+				호스트에서 요청: http://localhost:1234  # hello world 출력
+				
+			라. 컨테이너 종료 및 삭제
+			
+			    docker stop my-nginx
+			    docker rm my-nginx	
+			    docker ps -a
+				
+			마. 다시 시작
+			
+			    docker run -d --name my-nginx -p 1234:80 -v web-data:/usr/share/nginx/html  nginx
+				호스트에서 요청: http://localhost:1234   # hello world 출력. 볼륨 덕분에 데이터 유지됨.
+				
+	------------------------------------------------------------------------------------------------
