@@ -1653,19 +1653,7 @@ Docker 강좌 정리
 
 
 
-FROM node:14-alpine
 
-WORKDIR /app
-
-COPY package.json .
-
-RUN npm install
-
-COPY . .
-
-EXPOSE 80
-
-CMD ["node", "app.js"]
 
          # step1: Docker 없이 실행
 		 
@@ -1686,9 +1674,23 @@ CMD ["node", "app.js"]
 
 			  
 		 # step2: Docker로  실행
+    
+	         1) Dockerfile 작성
   
-  
-  
+                    FROM node:14-alpine   # base 이미지
+
+					WORKDIR /app          # 작업디렉터리 지정. 임의로 지정가능. 없으면 자동생성.
+
+					COPY package.json .   # /app에 package.json  복사
+
+					RUN npm install       # 위에서 복사한 package.json 기반으로 의존성 설치.
+									       실행결과는 /app에 node_modules폴더가 생성되고 여기에 의존성 파일이 저장됨.
+
+					COPY . .              # 나머지 파일 복사. ex. welcome.html, app.js 등등 
+
+					EXPOSE 80             # 문서화
+
+					CMD ["node", "app.js"] # 컨테이너에서 node app.js 실행
   
   
   
