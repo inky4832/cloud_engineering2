@@ -1533,3 +1533,42 @@ Docker 강좌 정리
 		
 		   docker run -d --name mysql-test -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=testdb
 		   -v mysql-data:/var/lib/mysql  mysql:8.3
+		   
+		다. mysql 접속
+		
+		    docker exec -it mysql-test bash
+			
+			bash-4.4# mysql -u root -p
+			 password: 1234
+			 
+			 mysql>show database;
+			 
+			 # mysql>create database testdb; // 우선은 testdb 없는 경우 명시적으로 생성하자.
+			 
+			 mysql> use testdb;
+			 mysql> create table mytest (name char, age int);
+			 mysql> insert into mytest (name, age ) values ( 'a',20);
+			 
+		라. 컨테이너 삭제 및 종료
+
+           docker stop 	 mysql-test
+		   docker rm  mysql-test
+			 
+		마. 다시 실행
+		
+		   docker run -d --name mysql-test -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=testdb
+		   -v mysql-data:/var/lib/mysql  mysql:8.3
+		   
+		바. mysql 접속
+		
+		    docker exec -it mysql-test bash
+			
+			bash-4.4# mysql -u root -p
+			 password: 1234
+			 
+			 mysql>show database;
+			 		 
+			 mysql> use testdb;
+			 
+			 mysql> select * from mytest;  # 데이터 유지됨. (영속성 확보 )
+	------------------------------------------------------------------------------
