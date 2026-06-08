@@ -1301,3 +1301,48 @@ Docker 강좌 정리
 		        따라서 성능이 떨어짐.
 				
 		- 목적: 개발코드 (******) 
+
+---------------------------------------------
+ 3.  Docker Volume 사용.
+  
+       1) Volume 생성
+		  - 문법:
+		          docker volume create [OPTIONS] [VOLUME]
+				  
+				ex. 
+    				docker volume create hello
+	                docker run -d -v hello:/world busybox ls /world 			   
+				
+	   2) Volume 목록확인
+		 - 문법:
+				docker volume ls [OPTIONS]
+				docker volume ls -f  key=value  # -f, --filter 
+				별칭: docker volume list
+				
+				
+	   3) Volume 상세 정보 확인
+		 -문법: 
+	           docker volume inspect [OPTIONS] VOLUME [VOLUME...]               
+               docker volume inspect --format
+			   
+			   ex. docker volume inspect myvolume
+			   
+			   
+	   4) Volume 삭제
+		 - 문법: 
+		       docker volume rm [OPTIONS] VOLUME [VOLUME...]
+			   docker volume rm -f 		  # -f --force
+			   별칭: docker volume remove
+			   
+			  ex. 
+			      docker volume rm hello
+			   
+	   5) 미사용 볼륨 모두 삭제
+	   
+	       -문법: 
+		        docker volume prune [OPTIONS]
+				docker volume prune -f    # -f, --force
+				docker volume prune --filter   
+				
+			ex. docker volume prune
+				
