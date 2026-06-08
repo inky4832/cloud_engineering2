@@ -1193,4 +1193,73 @@ Docker 강좌 정리
 			   docker rm  $(docker ps -aq )  
 			   docker rm -f $(docker ps -aq )  
 			   
-			---------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------//////////////////////////
+3장. Docker 볼륨(Docker Volume)
+//////////////////////////
+
+  1. Docker 에서 사용하는 데이터 종류.
+  
+      가. 이미지에서 사용하는 데이터
+		   -개념: Docker 이미지에서 필요한 정보를 포함하는 데이터.
+		   -구성요소:
+		      운영체제 라이브러리
+			  JDK,JRE,node.js 런타임 실행환경 파일.
+			  어플리케이션 코드(SpringBoot)
+			  의존성 파일 ( *.jar )
+			  설정파일
+	       -특징:
+                 read-only.(변경 불가:immutable)
+				 여러 컨테이너가 하나의 Docker 이미지 공유.
+		   
+		   
+	  나. 컨테이너에서 사용하는 데이터
+		- 개념: 실행중에 생성되는 데이터 의미.
+		- 구성요소:
+		     nginx 실행중 생성한 test.txt 파일 등
+			 mysql 실행중 생성한 테이블,데이터 등
+			 
+		- 특징:
+		       read-writer 가능.
+			   컨테이너마다 독립적.
+			   컨테이너 삭제되면 데이터도 같이 삭제됨(***********************)
+			   즉 휘발성(Ephemeral)
+			   공유불가
+		
+			////////////////////////////////////////
+			  # Docker 컨테이너가 휘발성 확인 실습
+			  
+			  docker run -d --name my-nginx -p 1234:80  nginx
+			  
+			  호스트에서 요청: http://localhost:1234
+			  
+			  docker  cp   index.html      my-nginx:usr/share/nginx/html/index.html
+			
+			  호스트에서 요청: http://localhost:1234  # 홈페이지 변경됨.
+			  
+			  docker stop my-nginx
+			  docker rm my-nginx	
+			  docker ps -a
+			  
+			  
+			  docker run -d --name my-nginx -p 1234:80  nginx
+			  호스트에서 요청: http://localhost:1234  # 변경사항이 유지안됨( 휘발성: Ephemeral )
+			  
+			/////////////////////////////////////////
+		
+	  
+	  다. 볼륨 데이터
+		
+		 -개념: 컨테이너가 삭제되어도 계속 유지되어야 하는 데이터 의미.
+		 -특징:
+		        영속성(persistent).
+				여러 container에서 공유가능
+				컨테이너에서 수정하지만 실제로는 host의 임의저장소(볼륨)에 반영됨.
+				
+		- 구조:
+
+				 Container ( 수정)
+				     |
+				  Volume 
+				     |
+				  host의 저장소
+				
