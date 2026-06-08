@@ -1301,6 +1301,7 @@ Docker 강좌 정리
 		        따라서 성능이 떨어짐.
 				
 		- 목적: 개발코드 (******) 
+		       코드 수정하면 바로 적용됨.
 
 ---------------------------------------------
  3.  Docker Volume 사용.
@@ -1399,4 +1400,45 @@ Docker 강좌 정리
 			    docker run -d --name my-nginx -p 1234:80 -v web-data:/usr/share/nginx/html  nginx
 				호스트에서 요청: http://localhost:1234   # hello world 출력. 볼륨 덕분에 데이터 유지됨.
 				
-	------------------------------------------------------------------------------------------------
+			바. 소스코드 수정후 cp 해야됨.
+	------------------------------------------------------------------------------------------------\
+	------------------------------------------------------
+   실습2> nginx와 Bind Mount
+   
+         가. 개발자가 직접 host에 디렉터리 생성.
+		 
+		     C:\cloud_engineering\Docker\tempDir
+			 
+		 
+		 나.  nginx 생성 + Bind Mount 지정
+		 
+		    docker run -d --name my-nginx -p 1234:80 -v C:\cloud_engineering\Docker\tempDir:/usr/share/nginx/html  nginx
+				
+			호스트에서 요청: http://localhost:1234  # 403 Forbidden
+			
+			
+		다. 변경파일 저장
+		 
+		   C:\cloud_engineering\Docker\tempDir\index.html
+		   
+		   호스트에서 요청: http://localhost:1234   # hello world2~ 출력
+		   
+		라. 컨테이너 종료 및 삭제
+			
+			    docker stop my-nginx
+			    docker rm my-nginx	
+			    docker ps -a
+				
+		마. 다시 시작
+		
+		 docker run -d --name my-nginx -p 1234:80 -v C:\cloud_engineering\Docker\tempDir:/usr/share/nginx/html  nginx
+				
+			호스트에서 요청: http://localhost:1234  # hello world2~ 출력 
+			
+		바. 변경된 소스 수정 후 바로 반영됨 
+		  
+		    C:\cloud_engineering\Docker\tempDir\index.html 수정하기
+			
+			호스트에서 요청: http://localhost:1234  # 변경사항 바로 적용되어 출력 
+			
+----------------------------------------------------------------------------------------
