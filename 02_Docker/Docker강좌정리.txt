@@ -1467,7 +1467,7 @@ Docker 강좌 정리
      가. -e, --env 옵션 이용
 		
 		 - 값하나씩 설정.
-		 - 실행 시 동작으로 환경변수 주입 가능.
+		 - 실행 시 동적으로 환경변수 주입 가능.
 		 - 우선순위가 가장 높다.
 		
 		 ex.  
@@ -1476,7 +1476,7 @@ Docker 강좌 정리
      나. --env-file 이용
 	     
 		- 파일에 저장한 후 한번에 적용. 
-		- 실행 시 동작으로 환경변수 주입 가능.
+		- 실행 시 동적으로 환경변수 주입 가능.
 		- 일반적으로 .env 파일로 만듬.
 		
 		 ex.  
@@ -1490,4 +1490,46 @@ Docker 강좌 정리
 		4순위: 프로그램 내의 기본값
 	 
 ----------------------------------------------------------------------------	  
+    실습1> 단일(멀티) 환경 변수
+	
+	   # 실행
+	   docker run -d --name my-nginx -p 1234:80 -e MY_NAME=inky4832 -e DB_HOME=localhost -e DB_USER=inky nginx
+	   
+	   # 접속해서 환경변수 출력
+	   docker exec -it my-nginx bash
+	   
+	    root>env
+		root>printenv
+		root>echo $MY_HOME
+---------------------------------------------------------------------------
+    실습2> .env 파일 이용.
+	
+	    # .env 파일 작성.
+		    DB_URL=127.0.0.1
+			DB_DATABASE=testdb
+			DB_PASSWD=1234
+	
+        # 실행
+       docker run -d --name my-nginx2 -p 1235:80 --env-file .env nginx
+	   
+	   # 접속해서 환경변수 출력
+	   docker exec -it my-nginx2 bash
+	   
+	    root>env
+		root>printenv
+		root>echo $DB_DATABASE
+
+----------------------------------------------------------------------------
+   실습3> -e 와 -v 모두 사용. ( mysql 연동 실습 )
    
+		가. volume 생성 ( mysql에서 사용한 데이터 유지하기 위함 )
+		 
+		   docker volume create mysql-data
+		   docker volume ls
+		   
+		나. 생성
+
+     	# https://hub.docker.com/_/mysql#where-to-store-data 참조할것.
+		
+		   docker run -d --name mysql-test -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=testdb
+		   -v mysql-data:/var/lib/mysql  mysql:8.3
