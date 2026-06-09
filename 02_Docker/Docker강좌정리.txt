@@ -2102,7 +2102,38 @@ Docker 강좌 정리
    
 			 # step1: 멀티 스테이지 패턴 적용 전 
 			 
+			   1) Dockerfile 작성.
+			   
+						# 멀티 스테이지 패턴 적용 전 코드임
+							FROM gradle:8.10.2-jdk21
+
+							WORKDIR /app
+
+							COPY . .
+
+							RUN gradle clean bootJar -x test  # Docker내에서 jar 생성.
+
+							EXPOSE 8080
+
+							ENTRYPOINT ["java","-jar","build/libs/boot_Dockerfile4_Multi_stage-0.0.1-SNAPSHOT.jar"]
 			 
+			  2) Docker 이미지 생성
 			 
+			      docker build -t springboot21:v1  .  
+				  
+				  docker images
+				  
+			       IMAGE             ID             DISK USAGE   CONTENT SIZE   EXTRA
+					springboot21:v1   1f3637ef2a43       1.35GB          455MB       
 			 
+			  3) 컨테이너 실행 
+			  
+			       docker run -d --name springboot21 -p 8080:8080  springboot21:v1
+			 
+			  
+			  4)  요청.
+			    
+				  GET http://localhost:8080
+				  
+		--------------------------------------------------------------------------
 			 # step2: 멀티 스테이지 패턴 적용 후 
