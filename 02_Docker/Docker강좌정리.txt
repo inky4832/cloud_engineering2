@@ -1975,7 +1975,26 @@ Docker 강좌 정리
 				      2) Talend API Tester 이용해서 요청하자.   
 					  
 			          http://localhost:8080/env
-			  
-			  
+					  
+					    출력:
+			                {
+							"activeProfiles":[
+							"local"
+							],
+							"message": "\"기본메시지\"",
+							"uploadDir": "/app/upload"
+							}
+										  
+				# 방법2: 외부 주입하기 
+
+					 인텔리제이 > DemoApplication 선택 > current file 선택 > Run with parameters 
+					 > 
+					     program arguments ( CommandLinePropertySource): --server.port=8091
+						 VM -Options(Java System properties): -Dserver.port=8092
+						 Environment Variables(OS environment variables) : SERVER_PORT=8093
+						 Config data ( application.yml) <== server:
+                                            port: 8090
+										  
+										  
 			 # step2: Docker로  실행  
 			 
