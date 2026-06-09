@@ -1663,10 +1663,36 @@ Docker 강좌 정리
 	       COPY [OPTIONS] <src> ... <dest>
 		   COPY [OPTIONS] ["<src>", ... "<dest>"]
 		   
-		   
+		   COPY [--from=<image|stage|context>] <src> ... <dest> # 멀티 스테이지 패턴에서 사용됨.
 		   
 		-용도: 호스트의 파일을 컨테이이너 이미지에 복사
 	     
+	 4) RUN
+	 
+	    -문법
+		        # Shell form:
+				RUN [OPTIONS] <command> ...
+				# Exec form:
+				RUN [OPTIONS] [ "<command>", ... ]
+				
+		-용도: 이미지가 만들어지는 동안 ( docker build ) 실행됨.(*******************)	
+			  한번만 실행되고 실행된 결과가 이미지 Layer에 저장됨.
+			  
+			  ex. apt update  
+			      apt fulll-upgrade
+				  npm install
+	 5) CMD
+
+		-문법
+		    CMD ["executable","param1","param2"] (exec form)
+			CMD ["param1","param2"] (exec form, as default parameters to ENTRYPOINT)
+			CMD command param1 param2 (shell form)
+				
+		-용도: 컨테이너가 실행될 때 실행됨 (*****************)		
+		
+		강사님 run apt update 같은 명령은 컨테이너 생성 전에 실행되는건가요? 
+		컨테이너가 없는 상태에서 저런 명령이 어떻게 실행되나요? 
+				
 ----------------------------------------------------
   실습1>  dockerfile_exam.zip ( 프런트엔드 기술. 현재는 JS 임. 나중에 vue.js로 대체됨 )
 
