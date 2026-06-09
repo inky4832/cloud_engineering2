@@ -1882,7 +1882,7 @@ Docker 강좌 정리
 				 http://localhost:8080	
 				 
 		  -------------------------------------------------------------------------------------
-  실습3>    boot_Dockerfile2_volume.zip 이용 ( 파일 업로드 실습 )
+  실습3>    boot_Dockerfile2_volume.zip 이용 ( 파일 업로드 실습 - Volume 실습 )
 	  
 	  
 	        # step1: Docker 없이 실행
@@ -1962,3 +1962,20 @@ Docker 강좌 정리
 				 docker run -d --name springboot21 -p 8080:8080 -v spring-data:/app/upload  springboot21
 				 
 				 GET  http://localhost:8080/files/
+				 
+		----------------------------------------------------------------------------------------------		  -------------------------------------------------------------------------------------
+  실습4>    boot_Dockerfile3_ENV.zip 이용 ( ENV 환경변수 실습 )
+  
+			
+			 # step1: Docker 없이 실행
+			 
+			    # 방법1: 외부 주입 없는 경우
+			 
+					  1) DemoApplication 실행 
+				      2) Talend API Tester 이용해서 요청하자.   
+					  
+			          http://localhost:8080/env
+			  
+			  
+			 # step2: Docker로  실행  
+			 
