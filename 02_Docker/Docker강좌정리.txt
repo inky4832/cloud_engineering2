@@ -1688,10 +1688,60 @@ Docker 강좌 정리
 			CMD ["param1","param2"] (exec form, as default parameters to ENTRYPOINT)
 			CMD command param1 param2 (shell form)
 				
-		-용도: 컨테이너가 실행될 때 실행됨 (*****************)		
-		      docker run 
-
+			 ex. CMD ["node", "app.js"]
+			     CMD ["java", "-jar" ,"app.jar"]
 				
+		-용도: 컨테이너가 실행될 때 실행됨 (*****************)		
+		      docker run 할 때 CMD 명령어를 덮어쓰기 가능함.
+			  
+			  ex. docker run -d --name my-app -p 8080:80  app2.js  <== app.js가 app2.js 로 동적으로 변경가능.
+
+	  6) ENTRYPOINT ( 고정 명령어 )
+
+       - 문법:
+              ENTRYPOINT ["executable", "param1", "param2"]  (exec form)
+              ENTRYPOINT command param1 param2			     (shell form)
+			  
+		-용도: 	컨테이너가 실행될 때 실행됨  
+		        docker run 할 때  명령어를 덮어쓰기 힘듬.  
+			  
+			     ENTRYPOINT ["node", "app.js"]
+			     ENTRYPOINT ["java", "-jar" ,"app.jar"]
+				 
+				  ENTRYPOINT ["java", "-jar"]
+				  CMD ["app.jar"]
+	
+      7) EXPOSE
+  
+         -문법:
+   		      EXPOSE <port>
+			  
+		- 용도:  컨테이너가 사용하는 포트가 뭔지를 알려주는 용도로 사용됨. (문서화)
+                실제 port를 사용할수 있게 open(publish)하지 않음.
+				실제 사용하기 위해서는 명시적으로 -p 1234:80 해야 됨.	
+				
+				
+	  8) ENV
+	  
+      - 문법
+                ENV <key>=<value> [<key>=<value>...]
+
+        -용도:  환경변수 설정. 				
+			    docker run 할 때  ENV값  덮어쓰기 가능함.
+				
+		
+	  9) VOLUME
+ 
+       -문법:
+             VOLUME ["/data"]	   
+		
+		-용도:  컨네이너의 변경사항을 유지하는 목적임.
+		
+				FROM ubuntu
+				RUN mkdir /myvol
+				RUN echo "hello world" > /myvol/greeting
+				VOLUME /myvol
+		
 ----------------------------------------------------
   실습1>  dockerfile_exam.zip ( 프런트엔드 기술. 현재는 JS 임. 나중에 vue.js로 대체됨 )
 
