@@ -1988,13 +1988,88 @@ Docker 강좌 정리
 				# 방법2: 외부 주입하기 
 
 					 인텔리제이 > DemoApplication 선택 > current file 선택 > Run with parameters 
-					 > 
+					 >  다음 3가지 방법중 하나 이용해서 외부에서 주입가능.
 					     program arguments ( CommandLinePropertySource): --server.port=8091
 						 VM -Options(Java System properties): -Dserver.port=8092
 						 Environment Variables(OS environment variables) : SERVER_PORT=8093
 						 Config data ( application.yml) <== server:
-                                            port: 8090
+                                                              port: 8090
 										  
-										  
+						program arguments 에 설정함.
+						
+							--server.port=8070 
+							--spring.profiles.active=prod 
+							 --app.message=hello  
+							 --app.upload-dir=/app2		
+
+					실제로 실행:  java -jar  XXX.jar  	--server.port=8070 	 --spring.profiles.active=prod		
+					
+					Talend 에서 요청;
+					GET http://localhost:8070/env 
+					
+					실행결과:
+					       {
+							"activeProfiles":[
+							"prod"
+							],
+							"message": "hello",
+							"uploadDir": "/app2"
+							}
+					 
 			 # step2: Docker로  실행  
 			 
+			     가. Dockerfile 작성  및 .dockerignore 작성
+				 
+				     FROM eclipse-temurin:21-jre
+
+					WORKDIR /app
+
+					COPY build/libs/*.jar app.jar
+
+					ENV SERVER_PORT=8080
+					ENV APP_NAME=spring-env-demo
+					ENV APP_MESSAGE="Dockerfile 기본 메시지"
+					ENV APP_UPLOAD_DIR=/app/upload
+					ENV SPRING_PROFILES_ACTIVE=prod
+
+					RUN mkdir -p /app/upload
+
+					EXPOSE 8080
+
+					ENTRYPOINT ["java", "-jar", "app.jar"]
+					
+					
+			    나. *.jar 생성 
+				   - CMD 창에서 다음 명령어로 jar 생성한다.
+				    
+					./gradlew  clean build -x test 	
+					
+					build/libs/boot_Dockerfile-0.0.1-SNAPSHOT.jar 생성됨.
+					
+			
+			    다. Dockerfile 빌드 ( 이미지 생성 )
+				
+				    docker build -t springboot21  .  
+					
+					docker images
+					
+				
+					
+				라. 컨테이너 실행 및 요청
+				 
+				  docker run -d --name springboot21 -p 8080:8080  springboot21
+				  
+				  	Talend 에서 요청;
+					GET http://localhost:8080/env 
+					
+					실행결과:
+					
+					   {
+						"message": "Dockerfile 기본 메시지",
+						"activeProfiles":[
+						"prod"
+						],
+						"uploadDir": "/app/upload"
+						}
+						
+				
