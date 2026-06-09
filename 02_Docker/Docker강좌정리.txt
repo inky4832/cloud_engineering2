@@ -1822,7 +1822,32 @@ Docker 강좌 정리
 	         5) welcome.html 수정
 			    반드시 새로운 이미지를 만들어서 컨테이너를 다시 생성해야 됨(***********************)
 	  -------------------------------------------------------------------------------------
+  실습2>    boot_Dockerfile.zip 이용
 	  
 	  
-	  
+			   # step1: Docker 없이 실행
 			   
+					
+                 # 방법1: 빌드없이 실행 ( jar 없이 실행 )
+				 인테리제이에서  DemoApplication 실행하고 요청.
+				   
+				    http://localhost:8080
+					
+				 # 방법2: 빌드 이용 ( jar 로 실행 )
+
+					- ./gradlew  clean build -x test 	 	
+			   
+			   
+			   # step2: Docker로  실행
+			   
+			     가. Dockerfile 작성
+				 
+				    FROM eclipse-temurin:21-jre  #  base 이미지
+
+					WORKDIR /app                 # 작업 디렉터리
+
+					COPY build/libs/*.jar app.jar
+
+					EXPOSE 8080
+
+					ENTRYPOINT ["java", "-jar", "app.jar"]
