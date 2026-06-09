@@ -2137,7 +2137,7 @@ Docker 강좌 정리
 			  
 			 5) 접속
 				
-				   docker exec -it springboot21 bash
+				   docker exec -it springboot21 bash   # 프로젝트내 모든 파일이 복사되어 용량이 커짐
 				   root> ls
 					build  build.gradle  
 					Dockerfile  
@@ -2199,7 +2199,7 @@ Docker 강좌 정리
 				  
 			 5) 접속
 				
-				   docker exec -it springboot21-v2 bash
+				   docker exec -it springboot21-v2 bash # 실행에 필요한 app.jar 파일만 복사되어 용량이 작음.
 				   root> ls
 					app.jar
 				  
