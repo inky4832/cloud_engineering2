@@ -1677,10 +1677,10 @@ Docker 강좌 정리
 				
 		-용도: 이미지가 만들어지는 동안 ( docker build ) 실행됨.(*******************)	
 			  한번만 실행되고 실행된 결과가 이미지 Layer에 저장됨.
+			  나중에 변경 불가 ( 변경할려면 이미지를 다시 만들어야 됨)
 			  
-			  ex. apt update  
-			      apt fulll-upgrade
-				  npm install
+			  ex. RUN apt update && apt fulll-upgrade -y
+				  RUN npm install
 	 5) CMD
 
 		-문법
@@ -1689,9 +1689,8 @@ Docker 강좌 정리
 			CMD command param1 param2 (shell form)
 				
 		-용도: 컨테이너가 실행될 때 실행됨 (*****************)		
-		
-		강사님 run apt update 같은 명령은 컨테이너 생성 전에 실행되는건가요? 
-		컨테이너가 없는 상태에서 저런 명령이 어떻게 실행되나요? 
+		      docker run 
+
 				
 ----------------------------------------------------
   실습1>  dockerfile_exam.zip ( 프런트엔드 기술. 현재는 JS 임. 나중에 vue.js로 대체됨 )
