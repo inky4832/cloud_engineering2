@@ -1743,6 +1743,27 @@ Docker 강좌 정리
 				VOLUME /myvol
 		
 ----------------------------------------------------
+    5. Dockerfile 빌드 명령어.
+	
+	    1) 개념.
+		  - Dockerfile 파일을 이용해서 이미지를 생성(빌드)하는 명령어.
+		  
+		2)문법:
+  		        docker buildx build [OPTIONS] PATH | URL | -
+				
+				별칭: docker build, docker builder build,  docker image build
+
+        3) 옵션:
+		         -t, --tag : 이미지이름과 tag 지정.
+				 -f, --file :   기본적인 Dockerfile 파일명이나 위치가 다를때 직접 지정.
+								ex.   docker build -t my-front-app:v1  .  # 기본적으로 현재 디렉터리의 Dockerfile 찾음
+								      docker build -t my-front-app:v1 -f My_Dockerfile .  # 명시된  My_Dockerfile 사용함.
+										docker build -t my-front-app:v1 -f ../../Dockerfile  .  # 명시된 경로에서 Dockerfile 찾음
+										
+				--no-cache : 캐시를 사용하지 않고 새로 빌드함.
+
+				
+ ----------------------------------------------------
   실습1>  dockerfile_exam.zip ( 프런트엔드 기술. 현재는 JS 임. 나중에 vue.js로 대체됨 )
 
          # step1: Docker 없이 실행
@@ -1784,7 +1805,7 @@ Docker 강좌 정리
   
 			2)  image 생성
 			
-			    docker build -t my-front-app:v1  .   # -t 이미지명:tag
+			     docker build -t my-front-app:v1  .   # -t 이미지명:tag
 				
 				docker images 
 				
