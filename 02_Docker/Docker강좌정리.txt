@@ -2134,7 +2134,16 @@ Docker 강좌 정리
 			  4)  요청.
 			    
 				  GET http://localhost:8080
-				  
+			  
+			 5) 접속
+				
+				   docker exec -it springboot21 bash
+				   root> ls
+					build  build.gradle  
+					Dockerfile  
+					Dockerfile_적용후  
+					gradle  gradlew  gradlew.bat  
+					settings.gradle  sr			  
 		--------------------------------------------------------------------------
 			 # step2: 멀티 스테이지 패턴 적용 후 
 			 
@@ -2172,7 +2181,11 @@ Docker 강좌 정리
 			      docker build -t springboot21:v2  .  
 				  
 				  docker images
-				  
+					
+				                                                                                                                                                     i Info →   U  In Use
+					IMAGE             ID             DISK USAGE   CONTENT SIZE   EXTRA
+					springboot21:v1   1f3637ef2a43       1.35GB          455MB    U   
+					springboot21:v2   90ffab897f10        494MB          134MB 
 			       
 			 
 			  3) 컨테이너 실행 
@@ -2183,3 +2196,12 @@ Docker 강좌 정리
 			  4)  요청.
 			    
 				  GET http://localhost:8080
+				  
+			 5) 접속
+				
+				   docker exec -it springboot21-v2 bash
+				   root> ls
+					app.jar
+				  
+			/////////////////////////////////////////////////////////////////////////////
+			
