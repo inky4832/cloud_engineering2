@@ -1835,19 +1835,130 @@ Docker 강좌 정리
 					
 				 # 방법2: 빌드 이용 ( jar 로 실행 )
 
-					- ./gradlew  clean build -x test 	 	
+					- ./gradlew  clean build -x test 	
+
+				    - build/libs/boot_Dockerfile-0.0.1-SNAPSHOT.jar 생성됨.
+
+					- 실행:
+                           java -jar boot_Dockerfile-0.0.1-SNAPSHOT.jar 
+                           java -jar .\build\libs\boot_Dockerfile-0.0.1-SNAPSHOT.jar						   
+
+							http://localhost:8080	 
 			   
 			   
 			   # step2: Docker로  실행
 			   
-			     가. Dockerfile 작성
+			     가. Dockerfile 작성  및 .dockerignore 작성
 				 
 				    FROM eclipse-temurin:21-jre  #  base 이미지
 
 					WORKDIR /app                 # 작업 디렉터리
 
-					COPY build/libs/*.jar app.jar
+					COPY build/libs/*.jar    app.jar
 
 					EXPOSE 8080
 
 					ENTRYPOINT ["java", "-jar", "app.jar"]
+					
+				나. *.jar 생성 
+				   - CMD 창에서 다음 명령어로 jar 생성한다.
+				    
+					./gradlew  clean build -x test 	
+					
+					build/libs/boot_Dockerfile-0.0.1-SNAPSHOT.jar 생성됨.
+					
+				
+				다. Dockerfile 빌드 ( 이미지 생성 )
+				
+				    docker build -t springboot21  .  
+					
+				
+				라. 컨테이너 실행
+				 
+				  docker run -d --name springboot21 -p 8080:8080   springboot21
+				  
+				
+				마. 요청
+				 http://localhost:8080	
+				 
+		  -------------------------------------------------------------------------------------
+  실습3>    boot_Dockerfile2_volume.zip 이용 ( 파일 업로드 실습 )
+	  
+	  
+	        # step1: Docker 없이 실행
+			
+				파일업로드 요청:  POST	  http://localhost:8080/files/upload
+				
+				파일 목록 조회:   GET  http://localhost:8080/files/
+			
+				파일 다운로드 :   GET  http://localhost:8080/files/파일명
+								
+								 ex. http://localhost:8080/files/.bash_history
+				
+				1) DemoApplication 실행 > C:\app\upload 폴더 생성
+				2) Talend API Tester 이용해서 요청하자.
+			
+			 # step2: Docker로  실행
+			 
+			     가. Dockerfile 작성  및 .dockerignore 작성
+				 
+				     FROM eclipse-temurin:21-jre
+
+					WORKDIR /app
+
+					COPY build/libs/*.jar app.jar
+
+					# 업로드 파일이 저장될 디렉터리
+					RUN mkdir -p /app/upload
+
+					EXPOSE 8080
+
+					ENTRYPOINT ["java", "-jar", "app.jar"]
+					
+					
+			    나. *.jar 생성 
+				   - CMD 창에서 다음 명령어로 jar 생성한다.
+				    
+					./gradlew  clean build -x test 	
+					
+					build/libs/boot_Dockerfile-0.0.1-SNAPSHOT.jar 생성됨.
+					
+			
+			    다. Dockerfile 빌드 ( 이미지 생성 )
+				
+				    docker build -t springboot21  .  
+					
+					docker images
+					
+				
+				라. 볼륨 생성 ( 업로드한  파일 유지 )
+					
+					docker volume ls
+				    docker volume create spring-data
+				
+				라. 컨테이너 실행
+				 
+				  docker run -d --name springboot21 -p 8080:8080 -v spring-data:/app/upload  springboot21
+				  
+				  
+				마. Talend API Tester 이용해서 요청하자.
+				 
+				 파일업로드 요청:  POST	  http://localhost:8080/files/upload
+				
+				파일 목록 조회:   GET  http://localhost:8080/files/
+			
+				파일 다운로드 :   GET  http://localhost:8080/files/파일명
+								
+								 ex. http://localhost:8080/files/.bash_history
+								 
+				
+				바. 컨테이너 중지 및 삭제하기
+				
+				   docker stop springboot21
+				   docker rm springboot21
+				   
+				아. 다시 컨테이너 실행해서  이전 업로드 파일 유지 확인.
+				
+				 docker run -d --name springboot21 -p 8080:8080 -v spring-data:/app/upload  springboot21
+				 
+				 GET  http://localhost:8080/files/
