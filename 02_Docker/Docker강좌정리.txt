@@ -2072,4 +2072,26 @@ Docker 강좌 정리
 						"uploadDir": "/app/upload"
 						}
 						
+				마.  컨테이너 실행시 새로운 환경변수 값 설정해서 덮어쓰기
 				
+				 docker run -d --name springboot21 -p 1234:9090 
+
+						-e SERVER_PORT=9090
+						-e SPRING_PROFILES_ACTIVE=test
+						-e APP_MESSAGE=helloworld
+						springboot21
+					
+					
+				  	Talend 에서 요청;
+					GET http://localhost:1234/env 
+					
+					실행결과:
+					   {
+						"uploadDir": "/app/upload",
+						"activeProfiles":[
+						"test"
+						],
+						"message": "helloworld"
+						}
+						
+	-------------------------------------------------------------------------------------------
