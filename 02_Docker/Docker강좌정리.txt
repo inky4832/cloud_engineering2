@@ -2299,4 +2299,34 @@ Docker 강좌 정리
 			   GET   http://localhost:8080/api/users
 			   
 	-----------------------------------------------------------------
-    실습2> boot_Dockerfile4_Network_mysql1_host.zip 이용.
+    실습2> boot_Dockerfile4_Network_mysql2_container.zip 이용.
+	
+		 핵심내용:
+		   implementation("com.mysql:mysql-connector-j:8.3.0") # 명시적으로 지정. 지정안하면 9.X 설치됨.
+		   
+	      
+		  # step1:  MySQL 컨테이너 IP 이용해서 접근
+		  
+	         컨테이너 ( SpringBoot App) 
+			    |
+				|   "IPAddress": "172.17.0.2",
+				|
+			 컨테이너  ( Mysql )
+			 
+			 
+	       1) MySql 컨테이너로 생성 ( Volume, -e )
+		   
+		      docker volume ls
+		      docker volume create mysql-data-volume
+			  
+			  docker run -it -d --name mysql-data -e MYSQL_ROOT_PASSWORD=1234 
+			  -e MYSQL_DATABASE=testdb
+			  -v mysql-data-volume:/var/lib/mysql  mysql:8.3
+			  
+			  
+		  2) Mysql IP 찾기
+		   
+		     docker inspect  mysql-data
+			 
+			    .. 
+				   "IPAddress": "172.17.0.2",  # 재시작하면 매번 바뀜.
