@@ -2392,8 +2392,7 @@ Docker 강좌 정리
 			  docker run -it -d --name mysql-data3 -e MYSQL_ROOT_PASSWORD=1234 
 			  -e MYSQL_DATABASE=testdb
 			  -v mysql-data-volume3:/var/lib/mysql 
-		--network boot-mysql-net
-			  mysql:8.3
+		--network boot-mysql-net mysql:8.3
 		   
 			3) SpringBoot에서 applilcation.yml 수정.
 
@@ -2416,10 +2415,115 @@ Docker 강좌 정리
 			6) 컨테이너 생성 + network 지정
 			
 			   docker run -d --name spring-mysql-demo3 -p 8080:8080 
-           --network boot-mysql-net
-			   spring-mysql-demo3
+           --network boot-mysql-net  spring-mysql-demo3
 			   
 			
 			7) 	 요청:
 			 
 			   GET   http://localhost:8080/api/users
+			   
+  -----------------------------------------------------------------
+    실습4>  sample12_TodoApp2_SpringSecurity 이용
+	
+	        
+		  ------------------------------ 동일 네트워크로 묶음
+	         컨테이너 ( SpringBoot App) 
+			    |
+				|     mysql-data4 컨테이너명으로 접속
+				|
+			 컨테이너  ( Mysql )
+		   ------------------------------	 
+		   
+		  1) Dockerfile 작성
+		  
+		            FROM eclipse-temurin:21-jre
+
+					WORKDIR /app
+
+					COPY build/libs/*.jar app.jar
+
+					EXPOSE 8080
+
+					ENTRYPOINT ["java", "-jar", "app.jar"]
+		  
+		  2) .dockerignore 작성
+		  
+		            # Git
+					.git
+					.gitignore
+
+					# IDE
+					.idea
+					.vscode
+					*.iml
+
+					# Build
+					build/*
+					!build/libs/*.jar
+					.gradle
+
+					# Node
+					node_modules/
+
+					# Logs
+					*.log
+					logs/
+
+					# OS
+					.DS_Store
+					Thumbs.db
+
+					# Env
+					.env
+					*.env
+
+					# Test
+					src/test/
+
+					# Docs
+					*.md
+
+					# Temp
+					tmp/
+					temp/
+					
+			3) 네트워크 생성
+			
+			    docker network create boot-mysql-net4
+				docker network ls
+			
+			4)  MySql 컨테이너로 생성 ( Volume, -e ) + network 지정 <== 순서 중요 
+		   
+		      docker volume ls
+		      docker volume create mysql-data-volume4
+			  
+			  docker run -it -d --name mysql-data4 -e MYSQL_ROOT_PASSWORD=1234 
+			  -e MYSQL_DATABASE=testdb
+			  -v mysql-data-volume4:/var/lib/mysql 
+		--network boot-mysql-net4 mysql:8.3
+		
+		   5) Springboot application.yml 수정
+		   
+		     url: jdbc:mysql://mysql-data4:3306/testdb  # mysql-data4 컨테이너명으로 접속
+			 
+		 6) *.jar 생성
+	
+			
+			   ./gradlew clean build -x test
+			   
+			   
+	         7) docker image 생성
+			
+				 docker build -t spring-mysql-demo4   .
+				 
+				  docker images
+				  
+			7) 컨테이너 생성 + network 지정
+			
+			   docker run -d --name spring-mysql-demo4 -p 8080:8080 
+           --network boot-mysql-net4  spring-mysql-demo4
+			   
+			
+			7) 	 요청:
+			 
+			   GET   http://localhost:8080/home
