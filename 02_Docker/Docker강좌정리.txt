@@ -2575,4 +2575,20 @@ Docker 강좌 정리
 	     - 최상위 속성
 		 - 하위에 여러 서비스를 가질 수 있음.
 		   각 서비스는 하나의 컨테이너라고 할 수 있음.
-				
+		   
+		 - 구성 
+               		 
+				services:
+				  서비스:  # 하나의 컨테이너
+				    image: # 사용할 Docker 이미지 ( base image ),없으면 다운로드
+					         hub에서 제공하는 offical image 또는 Dockerfile 로 만든 커스텀이미지.
+					build: # Dockerfile에서 직접 이미지 생성.	
+					container_name: # 컨테이너이름.   --name spring-mysql-demo4 동일
+					command: # 명령어, Dockerfile 의 CMD와 동일. 덮어쓰기 가능.		 
+							  command: /bin/sh -c 'echo "hello $$HOSTNAME"'
+							  ( 컨테이너 실행시 shell 명령어를 사용할려면 /bin/sh -c '명령어' 
+							  
+					entrypoint: # 명령어. Dockerfile 의 entrypoint와 동일, 덮어쓰기 불가.
+					ports:  # 포트포워딩(포트맵핑),  -p 8080:80 동일.
+					expose: # 포트 문서화 , Dockerfile의 EXPOSE 와 동일.
+					
