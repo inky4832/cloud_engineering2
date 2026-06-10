@@ -2324,9 +2324,36 @@ Docker 강좌 정리
 			  -v mysql-data-volume:/var/lib/mysql  mysql:8.3
 			  
 			  
-		  2) Mysql IP 찾기
+		  2) Mysql 컨테이너 IP 찾기
 		   
 		     docker inspect  mysql-data
 			 
 			    .. 
 				   "IPAddress": "172.17.0.2",  # 재시작하면 매번 바뀜.
+				   
+		  3) SpringBoot 코드 변경
+		   
+			 -  Mysql 컨테이너 IP로 변경
+			 
+		     url: jdbc:mysql://172.17.0.2:3306/testdb
+			 
+	     4) *.jar 생성 
+			
+			   ./gradlew clean build -x test
+			   
+			   
+			   
+	     5) docker image 생성
+			
+				 docker build -t spring-mysql-demo2   .
+				 
+				  docker images
+				  
+			6) 컨테이너 생성
+			
+			   docker run -d --name spring-mysql-demo2 -p 8080:8080  spring-mysql-demo2
+			   
+			
+			7) 	 요청:
+			 
+			   GET   http://localhost:8080/api/users
