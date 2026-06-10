@@ -2203,5 +2203,99 @@ Docker 강좌 정리
 				   root> ls
 					app.jar
 				  
-			/////////////////////////////////////////////////////////////////////////////
+----------------------------------------------------------------------------------------
+5장. Docker 네트워크
+/////////////////////////
+
+   1. 개념
+     컨테이너가 외부통신(www, host(win,linux)) 및 컨테이너간 통신이 가능하도록 구성하는 네트워크 환경을 의미.
 			
+   2. 3가지 형태
+   
+      외부통신: www (인터넷) 접근.
+	          기본적으로 지원됨.
+			  Docker에서 NAT 지원함. ( NAT(Network Address Translation): 사설IP --> 공인 IP )
+			  
+	  외부통신: host 접근 
+	          기본적으로 지원됨.
+	          window: docker.host.internal 키워드 이용
+			  linux: host Ip 이용
+			  
+	 컨테이너 통신: 기본적으로 지원안됨 ( 사실은 컨테이너 IP로 접근은 가능함. 
+	                                 하지만 사용하지 않음. 이유는 재시작하면 IP가 바뀌기 때문에)
+									 
+				  해결: 동일 네트워크로 묶고 컨테이너명으로 접근함.					 
+				  
+   3. docker 네트워크 정보보기
+   
+      docker network ls
+	   
+	    NETWORK ID     NAME         DRIVER    SCOPE
+		995f1272e6f0   bridge       bridge    local  # docker가 사용하는 기본 네트워크가 bridge임.
+		aee674dd959f   host         host      local
+		32334084d660   none         null      local
+		
+	 
+	  docker inspect bridge
+	  
+	  docker inspect host
+	  
+   -----------------------------------------------------------------
+    실습1> boot_Dockerfile4_Network_mysql1_host.zip 이용.
+	
+	 
+		  # step1: 윈도우 환경에서 실행
+		   
+		     핵심:
+			     url: jdbc:mysql://localhost:3306/testdb
+		   
+			 요청:
+			 
+			   GET   http://localhost:8080/api/users
+			   
+	 
+	     # step2: Springboot는 컨테이너로, Mysql은 윈도우에서 실행.
+		 
+		     코드를 변경하면 반드시 ./gradlew clean build -x test 다시 해야됨. (*******************)
+		 
+	         컨테이너 ( SpringBoot App) 
+			    |
+				|  host.docker.internal 이용 ( window )
+				|
+			  Mysql  ( window )
+			  
+			 핵심:
+			    url: jdbc:mysql://host.docker.internal:3306/testdb
+			
+			 1) Dockerfile 작성
+			 
+			     FROM eclipse-temurin:21-jre
+
+				WORKDIR /app
+
+				COPY build/libs/*.jar app.jar
+
+				EXPOSE 8090
+
+				ENTRYPOINT ["java", "-jar", "app.jar"]
+			 
+			2) *.jar 생성 
+			
+			   ./gradlew clean build -x test
+			   
+			3) docker image 생성
+			
+				 docker build -t spring-mysql-demo   .
+				 
+				  docker images
+				  
+			4) 컨테이너 생성
+			
+			   docker run -d --name spring-mysql-demo -p 8080:8080  spring-mysql-demo
+			   
+			
+			5) 	 요청:
+			 
+			   GET   http://localhost:8080/api/users
+			   
+	--------------------------------------------------------------------------
