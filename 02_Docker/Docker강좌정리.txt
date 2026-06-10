@@ -2307,12 +2307,15 @@ Docker 강좌 정리
 	      
 		  # step1:  MySQL 컨테이너 IP 이용해서 접근
 		  
+		   --------------------------------
 	         컨테이너 ( SpringBoot App) 
+		   ---------------------------------	 
 			    |
 				|   "IPAddress": "172.17.0.2",
 				|
+			-----------------------------------	
 			 컨테이너  ( Mysql )
-			 
+			---------------------------------- 
 			 
 	       1) MySql 컨테이너로 생성 ( Volume, -e )
 		   
@@ -2352,6 +2355,69 @@ Docker 강좌 정리
 			6) 컨테이너 생성
 			
 			   docker run -d --name spring-mysql-demo2 -p 8080:8080  spring-mysql-demo2
+			   
+			
+			7) 	 요청:
+			 
+			   GET   http://localhost:8080/api/users
+			   
+	-----------------------------------------------------------------
+    실습3>  boot_Dockerfile4_Network_mysql3_network.zip 이용 ( 컨테이너 간 연동 + 동일 네트워트 묶음 )
+	
+	
+			핵심: 
+			    url: jdbc:mysql://mysql-data3:3306/testdb  # mysql-data3
+	
+	          # step1:  MySQL 컨테이너 이름(*) 이용해서 접근
+		  
+		  
+		  ------------------------------ 동일 네트워크로 묶음
+	         컨테이너 ( SpringBoot App) 
+			    |
+				|   컨테이너명으로 접근가능. ex. mysql-data3
+				|
+			 컨테이너  ( Mysql, 컨테이너명: mysql-data3 )
+		   ------------------------------	 
+		   
+		    1) 네트워크 생성
+			
+			    docker network create boot-mysql-net 
+				docker network ls
+				
+			2) 	MySql 컨테이너로 생성 ( Volume, -e ) + network 지정
+		   
+		      docker volume ls
+		      docker volume create mysql-data-volume3
+			  
+			  docker run -it -d --name mysql-data3 -e MYSQL_ROOT_PASSWORD=1234 
+			  -e MYSQL_DATABASE=testdb
+			  -v mysql-data-volume3:/var/lib/mysql 
+		--network boot-mysql-net
+			  mysql:8.3
+		   
+			3) SpringBoot에서 applilcation.yml 수정.
+
+                ==> ip값대신에 mysql 컨테이너명으로 수정한다.			
+			
+			   url: jdbc:mysql://mysql-data3:3306/testdb
+			   
+			4) *.jar 생성
+	
+			
+			   ./gradlew clean build -x test
+			   
+			   
+	         5) docker image 생성
+			
+				 docker build -t spring-mysql-demo3   .
+				 
+				  docker images
+				  
+			6) 컨테이너 생성 + network 지정
+			
+			   docker run -d --name spring-mysql-demo3 -p 8080:8080 
+           --network boot-mysql-net
+			   spring-mysql-demo3
 			   
 			
 			7) 	 요청:
