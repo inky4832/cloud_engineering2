@@ -2738,3 +2738,50 @@ Docker 강좌 정리
 			     spring:
 				   profiles:
 				     active: ${BOOT_PROFILES:prod}	   
+					 
+		11) networks 속성
+		  
+		    - 기본적으로 docker-compose는 동일 네트워크로 자동으로 묶임.
+			  따라서 서비스명으로 접근이 가능함.
+			- 명시적으로 지정도 가능 ( 이유는 네트워크를 분리 목적)
+			
+			 ex.
+			 
+			 
+			    networks:  # 네트워크 생성
+				  - some-network
+			      - other-network
+			 
+				services:
+				  some-service:
+					networks:   # 네트워크 사용
+					  - some-network
+					  - other-network
+					  
+					  
+			 ex. front/backend/mysql
+			 
+			      
+			      networks:  # 네트워크 생성
+				  - db-net
+			      - web-net
+				  
+				  services:
+				     mysql:
+					   image: mysql:8.3
+					   ..
+					   networks:
+					     - db-net
+						 
+				     backend:
+					   image: springboot:4.5
+					   ..
+					   networks:
+					     - db-net
+						 
+					 front:
+					   image: vue.js:4.6
+					   ..
+					   networks:
+					     - web-net
+		-----------------------------------------------------------
