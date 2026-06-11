@@ -2650,3 +2650,33 @@ Docker 강좌 정리
 						                                       image: front-app
 															   
 		  ----------------------------------------------------------------------------------
+	  4) command 속성
+	  
+	     - 명령어, Dockerfile 의 CMD와 동일. 덮어쓰기 가능.	
+		 - 컨테이너 실행시 shell 명령어를 사용할려면 /bin/sh -c '명령어' 
+		 
+		  ex. 
+		       command: bundle exec thin -p 3000
+	           command: /bin/sh -c 'echo "hello $$HOSTNAME"'
+			   command: sh -c 'echo "hello $$HOSTNAME"'
+	
+	   5) entrypoint 속성 ( 고정 명령어용 )
+	     
+		  - 명령어. Dockerfile 의 entrypoint와 동일, 덮어쓰기 불가.
+		  
+		   ex.
+		       entrypoint: /code/entrypoint.sh
+			   
+			   
+		 6) ports 속성
+		   
+		    - 실제 포트 연결 기능 (**************)
+			- 문자열로 지정하자. HOST:CONTAINER should always be specified as a (quoted) string, 
+			                   to avoid conflicts with YAML base-60 float.
+			
+			ex. 
+			
+			   ports:
+				  - "3000"
+				  - "3000-3005"
+				  - "8000:8000"
