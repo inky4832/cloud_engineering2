@@ -2763,8 +2763,8 @@ Docker 강좌 정리
 			 
 			      
 			      networks:  # 네트워크 생성
-				  - db-net
-			      - web-net
+				  - db-net:  # 반드시 맨 뒤에 : 지정.
+			      - web-net:
 				  
 				  services:
 				     mysql:
@@ -2791,7 +2791,7 @@ Docker 강좌 정리
 		    
 			ex. 
 				volumes:   # 볼륨 생성
-				  db-data:
+				  db-data: # 반드시 맨 뒤에 : 지정.
 				  
 				services:
 				     mysql:
@@ -2905,13 +2905,83 @@ Docker 강좌 정리
 	  ---------------------------------------------------------------------------------
 	  실습>   sample12_TodoApp2_SpringSecurity.zip 
 	  
-	       
+	       //////////////////////////////
+		   	3) 네트워크 생성
+			
+			    docker network create boot-mysql-net4
+				docker network ls
+			
+			4)  MySql 컨테이너로 생성 ( Volume, -e ) + network 지정 <== 순서 중요 
+		   
+		      docker volume ls
+		      docker volume create mysql-data-volume4
+			  
+			  docker run -it -d --name mysql-data4 -e MYSQL_ROOT_PASSWORD=1234 
+			  -e MYSQL_DATABASE=testdb
+			  -v mysql-data-volume4:/var/lib/mysql 
+		--network boot-mysql-net4 mysql:8.3
+		
+		   5) Springboot application.yml 수정
+		   
+		     url: jdbc:mysql://mysql-data4:3306/testdb  # mysql-data4 컨테이너명으로 접속
+			 
+		 6) *.jar 생성
+	
+			
+			   ./gradlew clean build -x test
+			   
+			   
+	         7) docker image 생성
+			
+				 docker build -t spring-mysql-demo4   .
+				 
+				  docker images
+				  
+			7) 컨테이너 생성 + network 지정
+			
+			   docker run -d --name spring-mysql-demo4 -p 8080:8080 
+           --network boot-mysql-net4  spring-mysql-demo4
+			   
+			
+			7) 	 요청:
+			 
+			   GET   http://localhost:8080/home
+		   
+		   ////////////////////////////
 		    step1> healthcheck 없이 실행
 			
 				 1)  docker-compose.yaml 
 				 
-				 
+					networks:
+					   boot-mysql-net5:
+
+					volumes:
+					   mysql-data-volume5:
+
+					services:
+					  mysql:
+						image: mysql:8.3
+						container_name: mysql-data5
+						environment:
+						   MYSQL_ROOT_PASSWORD: 1234
+						   MYSQL_DATABASE: testdb
+						volumes:
+							- mysql-data-volume5:/var/lib/mysql
+						networks:
+							- boot-mysql-net5
+					  backend:
+						  build:
+							context: .
+							dockerfile: Dockerfile
+						  image: spring-mysql-demo5
+						  container_name:	spring-mysql-demo5
+						  ports:
+							- "8080:8080"
+						  networks:
+							- boot-mysql-net5
+							
 			     2)  docker compose up -d
+				 
 				 
 				 3)  docker ps 로 확인
 				 
