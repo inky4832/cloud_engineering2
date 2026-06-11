@@ -2680,3 +2680,61 @@ Docker 강좌 정리
 				  - "3000"
 				  - "3000-3005"
 				  - "8000:8000"
+				  
+		 7) expose 속성
+		     - 포트 문서화 , Dockerfile의 EXPOSE 와 동일.
+			   즉 실제 포트 연결 기능 없음 (***************)
+			 - 문자열로 지정.
+			 
+			 ex. 
+                expose:
+				  - "3000"
+				  - "8000"			  
+				  
+		  8) environment 속성
+		     - 환경변수 설정. 
+			 - Key는 대문자 권장.
+			 
+			 ex. 
+			     environment:
+				  RACK_ENV: development
+				  DB_HOST=172.168.0.1
+				  SHOW: "true"
+				  
+			  - 컨테이너 내부에서 사용방법
+			      
+				   $env
+				   $printenv
+				   
+				   $echo $RACK_ENV
+				   
+			  - SpringBoot 에서 사용방법.
+			  
+			     spring:
+				   profiles:
+				     active: ${RACK_ENV:prod}
+					 
+		  9) env_file 속성 
+    		  - .env 파일로 환경변수 설정하고 한번에 사용.
+			  - environment 가 우선권이 높음.
+			  
+			  ex. 
+				   #.env 파일내용
+				   DB_HOST=localhost
+				   DB_USER=root
+				   BOOT_PROFILES=dev	
+					
+			       env_file: .env
+				   
+			   - 컨테이너 내부에서 사용방법
+			      
+				   $env
+				   $printenv
+				   
+				   $echo $DB_HOST
+				   
+			  - SpringBoot 에서 사용방법.
+			  
+			     spring:
+				   profiles:
+				     active: ${BOOT_PROFILES:prod}	   
