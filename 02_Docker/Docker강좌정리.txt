@@ -2821,6 +2821,19 @@ Docker 강좌 정리
 						image: redis
 						
 					  db:
-						image: postgres:18
+						image: mysql:8.3
 		
 	-----------------------------------------------------
+	  14) healthcheck 속성.
+	     
+		  - 서비스가 정상인지 검사.
+		  
+		    ex.
+			
+			   healthcheck:
+				  test: ["CMD", "mysqladmin", "ping",-h", "localhost"]
+				  interval: 1m30s
+				  timeout: 10s
+				  retries: 3
+				  start_period: 40s
+				  start_interval: 5s
