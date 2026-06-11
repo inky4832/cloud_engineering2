@@ -2724,8 +2724,10 @@ Docker 강좌 정리
 				   DB_USER=root
 				   BOOT_PROFILES=dev	
 					
-			       env_file: .env
-				   
+			       env_file: .env  # .env 파일명이 자동으로 로드됨.
+				                   https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/
+			                        If the --env-file is not used in the command line, the .env file is loaded by default:
+									
 			   - 컨테이너 내부에서 사용방법
 			      
 				   $env
@@ -2903,7 +2905,7 @@ Docker 강좌 정리
 	   docker compose logs 
 	   
 	  ---------------------------------------------------------------------------------
-	  실습>   sample12_TodoApp2_SpringSecurity.zip 
+	  실습1>   sample12_TodoApp2_SpringSecurity.zip 
 	  
 	       //////////////////////////////
 		   	3) 네트워크 생성
@@ -3037,4 +3039,34 @@ Docker 강좌 정리
 						  networks:
 							- boot-mysql-net5
 	  ---------------------------------------------------------------------------------
+	    ---------------------------------------------------------------------------------
+	  실습2> 보안처리
 	  
+	        1) .env 파일 작성
+			
+			    MYSQL_ROOT_PASSWORD=1234
+				
+				
+		    2) application.yaml 과  docker-compose.yaml 수정
+			
+			  - MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+			  - password: ${MYSQL_ROOT_PASSWORD}
+			  
+			 
+			3) .env 파일은 .gitignore에 지정.
+			
+			4) jar 새로 생성. 
+	
+				 
+				     ./gradlew clean build -x test
+					 
+			     5)  docker compose up -d  --build 
+				 
+				 
+				 6)  docker ps 로 확인
+				 
+				 7)  요청
+				 
+				     GET http://localhost:8080/home
+					
+	-----------------------------------------------------------------------------------
