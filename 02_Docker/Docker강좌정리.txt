@@ -2770,18 +2770,57 @@ Docker 강좌 정리
 				     mysql:
 					   image: mysql:8.3
 					   ..
-					   networks:
+					   networks: # 네트워크 사용
 					     - db-net
 						 
 				     backend:
 					   image: springboot:4.5
 					   ..
-					   networks:
+					   networks:  # 네트워크 사용
 					     - db-net
 						 
 					 front:
 					   image: vue.js:4.6
 					   ..
-					   networks:
+					   networks: # 네트워크 사용
 					     - web-net
 		-----------------------------------------------------------
+		12) volumes 속성
+		   - 영속성 유지 목적.
+		   
+		    
+			ex. 
+				volumes:   # 볼륨 생성
+				  db-data:
+				  
+				services:
+				     mysql:
+					   image: mysql:8.3
+					   
+					   volumes:   # 볼륨 사용
+					     db-data:/var/lib/mysql
+						 
+					   networks: 
+					     - db-net  
+			 
+			 
+		13) depends_on 속성
+		
+		   - 서비스 순서 지정.
+		   - 실제 db와 redis가 정상적으로 실행될때까지는 안 기다림.
+		     따라서 healthcheck로 서비스 여부 확인필요.
+		   
+		    ex.
+			      services:
+					  web:
+						build: .
+						depends_on:  # web 보다 먼저 db와 redis 가 실행됨.
+						  - db
+						  - redis
+					  redis:
+						image: redis
+						
+					  db:
+						image: postgres:18
+		
+	-----------------------------------------------------
