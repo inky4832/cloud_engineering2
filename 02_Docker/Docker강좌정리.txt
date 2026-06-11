@@ -2903,3 +2903,24 @@ Docker 강좌 정리
 	   docker compose logs 
 	   
 	  ---------------------------------------------------------------------------------
+	  실습>   sample12_TodoApp2_SpringSecurity.zip 
+	  
+	       
+		    step1> healthcheck 없이 실행
+			
+				 1)  docker-compose.yaml 
+				 
+				 
+			     2)  docker compose up -d
+				 
+				 3)  docker ps 로 확인
+				 
+				 4)  요청
+				 
+				     GET http://localhost:8080/home
+			
+			
+			step2> mysql에  healthcheck 적용 실행
+			
+	  ---------------------------------------------------------------------------------
+	  
