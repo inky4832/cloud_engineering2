@@ -2535,7 +2535,7 @@ Docker 강좌 정리
   https://docs.docker.com/reference/compose-file/services/ 참조
   
   1. 개념
-    여러개의 컨테이너(서비스)를 한번에정의하고, 한번에 실행/중지/삭제가 가능하도록 지원하는 도구.
+    여러개의 컨테이너(서비스)를 한번에 정의하고, 한번에 실행/중지/삭제가 가능하도록 지원하는 도구.
 	
  2. 파일명
     
@@ -2545,6 +2545,14 @@ Docker 강좌 정리
   3. 특징
      - 필요할 때 Dockerfile 사용가능.  
 	 - 자동으로 동일한 네트워크로 묶임 (*****)
+	    ==> 서비스간에 IP가 아닌 서비스명으로 접근이 가능하다.
+		==> 일반적으로는 명시적으로 네트워크를 지정함.( 분리하기 위함 )
+		   
+		    ex.
+				   front-end     back-end        mysql
+				   (vue.js)      (springboot)
+			       
+
 	 - 여러 컨테이너를 한번에 시작 및 종료 가능.
 	 -  depends_on: 속성으로 컨테이너 실행 순서를 지정가능.
 	 
@@ -2591,4 +2599,17 @@ Docker 강좌 정리
 					entrypoint: # 명령어. Dockerfile 의 entrypoint와 동일, 덮어쓰기 불가.
 					ports:  # 포트포워딩(포트맵핑),  -p 8080:80 동일.
 					expose: # 포트 문서화 , Dockerfile의 EXPOSE 와 동일.
+					
+					networks: 명시적으로 네트워트 지정  #  docker network create 동일.
+							  생성과 사용이 분리되어 사용됨.
+					environment:  환경변수 설정. Key는 대문자 권장.
+					env_file: .env 파일로 환경변수 설정하고 한번에 사용.
+					volumes: 영속성 위한 방법.
+					         생성과 사용이 분리되어 사용됨.
+
+					depends_on: 서비스 실행 순서 지정.
+					working_dir: 서비스의 작업 디렉터리. 여러 명령어들의 기준위치 역할.
+					healthcheck: 서비스의 상태 검사 ( 서비스 제공 여부 확인용 )
+					restart: 서비스 재시작 정책 ( restart policy )
+					
 					
