@@ -2850,7 +2850,7 @@ Docker 강좌 정리
 						  
 						healthcheck:
 						  test: ["CMD", "mysqladmin", "ping",-h", "localhost"]
-						  interval: 1m30s
+						  interval: 10s
 						  timeout: 10s
 						  retries: 3
 						  start_period: 40s
@@ -2969,6 +2969,7 @@ Docker 강좌 정리
 							- mysql-data-volume5:/var/lib/mysql
 						networks:
 							- boot-mysql-net5
+							
 					  backend:
 						  build:
 							context: .
@@ -3000,5 +3001,40 @@ Docker 강좌 정리
 			
 			step2> mysql에  healthcheck 적용 실행
 			
+			   1)  docker-compose.yaml 
+				 
+					networks:
+					   boot-mysql-net5:
+
+					volumes:
+					   mysql-data-volume5:
+
+					services:
+					  mysql:
+						image: mysql:8.3
+						container_name: mysql-data5
+						environment:
+						   MYSQL_ROOT_PASSWORD: 1234
+						   MYSQL_DATABASE: testdb
+						volumes:
+							- mysql-data-volume5:/var/lib/mysql
+						networks:
+							- boot-mysql-net5
+						
+						healthcheck:
+						 test: 명령어는 찾아서 적용할것. <== 확인방법:  docker ps 
+						                              성공: healthy로 표기되고 backend도 실행됨.
+						                              실패: unhealthy 표기됨. backend 실행안됨.
+						 
+					  backend:
+						  build:
+							context: .
+							dockerfile: Dockerfile
+						  image: spring-mysql-demo5
+						  container_name:	spring-mysql-demo5
+						  ports:
+							- "8080:8080"
+						  networks:
+							- boot-mysql-net5
 	  ---------------------------------------------------------------------------------
 	  
