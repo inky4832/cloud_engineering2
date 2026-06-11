@@ -2612,4 +2612,41 @@ Docker 강좌 정리
 					healthcheck: 서비스의 상태 검사 ( 서비스 제공 여부 확인용 )
 					restart: 서비스 재시작 정책 ( restart policy )
 					
+		---------------------------------------------------------------------------------			
+	 2) image 속성.				
+	    - 사용할 Docker 이미지 ( base image ),없으면 다운로드
+		
+		    ex. 
+				services:
+				  web: # 서비스명
+					image: nginx:latest
+					container_name: my-nginx   #  docker run --name my-nginx nginx
 					
+	 3) build 속성
+	     - Dockerfile 파일 이용해서 직접 이미지 생성
+		 
+		    ex.
+			     services:
+				   backend:
+				     build:
+					   context: . | ./backend    # 이미지를 만들 때 필요한 파일등이 있는 경로 지정.
+												   docker-compose.yaml 기준  
+					   dockerfile: Dockerfile | ../my-Dockerfile  # 빌드에 사용할 Dockerfile 이름지정.
+																	Dockerfile 파일인 경우 생략 가능.
+					 image: springboot-app     # 생성할 이미지 명.     
+					   
+				
+			 만약에 다음과 같은 디렉터리 구조라면?
+			 
+			    project/
+				    - docker-compose.yaml              services:
+					- backend/                 ==>         backend:
+					    -Dockerfile                            build: 
+						-...                                     context: ./backend
+						                                       image: backend-app 
+					- frontend/                            frontend:
+                        -Dockerfile                            buiid:
+						-....                                    context: ./frontend
+						                                       image: front-app
+															   
+		  ----------------------------------------------------------------------------------
