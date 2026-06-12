@@ -115,7 +115,82 @@
 	------------------------------------------------------------------------------	 
    6. Workd node
 
-      
+      1)개념.
+	    - 실제 컨테이너를 포함하는 Pod가 실행되는 곳.
+		
+	  2) 구성요소
+	  
+	    가. kubelet
+			-Master node의 API Server 와 통신 담당.
+			- 주로 Worker node의 상태정보(pod 등 여러 리소스 상태)를 
+			    master node에게 전달함.
+			
+		나. kube-proxy
+		     - Node와 Pod등에서 사용하는 네트워트 통신 담당.	
+		
+		다. CRI( containerd )
+	       - CRI(Container Runtime interface)이고 컨테이너를 실행하는 스펙을 정의한 개념.
+		     ( 자바의 인터페이스와 비슷 )
+			 실제 구현한 구현물: containerd, CRI-O 등.
+			 
+		   - 용도: 컨테이너를 실행하는 런타임 환경을 제공.
+		         즉 컨테이너를 생성하기 위한 이미지 다운로드
+				   컨테이너 생성/중지/삭제 등.
+				   
+----------------------------------------------------------------------------------				   
+ 		  
+ //////////////////////////////
+ 2장 K8s 환경설정
+ //////////////////////////////			 
+ 
+   1. 윈도우용 K8s 설치
+   
+      - Docker Desktop K8s 이용.
 	   
-			 
-			 
+   2. 설치확인
+     
+	  > kubectl version
+	   Client Version: v1.34.1
+       Kustomize Version: v5.7.1
+       Server Version: v1.34.1
+	   
+	   #클러스터 정보
+	  > kubectl cluster-info
+	  > kubectl cluster-info dump
+	  
+	  # 노드 정보
+	  > kubectl get nodes
+	  
+	  # 노드 목록 보기 
+	  > kubectl describe node 
+	
+------------------------------------------------------------------
+ //////////////////////////////
+ 3장 kubectl 
+ //////////////////////////////	
+ https://kubernetes.io/docs/reference/kubectl/
+ 
+   1. 개요
+      
+	  - K8s 클러스터를 관리(제어)하는 명령어.(CLI 기반)
+	  - K8s 설치하면 자동으로 설치됨.
+	  - Master Node의 API Server와 통신
+	  
+	              kubectl get nodes
+				  (실제 REST API 형태로 요청 )
+	      사용자 ---------------------> API Server ----> 처리
+    
+	2. 문법
+	
+	   kubectl [command] [TYPE] [NAME] [flags]
+	 
+	 
+	    command: 리소스(pod,service,..)에 대해서 수행할 동작 지정.
+		        ex. get : 리소스 조회
+				   delete : 리소스 삭제
+				   describe: 상세 정보 조회
+				   apply: 리소스 생성/수정
+				   logs: 로그 확인
+				   exec: 컨테이너 접속/명령어 실행
+				   rollout : 배포관리( 롤배 포함)
+				   config: 클러스터 접속관리 ( 로컬/클라우드)
