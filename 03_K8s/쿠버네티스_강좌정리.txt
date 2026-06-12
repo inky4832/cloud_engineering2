@@ -1,0 +1,87 @@
+ 
+  쿠버네티스(K8s) 강좌정리
+ //////////////////////////////
+ 1장 K8s (Kubernetes) 개요
+ //////////////////////////////
+ 
+   1.개념
+     - 오픈소스 시스템.
+	 - Docker같은 컨테이너 포함하는 Pod를 관리(생성/사용/종료/배포)하는 시스템의 표준 
+ 	   (오케스트레이션 역할)
+	   
+	    https://kubernetes.io/
+	 
+   2.  특징
+     - 어플리케이션 부하에 따른 자동 배포 기능 
+	 - 쉬운 scaling과 Load Balancing (요청분배)
+	 - 자동으로 네트워크 구성 
+	 - 문제 발생 시 컨테이너 자동 재시작 및 재배치
+	 - 필요시 이전버전으로 롤백.( 바로이전, 특정버전 롤백 가능)
+	 - 표준이기 때문에 어떤 클라우드와도 연동 가능  (AWS, Azure(MS), GCP(Google))
+	 
+   3. K8s 아키텍처
+     
+	 https://kubernetes.io/ko/docs/concepts/architecture/
+	 
+	   k8s  클러스터
+	   --------------------------------------------
+	   
+	     Control Plane          -------------->   Data plane         
+		 (Master node:노트북1)					  ----------------
+											       Worker Node (노트북2) ex. App Pod 
+												   
+												   ..
+												   
+												   Worker Node ( 노트북3) ex. DB Pod
+												   
+		--------------------------------------------										   
+      
+    Control Plane  역할: 관리자 역할.
+	Worker Node: 실제 컨테이너를 실행하는 서버.
+	  
+	 4. 클러스터
+	 
+	   1)개념
+	    - 여러 대의 컴퓨터(노드)를 하나의 컴퓨터처럼 동작하도록 구축한 시스템의미.
+		
+	   2) 필요성	
+	   
+	     - 1대 운영시
+		    서비스 장애 발생시 바로 서비스 종료.
+		 
+		 -클러스터 운영시
+		    여러 노드에 분산 배치 가능.
+			장애 발생 시 다른 노드로 재배치
+			트래픽 증가 시 요청분배 가능.
+			
+			
+	   3) 노드 (Node)
+	   
+	      가. 개념
+		    - 클러스터를 구성하는 컴퓨터 의미. 
+			
+		  나. 종류
+		  
+		     a. Control plane ( master node )
+			   - 클러스터 전체를 관리하는 역할.
+			   - 구성요소 4가지
+			     > kube-api-server: Worker node의 kubelet과 연동.
+			     > scheduler : Pod를 어느 노드에 배포할 지 결정.
+				 > controller-manager: worker 노드에 있는 pod 복구 담당 ( pod 갯수등 참고)
+				 > etcd : 클러스터의 상태 정보 저장소.
+				 
+			 b.  Data Plane ( worker node )
+			   - 실제 기능을 가진 Pod가 실행하는 역할.
+			   - 구성요소	 3가지
+			     > kubelet : Master node와 통신 담당.
+				 > CRI(Container Runtime Interface): Pod(컨테이너)를 실행하는 런타임.
+				                                     containerd
+													 
+				 > kube-proxy: Node와 Pod등에서 사용하는 네트워트 통신 담당.									 
+
+
+
+			   
+			 
+			 
+			 
