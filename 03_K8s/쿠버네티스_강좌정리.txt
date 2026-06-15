@@ -319,3 +319,19 @@
 			  대규모 운영에 유리.
 		   
 -------------------------------------------------------------------------------------------------	   
+
+    3) K8s 의 YAML ( Yet Another Markup Language,  manifest 파일이라고도 부름. )
+	 
+	   가. 개념
+	     - K8s의 클러스터가 원하는 상태 ( Desired State)를 갖도록 설정하는 파일임 (*********************)
+		 
+		 
+	   나. 공통 구조 
+	   
+	         apiVersion: v1	| apps/v1 		# API 버전,  확인방법: kubectl api-resources , kubectl api-versions
+			 kind: Pod | Deployment
+			 metadata:
+			 
+			 spec:
+			 
+			 
