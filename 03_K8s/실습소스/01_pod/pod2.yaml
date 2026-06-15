@@ -1,0 +1,14 @@
+# pod2.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod2
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:1.14.2
+
+  - name: redis-container
+    image: redis
+
