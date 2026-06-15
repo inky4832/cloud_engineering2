@@ -216,3 +216,75 @@
 				   ..
 				   
 ---------------------------------------------------------------------				   
+------------------------------------------------------------------
+ //////////////////////////////
+ 4장 kubeconfig 개요 
+ //////////////////////////////	
+  
+    1)개념
+	   - kubectl 클러스터에 접속하기 위해서 사용하는 설정파일임.
+	   - 윈도우: C:\Users\User\.kube\config 에 저장되어 있음. ( 나중에 AWS 클러스터 추가하면 이 파일에 추가됨 )
+	     리눅스:  .kube/config
+		 
+	2) 구성요소 3가지 
+	
+	  가. cluster
+			- 접속할 K8의 클러스터 정보가 저장됨.
+			  ex. API Sever 주소, 클러스터 이름.
+			  
+	  나. context
+		 - cluster와 user 정보를 연결한 설정.
+		  즉, 누가(user) 어떤 클러스터(cluster)를 접속할지를 설정.
+	  
+	  
+	  다. user
+	       - 접속할 사용자 정보.
+		    ex. 사용자명, 인증정보 등
+			
+
+	3. 특징
+	   - 여러 클러스터 정보 저장이 기능.
+	   - 여러 사용자 정보 저장이 가능.
+	   
+	   
+	4. config 주요 명령어. 
+	   https://kubernetes.io/docs/reference/kubectl/generated/kubectl_config
+	   
+	     kubectl - kubectl controls the Kubernetes cluster manager
+		kubectl config current-context - Display the current-context
+		kubectl config delete-cluster - Delete the specified cluster from the kubeconfig
+		kubectl config delete-context - Delete the specified context from the kubeconfig
+		kubectl config delete-user - Delete the specified user from the kubeconfig
+		kubectl config get-clusters - Display clusters defined in the kubeconfig
+		kubectl config get-contexts - Describe one or many contexts
+		kubectl config get-users - Display users defined in the kubeconfig
+		kubectl config rename-context - Rename a context from the kubeconfig file
+		kubectl config set - Set an individual value in a kubeconfig file
+		kubectl config set-cluster - Set a cluster entry in kubeconfig
+		kubectl config set-context - Set a context entry in kubeconfig
+		kubectl config set-credentials - Set a user entry in kubeconfig
+		kubectl config unset - Unset an individual value in a kubeconfig file
+		kubectl config use-context - Set the current-context in a kubeconfig file
+		kubectl config view - Display merged kubeconfig settings or a specified kubeconfig file
+		
+		
+	 ex.   
+	 
+	     1) cofing 파일 내용 조회 
+	 
+	       kubectl config view  # 민감정보 출력안됨.   
+	       kubectl config view  --raw  # 민감정보 출력됨 
+		   
+		 2) 현재 사용중인 컨텍스트 
+		 
+		   kubectl config current-context
+		     ddocker-desktop
+			 
+	    3) 현재 등록된 모든 컨텍스트 정보 조회
+		
+		  kubectl config get-contexts
+		  
+		    CURRENT   NAME             CLUSTER          AUTHINFO         NAMESPACE
+			*         docker-desktop   docker-desktop   docker-desktop   
+
+-------------------------------------------------------------------------------------------------
