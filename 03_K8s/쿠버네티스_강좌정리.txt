@@ -329,9 +329,33 @@
 	   나. 공통 구조 
 	   
 	         apiVersion: v1	| apps/v1 		# API 버전,  확인방법: kubectl api-resources , kubectl api-versions
-			 kind: Pod | Deployment
-			 metadata:
+			 kind: Pod | Deployment			# 생성하려는 리소스 종류 ex. Pod, Service, Deployment ,.....
+						                      대소문자 구별됨.
+			 metadata:						# kind의 추가 설정정보.
+											  ex. 이름,라벨, 네임스페이스
 			 
-			 spec:
+			 spec:							# 리소스마다 다름. 개별적인 리소스마다 정리 필요.
 			 
 			 
+	   다. YAML 작성 가이드 
+	   
+    	   각 리소스마다 yaml 내용은 	 https://kubernetes.io/docs/home/ 검색해서 복사/붙이기 해서 사용함.
+		   
+		    또는
+			
+			kubectl explain pod  # pod에 대한 소개 및 필드(field) 소개
+			
+			kubectl explain pod.spec  # pod의 spec 소개 
+			
+		    kubectl explain pod.spec.containers  # pod의 spec 소개 
+			
+			
+	  다. kubectl 과 yaml 처리
+	  
+	    - 동작방식
+		
+				     	pod.yaml --> JSON -------->
+		   kubectl -------------------------------->  API Server
+	      (pod.yaml)
+	
+------------------------------------------------------------------------------------------------
