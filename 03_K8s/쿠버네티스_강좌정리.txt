@@ -477,6 +477,9 @@
 	
 	   1)Pod 생성 및 수정 
 	    
+		https://kubernetes.io/docs/reference/kubectl/generated/kubectl_apply/
+		
+		
 	    - 개념: YAML 파일 이용해서 리소스 생성/수정하는 명령어.
 		
 	    -  문법: 
@@ -505,8 +508,9 @@
 				kubectl get pods 
 --------------------------------------------------------------
      2) Pod 목록 보기
+	 https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/
 	 
-	- 개념: K8s의 리소스에 목록를 보는 명령어.
+	- 개념: K8s 리소스의 목록를 보는 명령어.
 	
 	- 문법:
 	  kubectl get [(-o|--output=)json|yaml|kyaml|name|go-template|go-template-file|template|templatefile|jsonpath|jsonpath-as-json|jsonpath-file|custom-columns|custom-columns-file|wide] 
@@ -524,3 +528,6 @@
 		 kubectl get pods --namespace backend  # namespace로 만든 pod는 반드시 namespace를 설정해야 정보 확인이 가능.
 		 
 	----------------------------------------------------------------------------------------------------
+	3) Pod 상세 보기 
+	
+	 
