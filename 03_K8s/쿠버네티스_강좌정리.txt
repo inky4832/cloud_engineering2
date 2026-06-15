@@ -192,5 +192,27 @@
 				   apply: 리소스 생성/수정
 				   logs: 로그 확인
 				   exec: 컨테이너 접속/명령어 실행
-				   rollout : 배포관리( 롤배 포함)
+				   rollout : 배포관리( 롤백 포함)
 				   config: 클러스터 접속관리 ( 로컬/클라우드)
+				   
+				   
+		TYPE:  대상이 되는 리소스 종류 ( 대소문자 구별안함,  단수/복수/약어 모두 가능 )
+		
+		     확인방법 : kubectl api-resources
+			 
+			 ex. pod, pods ,po 모두 가능
+			 
+	
+	    NAME: 리소스명 ( 대소문 구별함. name을 지정하지 않으면 모든 리소스 의미)
+		
+		    ex.  kubectl get pods            <=== select * from table;
+                 
+                 kubectl get pods  my-pod    <=== select * from table where ~ ;
+				 
+		flags: 옵션
+		      ex.  -f : 파일 지정.
+			       --all: 모든것 의미. ex.  kubectl delete all --all
+				   -it : 인터렉티스 접속.
+				   ..
+				   
+---------------------------------------------------------------------				   
