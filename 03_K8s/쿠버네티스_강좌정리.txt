@@ -358,4 +358,97 @@
 		   kubectl -------------------------------->  API Server
 	      (pod.yaml)
 	
-------------------------------------------------------------------------------------------------
+------------------------------------------------------------------
+ //////////////////////////////
+ 6장  K8s 주요 객체 1 - Pod
+ //////////////////////////////	
+  
+     1.개념
+	   - K8s 에서 관리(생성/수정/삭제)하는 최소 단위임 (  docker에서는 컨테이너가 최소 단위였음 )
+	   - Pod 안에 하나 이상의 컨테이너를 포함함. ( 일반적으로 하나의 컨테이너를 가짐 )
+	   
+	     https://kubernetes.io/docs/concepts/workloads/pods/
+		 https://kubernetes.io/docs/reference/kubernetes-api/core/pod-v1/
+  
+     2. 특징
+	   a. Pod 안에 하나 이상의 컨테이너를 포함함.
+	   b. Pod 안에 있는 컨테이너들이 네트워크과 볼륨을 공유할 수 있음. (************)
+	   
+			--------------------------
+			  pod 
+			  
+			   --------------
+			    conainter1
+			   --------------
+
+			   --------------
+				container2
+			   --------------
+			   
+			   shared Network
+			   shared Volume
+			----------------------------------
+			
+		c. Pod는 일시적인 ( Ephemeral ) 객체임 (영구적인 객체가 아님 ) 
+		  언제든지 제거될 수 있고 새로운 Pod가 생성될 수 있음.
+			 ex.  Node 장애
+			      Pod 삭제
+				  Deployment 업데이트
+				  Scale Out/In  ( 트래픽에 따른 Pod 갯수 증가/감소 )
+				  
+		  ==> Pod에서 했던 데이터 유지가 기본적으로 불가. ( 영속성을 위해서 Volume 사용함 )		 
+		
+		d. Pod는 직접 생성하기 보다는 다른 리소스를 이용해서 만드는것이 일반적임.
+		   이유는 더 많은 기능이 포함됨.
+			ex. Deployment, StatefulSet, Job, CronJob
+		   
+		   
+		e.  Pod는 lifecycle 가짐.
+		https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+		
+		     pending --> running --> succeeded/failed
+			 
+		  pending: Pod가 생성되었으나 아직 실행되지 않음.
+		  running: 하나이상의 컨테이너가 실행중.
+		  succeeded: 하나이상의 컨테이너가 모두 정상종료.
+		  failed:   하나이상의 컨테이너가 비정상종료.
+		  Unknown:  노드와 통신불가로 인해서 상태확인 불가.
+		  
+		  
+		  확인방법:  kubectl get pods 
+		  
+		f. RestartPolicy 정책이 있음.
+		  - Pod가 제거된 후 재시작과 관련된 정책임.
+		  https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#example-scenarios
+		  
+		  
+		   가. Always : 컨테이너가 종료되면 항상 재사작됨. 
+		   나. OnFailure : 실패했을때만 재시작. 
+		   다. Never   : 재시작하지 않음.
+		   
+		  
+		g. image관련 정책 (  ImagePullPolicy )
+ 
+     https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+	 
+	        - Pod가 실행될 때, 컨테이너 이미지를 언제, 어떤 방식으로 hub에서 가져올지 결정하는 정책임.
+	    
+			- 3가지
+			
+			 가.  Always : 무조건 매번 hub에서 가져옴.( 사실은 아님 )
+						   실제동작은 다음과 같다.
+						   -hub에 이미지 확인을 요청함.
+						    만약에 로컬에 없으면 새롭게 다운로드  되고
+							있으면 캐시 이미지 사용.
+			 
+			 나.  IfNotPresent : Node(local)에 이미지막 없을때만 다운로드  ( 가장 많이 사용 )
+			 
+			 다.  Never  : 항상 로컬에 있는 이미지 사용.
+		
+		
+		
+		
+		
+		
+		
+		
