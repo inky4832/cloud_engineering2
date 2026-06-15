@@ -530,4 +530,63 @@
 	----------------------------------------------------------------------------------------------------
 	3) Pod 상세 보기 
 	
+	 https://kubernetes.io/docs/reference/kubectl/generated/kubectl_describe/
 	 
+	  -개념:  리소스의 상세 정보를 출력하는 명령어. ( docker describe , docker inspect 비슷 )
+	  
+	  - 문법:
+	        kubectl describe (-f FILENAME | TYPE [NAME_PREFIX | -l label] | TYPE/NAME)
+	   
+	   
+	   ex. 
+	        kubectl describe pods   # TYPE
+			
+			kubectl describe pods/nginx  # TYPE/NAME
+			
+			kubectl describe pods -l name=myLabel
+			
+	
+	- 살펴봐야된 항목은 Event 항목임 
+	
+	     a. pending: CPU 나 Memory 자원부족인 경우에 주로 발생됨.
+		 
+		 b. ImagePullBackOff :  컨테이너를 생성할 이미지가 없는 경우.
+							   ex. 이미지명 오타, tag 오타.
+							   
+		 
+		 c. CrashLoopBackOff : 컨테이너가 계속 죽고 살아나는 동작을 반복함.
+							 ex. 어플리케이션 오류
+							     환경변수 설정 오류 
+								 포트 충돌 
+								 
+	---------------------------------------------------------------------
+	4) Pod 삭제 
+	https://kubernetes.io/docs/reference/kubectl/generated/kubectl_delete/
+	
+	  - 개념: 리소스 삭제하는 명령어. 
+	  
+	  -문법 : 
+	    
+		  kubectl delete ([-f FILENAME] | [-k DIRECTORY] | TYPE [(NAME | -l label | --all)])
+		  
+		  --all : 모든 리소스 삭제 , ex.  kubectl delete pods --all
+		  -f 파일명: 파일안에 지정된 리소스를 삭제.
+		  -l key=value: label 기반 삭제.
+		  
+		  
+		ex.
+		   kubectl delete pods 파드명
+		   kubectl delete -f 파일명.yaml
+		   
+		   kubectl delete pod,service baz foo
+		   kubectl delete pods,services -l name=myLabel
+		   
+		   kubectl delete pods --all
+		  
+		  
+============================================================================
+============================================================================
+============================================================================
+============================================================================
+	    
+		  
