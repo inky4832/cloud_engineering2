@@ -446,7 +446,12 @@
 			 다.  Never  : 항상 로컬에 있는 이미지 사용.
 		
 		
-		
+		    - ImagePullPolicy를 생략했을 경우의 기본값.
+			
+			   가. tag가 latest 인 경우 
+				- 기본적으로 Always로 동작됨.
+			   
+			   나. tag가 특정 버전인 경우 ( latest가 아닌 경우 )
 		
 		
 		
