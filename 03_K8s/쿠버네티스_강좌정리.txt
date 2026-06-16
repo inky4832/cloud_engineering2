@@ -1314,3 +1314,96 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 
 			
 	--------------------------------------------------------------------------------------	 
+	실습1> CPU 실습
+	
+	
+	  1) yaml 작성
+	   # pod9.yaml
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			 name: stress-cpu
+			spec:
+			 restartPolicy: Never
+			 containers:
+			  - name: stress
+				image: polinux/stress
+				args: ["stress", "--cpu", "1", "--timeout", "120s", "--verbose"]
+			  #  args: ["stress", "--vm", "1", "--vm-bytes", "300M", "--timeout", "120s", "--verbose"]
+				resources:
+				  requests:
+					cpu: "200m"
+					memory: "64Mi"
+				  limits:
+					cpu: "500m"
+					memory: "128Mi"
+					
+		
+		args: ["stress", "--cpu", "1", "--timeout", "120s", "--verbose"] 의미?
+		==> cpu 1개를 이용해서 엄청나게 많은 연산작업을 수행함.
+		    120초 이후에는 연산작업을 끝냄.
+			
+	  2) pod 생성 
+	  
+	     kubectl apply -f  pod9.yaml
+		 
+	  3) pod 자원 확인 
+
+         kubectl top pods 
+     
+	         NAME         CPU(cores)   MEMORY(bytes)   
+			stress-cpu   500m         0Mi             # CPU가 최대 500m 에서 동작됨. 넘지않음.
+	 
+      4) 삭제	 
+	  
+	    kubectl delete  -f  pod9.yaml
+		
+--------------------------------------------------------------------------------------	 
+	실습2> Memory 실습
+	
+	
+	  1) yaml 작성
+	   # pod9.yaml
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			 name: stress-cpu
+			spec:
+			 restartPolicy: Never
+			 containers:
+			  - name: stress
+				image: polinux/stress
+			 	#args: ["stress", "--cpu", "1", "--timeout", "120s", "--verbose"]
+			    args: ["stress", "--vm", "1", "--vm-bytes", "300M", "--timeout", "120s", "--verbose"]
+				resources:
+				  requests:
+					cpu: "200m"
+					memory: "64Mi"
+				  limits:
+					cpu: "500m"
+					memory: "128Mi"
+					
+		
+		 args: ["stress", "--vm", "1", "--vm-bytes", "300M", "--timeout", "120s", "--verbose"] ?
+		 
+		==> 메모리가 300M 가 필요하도록 동작됨.
+		    120초 이후에는 작업이 끝냄.
+			
+			
+	   2) pod 생성 
+	  
+	     kubectl apply -f  pod9.yaml
+		 
+	  3) pod 자원 확인 
+
+         # kubectl top pods   <== 확인안됨.  error: metrics not available yet 메시지 출력됨.
+			
+		 kubectl get pods	
+		  NAME         READY   STATUS      RESTARTS   AGE
+			stress-cpu   0/1     OOMKilled   0          69s
+
+     
+      4) 삭제	 
+	  
+	    kubectl delete  -f  pod9.yaml
+-----------------------------------------------------------------------------------------		
