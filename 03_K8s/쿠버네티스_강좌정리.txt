@@ -656,8 +656,38 @@
 
 			  kubectl exec -it nginx-pod -- bash  # 직접 접속
 			  root>
-			  
-			  
+--------------------------------------------------------------------
+	8) Label CRUD		 
+https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
+	
+	   - 개념: label을 추가/수정/삭제/조회 하는 명령어
+	   
+	   - 문법:
+             kubectl label [--overwrite] (-f FILENAME | TYPE NAME) KEY_1=VAL_1 ... KEY_N=VAL_N [--resource-version=version]
+   	   
+		    --overwrite: 기존 라벨 덮어쓰기 ( 수정 )
+			--all:  모든 리소스 선택.
+			
+			        ex.  kubectl label pods --all  key=value
+	   
+	        -f, --filename 파일명: 지정된 파일에 라벨 추가 .
+			--list : 라벨 출력
+			key-   : 라벨삭제  ex. app- ,  env-
+			
+	     		
+		 ex. 
+		  
+		    kubectl label pods nginx-pod unhealthy=true  # 추가 
+			 kubectl label pods --all status=unhealthy   # 모든 pod 추가 
+			 
+			kubectl label --overwrite pods nginx-pod status=unhealthy  # 수정
+			
+	         kubectl label pods nginx-pod  app-    # app 라벨
+			 
+			 kubectl label pods  nginx-pod  --list  # 라벨 출력
+			 kubectl get pods --show-labels    #  라벨 출력 
+			 
+			 
 ============================================================================
 ============================================================================
 ============================================================================
