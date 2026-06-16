@@ -1253,3 +1253,41 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 			 CPU 자원 ( I7 12Core )
 			 Memory 자원 ( 32G )
 			-------------------
+			
+	  2. 설정 방법
+	  
+		  spec:
+		    containers:
+			   resources:
+				  requests: # 희망 자원
+					memory: "64Mi"
+					cpu: "250m"
+				  limits:  #  제한 자원
+					memory: "128Mi"
+					cpu: "500m"
+					
+	 3. 단위 
+	 
+	     가. CPU 단위 ( MilliCPU )
+		    - 1000m =  1CPU = 1 Core 
+			
+			  ex. 
+			     100m = 0.1 CPU
+				 250m = 0.25 CPU
+				 500m = 0.5 CPU
+				 1000m =  1 CPU
+		  
+		 나. Memory 단위
+		  
+		   - ki: kibi byte
+		     mi: Mibi byte
+			 Gi: Gibi byte
+			 
+			 
+			 1ki = 1024byte
+			 1Mi = 1024^2 byte
+			 1Gi = 1024^3 byte
+			 
+			 ex. 
+			    1Gi = 1024MB 
+				128Mi = 128MB 
