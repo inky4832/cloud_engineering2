@@ -775,8 +775,9 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
            
            가. metric-server 설치.
            kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+		   kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 		   
-		   나. 로컬 환경 ( Docker Desktop/ / Minikube ) 필수 설정
+		   나. 로컬 환경 ( Docker Desktop/ Minikube ) 필수 설정
 	           
 			kubectl edit deployment metrics-server -n kube-system
 
@@ -800,7 +801,9 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 		   
 		   kubectl top node
 
-
+          사. pod 자원 확인
+		   
+		   kubectl top pod 
 ============================================================================
 ============================================================================
 ============================================================================
