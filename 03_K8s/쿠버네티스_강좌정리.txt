@@ -583,7 +583,32 @@
 		   
 		   kubectl delete pods --all
 		  
-		  
+	==> 이미지는 삭제 안됨. 명시적으로 삭제해야 됨.	 
+
+---------------------------------------------------------------------
+	5) Pod 내의 컨테이너에서 실행되는 어플리케이션(ex. SpringBoot) 로그 출력
+	
+	  https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/
+	  
+	   - 개념: 컨테이너에서 실행되는 어플리케이션(ex. SpringBoot)의 정상로그(표준출력)와 오류로그(표준에러)를 출력하는 명령어.
+	   
+	   - 문법: 
+	
+	          kubectl logs [-f] [-p] (POD | TYPE/NAME) [-c CONTAINER]
+	
+				-f, --follow : 인텔리제이 로그처럼 실시간으로 로그 출력 가능.
+				-c 컨네이너명:  컨테이너명 지정.
+	            --tail n :     마지막 로그중 n개 출력.
+				-l, --selector string : 필터링 
+				--since 시간:  지정된 시간 이후 로그만 출력, ( 단위: 2s, 2m, 2h )
+				--timestamps : 시간 출력
+				-p, --previous : 재시작전 로그 출력.  ex. CrashLoopBackOff 발생시 필수로 봐야됨. 
+		  ex. 
+		      kubectl logs nginx-pod		
+			  kubectl logs nginx-pod	--tail 10
+              kubectl logs nginx-pod    --since=1m
+			  kubectl logs nginx-pod   -c  nginx-container
+			  
 ============================================================================
 ============================================================================
 ============================================================================
