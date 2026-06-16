@@ -527,6 +527,8 @@
 		 
 		 kubectl get pods --namespace backend  # namespace로 만든 pod는 반드시 namespace를 설정해야 정보 확인이 가능.
 		 
+		 kubect get pods --show-labels    # label 출력.
+		 
 	----------------------------------------------------------------------------------------------------
 	3) Pod 상세 보기 
 	
@@ -616,13 +618,14 @@
 			 kubectl logs : 우리가 사용하는 어플리케이션(ex. Springboot, Vuejs ) 로그값 출력.
 			 
 	--------------------------------------------------------------------
-	6) 실행 중 Pod 수정
+	6) 실행 중 리소스(Pod) 수정
 	
 	https://kubernetes.io/docs/reference/kubectl/generated/kubectl_edit/
 	
 	  - 개념: k8s의 실행중인 상태에서 Pod를 직접 수정하는 명령어. 
 	         Pod가 생성된 후에는 대부분이 수정이 안됨.(******************)
 			 극히 일부분의 속성만 변경이 가능 ( ex. label, annotation )
+			 Deployment에서 주로 사용됨.
      
 	  - 문법:
 	  
@@ -782,3 +785,46 @@
 		     kubectl delete pods  pod3
 			 
 			 kubectl delete -f pod3.yaml
+			 
+	-------------------------------------------------------------------------------------
+ 실습4>  Pod 수정  ( label 추가 )
+ 
+        
+        1)  yaml 작성 ( pod4.yaml)
+
+               # pod4.yaml
+
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  name: pod4
+				spec:
+				  containers:
+				  - name: nginx-container
+					image: nginx:1.14.2
+
+		2) pod 생성 및 조회
+		
+		     kubectl apply -f pod4.yaml	
+			 kubectl get pods --show-labels
+			 
+	
+	    3) label 수정 
+		
+			kubectl edit pods pod4
+			
+			명령어를 지정하면 윈도우환경에서는 메모장이 열림. (메모장에서 수정후 저장 및 창닫기 하면 반영이 됨 )
+			
+			name: pod4
+			labels:         <== 추가작업하고 저장 및 파일 닫기
+			  app: nginx
+			  env: dev
+			  
+		4) 다시 pod 조회 
+		
+		  kubectl get pods --show-labels
+		    
+			 NAME   READY   STATUS    RESTARTS   AGE   LABELS
+			pod4   1/1     Running   0          12m   app=nginx,env=dev
+			
+	-----------------------------------------------------------------
