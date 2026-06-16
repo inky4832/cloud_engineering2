@@ -762,6 +762,45 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 	     
 		 kubectl run pod9 --image=nginx --rm
 		
+-------------------------------------------------------------------
+12)  리소스의 CPU와 Memory 조회
+ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_top/
+ 
+      - 개념: K8s의 실시간 CPU/Memory 사용량 조회.
+	  
+	  - 문법:  
+	         kubectl top
+			 
+	  - 사용방법:
+           
+           가. metric-server 설치.
+           kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+		   
+		   나. 로컬 환경 ( Docker Desktop/ / Minikube ) 필수 설정
+	           
+			kubectl edit deployment metrics-server -n kube-system
+
+		   다. 수정
+		   
+		     containers.args 에 아래 추가
+
+		   args:
+		  - --kubelet-insecure-tls
+		  - --kubelet-preferred-address-types=InternalIP
+
+           라. 수정 후 재시작
+			
+			kubectl rollout restart deployment metrics-server -n kube-system
+
+		  마. 정상 동작 확인
+
+			 kubectl get pod -n kube-system
+			 
+		  바. Node 자원 확인
+		   
+		   kubectl top node
+
+
 ============================================================================
 ============================================================================
 ============================================================================
