@@ -1291,3 +1291,26 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 			 ex. 
 			    1Gi = 1024MB 
 				128Mi = 128MB 
+				
+	 4. requests
+	 
+	     -개념:  최소 보장 자원 
+		       ( 최소한 이 정도의 CPU와 Memory가 필요해~ )
+			   
+		 -용도: scheduler가 Pod를 어느 node에 올릴지 결정하는 기준이 됨.
+		       중요한 것은 실제 실행했을 때 필요한 자원이 기준이 아님.
+			   requests에 부합되지 않는 Node에는 배치안됨.
+			   
+			   
+	5. limits
+ 
+       - 개념: 최대 사용 자원 .
+	   - 용도: 리소스(Pod) 보호.
+	          특정 Pod가 자원을 독점하지 못하도록 제한함.
+			  
+	   -동작:
+            CPU가 초과되면 Throttling 발생 ( 최대 상한선에서 사용되도록 강제 )
+            Memory가 초과되면 강제 종료 발생 ( OOMKill 라고 부름 )
+
+			
+	--------------------------------------------------------------------------------------	 
