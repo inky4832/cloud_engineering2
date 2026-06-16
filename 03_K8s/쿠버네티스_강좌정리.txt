@@ -710,7 +710,26 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
 	  - 용도: 개발용/테스트용,  실제는 Service 이용함.
 	  
 	    kubectl port-forward pod/nginx-pod 8080:80
-			
+-------------------------------------------------------------------
+10)  리소스(파일)  교체
+https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
+
+
+	 - 개념: K8s의 기존 리소스(a.yaml)를 새로운 리소스(a_new.yaml)로 교체하는 명령어.
+	 - 특징: 반드시 전체 리소스 spec를 제공해야 됨. 일부가 누락되면 교체안됨.
+	 
+	        숨겨져있는 spec 확인은 다음과 같다.
+			  kubectl get TYPE NAME -o yaml
+	 
+	 
+	
+	 - 문법:
+	     kubectl replace -f FILENAME
+		 
+		 
+	  ex .	   kubectl replace -f a-new.yaml
+	  
+	  
 ============================================================================
 ============================================================================
 ============================================================================
@@ -1038,3 +1057,64 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
 		
 		   http://localhost:8080
 		   
+		5) 삭제 
+
+
+			 kubectl delete -f pod7.yaml	
+	-------------------------------------------------------------------------------
+ 실습8>  리소스 교체
+ 
+       1)  yaml 작성 ( pod8.yaml)
+	   
+	       # pod8.yaml
+
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: pod8
+			  labels:
+				app: nginx
+				env: dev
+			spec:
+			  containers:
+			  - name: nginx-container
+				image: nginx:1.14.2
+				ports:
+				- containerPort: 80
+
+      2) pod 생성 및 조회
+			
+		kubectl apply -f pod8.yaml	
+		kubectl get pods --show-labels 
+		
+		
+	  3) 새로운 yaml 작성 ( pod8-new.yaml)
+	    => 반드시 기존 파일(pod8.yaml)내에 숨겨져 있는 spec까지 새로운 파일에 포함시켜야 됨.
+	  
+	  kubectl get pods pod8 -o yaml > ./pod8-new.yaml
+	  
+	  
+	  4) 새로운 pod8-new.yaml 열고 수정.
+	  
+	       -라벨 수정 
+		       labels:
+				app: nginx-app
+				env: prod
+	  
+	        -이미지 버전 수정
+			
+			 - image: nginx:1.30.2
+	  
+	   
+	   5) yaml 교체
+	   
+	      kubectl replace -f pod8-new.yaml
+		    pod/pod8 replaced
+			
+	   	
+		6)변경사항 확인 
+			
+		  kubectl get pods --show-labels 
+		  kubectl describe pod pod8
+		  
+	----------------------------------------------------------------------------
