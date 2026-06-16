@@ -688,10 +688,11 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
 			 kubectl label pods  nginx-pod  --list  # 라벨 출력
 			 kubectl get pods --show-labels    #  라벨 출력 
 			 
-			 kubectl get pods  -L app, env     # 지정된 라벨 출력
-			 kubectl get pods  -l app=nginx     # 지정된 라벨 출력
+			 kubectl get pods  -L app,env     # 지정된 라벨 출력, 공백없이 지정.
+			 kubectl get pods  -l app=nginx     # 지정된 라벨에 해당하는 Pod 정보 출력
 			 
-			 
+			kubectl get pods  -o yaml   # lable 출력됨 
+			kubectl get pods  -o json   # lable 출력됨 
 			 
 ============================================================================
 ============================================================================
@@ -919,3 +920,45 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
 			  root@pod5:/# ls
 				abc.txt  bin  boot ...
 			  
+			4) 삭제 
+			   kubectl delete  -f pod5.yaml	
+	-----------------------------------------------------------------
+
+ 실습6>  Pod 안 label CRUD 
+ 
+       1)  yaml 작성 ( pod6.yaml)
+ 			  
+			   # pod6.yaml
+
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  name: pod6
+				  labels:
+					app: nginx
+					env: dev
+				spec:
+				  containers:
+				  - name: nginx-container
+					image: nginx:1.14.2
+
+		2) pod 생성 및 조회
+			
+			    kubectl apply -f pod6.yaml	
+			    
+				
+		3) Pod 조회
+		
+		    kubectl get pods 
+			kubectl get pods  -o wide 
+			kubectl get pods  -o yaml   # lable 출력됨 
+			kubectl get pods  -o json   # lable 출력됨 
+			
+			
+	    4)라벨 조회
+		  
+		    kubectl get pods --show-labels
+			kubectl label pods pod6 --list  # 라벨 출력
+
+			kubectl get pods  -L app,env     # 지정된 라벨 출력
+            kubectl get pods  -l app=nginx     # 지정된 라벨 출력
