@@ -693,7 +693,24 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
 			 
 			kubectl get pods  -o yaml   # lable 출력됨 
 			kubectl get pods  -o json   # lable 출력됨 
+
+-------------------------------------------------------------------
+	9)  포트 포워딩
+	 
+	 https://kubernetes.io/docs/reference/kubectl/generated/kubectl_port-forward/
+	 
+	  - 개념: 외부에서 직접 Pod를 접근하지 못함. 
+	         따라서 외부에서 접근할 수 있도록 포트 매핑을 하는 명령어. 
+			 임시적으로 사용됨.
 			 
+	  - 문법:
+	   
+	     kubectl port-forward TYPE/NAME [options] [LOCAL_PORT:]REMOTE_PORT [...[LOCAL_PORT_N:]REMOTE_PORT_N]
+			
+	  - 용도: 개발용/테스트용,  실제는 Service 이용함.
+	  
+	    kubectl port-forward pod/nginx-pod 8080:80
+			
 ============================================================================
 ============================================================================
 ============================================================================
@@ -982,3 +999,42 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
 		kubectl delete  -f pod6.yaml	
 		
 	-------------------------------------------------------------------------------
+ 실습7>  포트 포워딩 
+ 
+       1)  yaml 작성 ( pod7.yaml)
+ 
+           # pod7.yaml
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: pod7
+			  labels:
+				app: nginx
+				env: dev
+			spec:
+			  containers:
+			  - name: nginx-container
+				image: nginx:1.14.2
+				ports:					# docker의 EXPOSE 용도. 문서화 기능. 없어도 무관.
+				- containerPort: 80
+        
+		2) pod 생성 및 조회
+			
+			    kubectl apply -f pod7.yaml	
+				kubectl get pods
+				
+				
+		3) 포트포워드
+
+   		  kubectl port-forward pod/pod7 8080:80
+		  
+		     Forwarding from 127.0.0.1:8080 -> 80
+			 Forwarding from [::1]:8080 -> 80
+			 Handling connection for 8080
+			 
+			 Ctrl+c 실행하면 종료됨.( 휘발성 )
+
+		4) 호스트에서 요청 
+		
+		   http://localhost:8080
+		   
