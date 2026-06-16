@@ -609,6 +609,31 @@
               kubectl logs nginx-pod    --since=1m
 			  kubectl logs nginx-pod   -c  nginx-container
 			  
+		==> 최종적으로 정리
+		 
+		     kubectl get : 상태 확인용.
+			 kubectl describe: 이벤트 확인용
+			 kubectl logs : 우리가 사용하는 어플리케이션(ex. Springboot, Vuejs ) 로그값 출력.
+			 
+	--------------------------------------------------------------------
+	6) 실행 중 Pod 수정
+	
+	https://kubernetes.io/docs/reference/kubectl/generated/kubectl_edit/
+	
+	  - 개념: k8s의 실행중인 상태에서 Pod를 직접 수정하는 명령어. 
+	         Pod가 생성된 후에는 대부분이 수정이 안됨.(******************)
+			 극히 일부분의 속성만 변경이 가능 ( ex. label, annotation )
+     
+	  - 문법:
+	  
+	        kubectl edit (RESOURCE/NAME | -f FILENAME)
+			
+			명령어를 지정하면 윈도우환경에서는 메모장이 열림. (메모장에서 수정후 저장 및 창닫기 하면 반영이 됨 )
+			
+	     ex. 
+		     kubectl edit nginx-pod
+			 kubectl edit -f app.yaml
+			 
 ============================================================================
 ============================================================================
 ============================================================================
