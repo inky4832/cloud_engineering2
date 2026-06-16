@@ -637,6 +637,27 @@
 		     kubectl edit nginx-pod
 			 kubectl edit -f app.yaml
 			 
+ --------------------------------------------------------------------
+	7) pod안 컨테이너에 명령어 실행 (  docker exec  기능 )
+
+	   - 개념: 실행중인 Pod안의 컨테이너에 명령어를 실행하는 명령어.
+	   
+	   - 문법:
+	         
+			 kubectl exec (POD | TYPE/NAME) [-c CONTAINER] [flags] -- COMMAND [args...]
+			 
+		    -c, --container string: 컨테이너명 지정.
+			-i: 표준입력 활성화
+			-t: 모니터 활성화. tty
+			
+   		 ex. 
+			 kubectl exec nginx-pod -- date
+             kubectl exec nginx-pod -- pwd(ls)
+
+			  kubectl exec -it nginx-pod -- bash  # 직접 접속
+			  root>
+			  
+			  
 ============================================================================
 ============================================================================
 ============================================================================
