@@ -1221,7 +1221,35 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 	 
 	      kubectl delete all --all  # 모든 Pod와 Service 삭제됨.
 		  
----------------------------------------------------------------------------------------
-	 
-	 	     
-		
+------------------------------------------------------------------
+ //////////////////////////////
+ 7장   Pod 의 리소스 자원 (CPU/Memory) 관리 
+ //////////////////////////////	
+ 
+  https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits
+
+      1)개념: 여러 Pod들이 Node의 CPU와 Memory를 공유해서 사용함.
+	        그런데 특정 Pod가 과도하게 CPU와 Memory를 사용하면 
+			다른 Pod들이 문제가 발생될 수 있음. 따라서 CPU와 Memory 사용량에 대한 제한을 설정해야 됨.
+			
+	   
+	        ---------------
+			 Node (PC)
+			 
+			   ----
+			   Pod (SpringBoot)  - 희망 자원: 최소한 이 정도의 CPU와 Memory가 필요해~ 
+											 ex. CPU: 1 , Memory: 1Gi
+											 
+								 - 제한 자원: 최대한 사용할 수 있는 CPU와 Memory 크기 지정.
+  								            ex. CPU: 2 , Memory: 3Gi
+										만약 CPU를 초과하면 사용제한함( Throttling 발생)
+										    Memory 초과하면 종료됨 ( OOMKill 됨 )
+			   ----
+			   
+			   ---
+			   Pod (MySql, Redis)
+			   ---
+			  
+			 CPU 자원 ( I7 12Core )
+			 Memory 자원 ( 32G )
+			-------------------
