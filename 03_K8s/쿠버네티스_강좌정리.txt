@@ -848,4 +848,39 @@
 			 NAME   READY   STATUS    RESTARTS   AGE   LABELS
 			pod4   1/1     Running   0          12m   app=nginx,env=dev
 			
+	    6) 삭제
+		
+            kubectl delete  -f pod4.yaml	
+		
 	-----------------------------------------------------------------
+
+ 실습5>  Pod 안 컨테이너에 명령어 추가.
+ 
+       
+           1)  yaml 작성 ( pod5.yaml)
+		   
+		      # pod5.yaml
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  name: pod5
+				spec:
+				  containers:
+				  - name: nginx-container
+					image: nginx:1.14.2
+					command: ["sh", "-c", "touch abc.txt && nginx -g 'daemon off;'"]
+		
+			2) pod 생성 및 조회
+			
+			    kubectl apply -f pod5.yaml	
+			    kubectl get pods 
+			 
+			 
+			3) 컨테이너에 접속
+			
+			  kubectl exec pod5 -- ls  # 접속없이 명령어만 실행
+			  
+			  kubectl exec -it  pod5 -- bash    # 직접 접속
+			  root@pod5:/# ls
+				abc.txt  bin  boot ...
+			  
