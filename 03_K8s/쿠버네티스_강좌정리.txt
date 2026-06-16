@@ -755,7 +755,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 	  ex. 
 	   
 	     kubectl run pod9 --image=nginx
-		 kubectl run pod9 --image=nginx --dry-run=client
+		 kubectl run pod9 --image=nginx --dry-run=client  -o yaml  # 실행되지 않고 yaml로 출력됨.
 		 kubectl run pod9 --image=nginx --restart=Never  --port=5701
 		 kubectl run pod9 --image=nginx --env="DNS_DOMAIN=cluster" 
 		 kubectl run -it pod9 --image=nginx -- bash
@@ -1149,4 +1149,37 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 		  kubectl get pods --show-labels 
 		  kubectl describe pod pod8
 		  
-	----------------------------------------------------------------------------
+		 7)  삭제
+
+          kubectl delete  -f pod8-new.yaml		 
+		-------------------------------------------------------------------------------
+ 실습9>  빠른 Pod 생성
+ 
+ 
+         kubectl run pod9 --image=nginx:1.14.2
+	 
+		 kubectl run pod10 --image=nginx:1.14.2 --dry-run=client -o yaml
+		 kubectl run pod11 --image=nginx:1.14.2 --restart=Never  --port=5701
+         kubectl run pod12 --image=nginx:1.14.2 --env="DNS_DOMAIN=cluster" 
+		 kubectl run -it pod13 --image=nginx:1.14.2 -- bash
+		 
+		 
+		 kubectl run -it pod14 --image=nginx:1.14.2 --rm -- bash
+		  root> exit  # exit로 빠져 나올때 pod 삭제됨.
+		 
+		 
+	     kubectl get pods
+	 
+	 
+		 # 삭제
+		 
+		  kubectl delete pods  pod9
+		  kubectl delete pods  pod11
+	 
+	 
+	      kubectl delete all --all  # 모든 Pod와 Service 삭제됨.
+		  
+---------------------------------------------------------------------------------------
+	 
+	 	     
+		
