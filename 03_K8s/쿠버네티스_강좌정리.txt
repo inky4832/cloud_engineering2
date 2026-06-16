@@ -729,7 +729,39 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 		 
 	  ex .	   kubectl replace -f a-new.yaml
 	  
+-------------------------------------------------------------------
+11)   빠른 pod 생성
+ 
+   https://kubernetes.io/docs/reference/kubectl/generated/kubectl_run/
+   
+   -개념:  빠른 방법으로 pod 생성하는 명령어.
+          실무에서는 yaml 이용.
+		  
+   - 문법:
+        kubectl run NAME --image=image [--env="key=value"] [--port=port]
+    		[--dry-run=server|client] [--overrides=inline-json] [--command] -- [COMMAND] [args...]
 	  
+		 --image : 컨테이너로 만들 base 이미지명.
+		 --env   : 환경변수 
+		 --port  : 문서화 기능 
+		 --dry-run : 실제 생성하지 않고 YAML 확인가능.
+	    --command : 명령어 지정
+		-- 명령어:  컨테이너에서 실행할 명령어 지정
+		--image-pull-policy:  ImagePullPolicy 정책.  Always, IfNotPresent, NEVER 
+		--restart :  restartPolicy 정책.   Always, OnFailure, Never
+		-it  : 표준입력과 모니터 활성화
+		--rm : 종료시 자동삭제
+		
+	  ex. 
+	   
+	     kubectl run pod9 --image=nginx
+		 kubectl run pod9 --image=nginx --dry-run=client
+		 kubectl run pod9 --image=nginx --restart=Never  --port=5701
+		 kubectl run pod9 --image=nginx --env="DNS_DOMAIN=cluster" 
+		 kubectl run -it pod9 --image=nginx -- bash
+	     
+		 kubectl run pod9 --image=nginx --rm
+		
 ============================================================================
 ============================================================================
 ============================================================================
