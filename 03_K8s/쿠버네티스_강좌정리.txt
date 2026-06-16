@@ -683,9 +683,14 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/
 			kubectl label --overwrite pods nginx-pod status=unhealthy  # 수정
 			
 	         kubectl label pods nginx-pod  app-    # app 라벨
-			 
+				
+			 # 라벨 조회 
 			 kubectl label pods  nginx-pod  --list  # 라벨 출력
 			 kubectl get pods --show-labels    #  라벨 출력 
+			 
+			 kubectl get pods  -L app, env     # 지정된 라벨 출력
+			 kubectl get pods  -l app=nginx     # 지정된 라벨 출력
+			 
 			 
 			 
 ============================================================================
