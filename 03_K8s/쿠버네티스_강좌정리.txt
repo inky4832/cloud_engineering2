@@ -2011,7 +2011,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		 kubectl rollout resume      : 중지된 배포 재개
 
 -------------------------------------------------------------------------------------------------
-   실습1> deployment 생성 및 조회(상세)
+   실습1> deployment 생성 및 조회(상세) 및 배포상태/이력 조회
    
          1) yaml 작성 
 		 https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment 참조.
@@ -2080,4 +2080,49 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				REVISION  CHANGE-CAUSE
 				1         <none>
 				
-	   ----------------------------------------------------------------------
+	------------------------------------------------------------------------------------------------
+   실습2> 자동 복구 실습
+   
+    
+	    1) 특정 pod 삭제 
+		   
+			> kubectl get pods 
+			 
+			 NAME                          READY   STATUS    RESTARTS   AGE
+			deploy-pod-6b64db89dc-57zch   1/1     Running   0          25m
+			deploy-pod-6b64db89dc-5gnrs   1/1     Running   0          25m
+			deploy-pod-6b64db89dc-vcfjf   1/1     Running   0          25m
+			rs-pod-4kfmg                  1/1     Running   0          170m
+			
+			> kubectl delete pod deploy-pod-6b64db89dc-57zch
+			
+		2) 다시 확인 
+		
+		    > kubectl get pods
+			
+			    NAME                          READY   STATUS    RESTARTS   AGE
+				deploy-pod-6b64db89dc-5gnrs   1/1     Running   0          26m
+				deploy-pod-6b64db89dc-vcfjf   1/1     Running   0          26m
+				deploy-pod-6b64db89dc-ztnwm   1/1     Running   0          5s    # 새롭게 생성된 Pod
+				rs-pod-4kfmg                  1/1     Running   0          172m
+				
+----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+   실습3 >  스케일링 
+   
+   
+         1.  스케일 증가/감소 ( 명령형 방식 )
+		   
+		   kubectl scale deployment/deploy-pod  --replicas=5
+		   kubectl get pods 
+		   
+		   
+		   
+		  2. yaml 변경 ( 선언형 방식 )
+		 
+		     replicas: 10 변경 
+			 
+			kubectl apply -f  deployment1.yaml # 생성/수정 
+			kubectl get pods 
+			
+------------------------------------------------------------------------------------------------
