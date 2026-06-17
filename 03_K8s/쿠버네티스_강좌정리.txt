@@ -2126,3 +2126,21 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			kubectl get pods 
 			
 ------------------------------------------------------------------------------------------------
+  실습 4> 배포이력 추가  ( 이미지 변경해서 배포 이력 추가 )
+   
+        구버전 : nginx:1.14.2
+        신버전:  nginx:1.31.1 
+		
+		
+		 1) 이미지 변경 작업.
+		 
+		 https://kubernetes.io/docs/reference/kubectl/generated/kubectl_set/kubectl_set_image/ 참조.
+		 
+		   문법:
+		    kubectl set image (-f FILENAME | TYPE NAME) CONTAINER_NAME_1=CONTAINER_IMAGE_1 ... CONTAINER_NAME_N=CONTAINER_IMAGE_N
+			
+			
+			kubectl set image deployment deploy-pod  nginx-container=nginx:1.31.1
+			
+  
+  
