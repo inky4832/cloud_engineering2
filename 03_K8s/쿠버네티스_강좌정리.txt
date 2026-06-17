@@ -1586,3 +1586,18 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 				  
 				  kubectl delete namespaces dev   # dev 네임스페이스안에 모든 리소스도 같이 삭제됨. 
 	--------------------------------------------------------------------------------------------
+ //////////////////////////////
+ 6장  K8s 주요 객체 3 - ReplicaSet
+ //////////////////////////////
+ 
+     https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/ 
+	 https://kubernetes.io/docs/reference/kubernetes-api/apps/replica-set-v1/
+ 
+    1. 개념
+     - 지정한 갯수만큼 Pod를 생성해주는 리소스.
+	   만약에 하나의 pod가 장애로 인해서 종료되면, current state와 desired state 비교해서 
+	   desired state 상태로 만듬.
+	 - ReplicaSet 삭제하면 관련된 Pod 들도 같이 삭제됨. 
+	 
+	2. 목적
+      - pod 갯수 유지 ( desired state 유지 )
