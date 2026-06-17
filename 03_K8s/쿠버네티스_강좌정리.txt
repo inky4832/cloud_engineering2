@@ -1869,7 +1869,11 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 		   
 		 2) 2가지 방법 
 		 
-		  가. 롤링 업데이트 방식 
+		  가. 롤링 업데이트 방식 (Rolling-update)
+		      - 방법: 구버전 Pod를 삭제, 신버전 Pod를 생성하면서 업데이트 하는 방식.
+			  - 장버: 서비스 중단 없음.(무중단 배포 가능)
+			    단점: 배포 시간이 길어짐.
+			         버전들이 혼재함.
 			  
 			   -샘플:
 					 replica: 10
