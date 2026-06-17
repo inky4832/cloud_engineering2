@@ -1473,12 +1473,31 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 	 
 			  kubectl apply -f  namespace.yaml
 	 
+	  2) Namespace 보기
+	  
+	       kubectl get namespaces
+		   kubectl get ns
 	 
+	  3) Namespace 자세히 보기
+	  
+	    
+		   kubectl describe namespaces
+		   kubectl describe namespaces  my-namespace
 	 
-	 
-	 
-	 
-	 
-	 
-	 
+	  4) Namespace 삭제
+			
+	     kubectl delete namespaces  my-namespace
+		 kubectl delete ns  my-namespace
+
+     ----------------------------------------------
+	  5) Namespace 별 리소스 조회 
+
+	     kubectl get pods                  # default 네임스페이스에서 찾음
+		 kubectl get pods -n my-namespace  # my-namespace 네임스페이스에서 찾음
+				 
+		 kubectl get pods -A               # 모든 네임스페이스에서 찾음
+		 kubectl get pods --all-namespaces # 모든 네임스페이스에서 찾음
+
+------------------------------------------------------------------------------------
+   실습1> 	 
 	 
