@@ -1756,4 +1756,66 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 			kubectl apply -f replicaset-pod.yaml # 생성/수정 
 			kubectl get pods 
 			
------------------------------------------------------------------------------				
+
+------------------------------------------------------------------------------------------------
+	  실습4>   현재 Pod를 관리하는 replicaSet 정보보기 
+	  
+	        kubectl get pods  rs-pod-4kfmg -o yaml 
+			
+			    ...
+				ownerReferences:
+			  - apiVersion: apps/v1
+				blockOwnerDeletion: true
+				controller: true
+				kind: ReplicaSet
+				name: rs-pod
+				uid: 99ef97a3-bff8-495d-bb54-f7f0991b61da
+				
+---------------------------------------------------------------
+    실습 5> ReplicaSet으로  특정 pod 제외.
+	
+	  https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/#isolating-pods-from-a-replicaset
+	  
+	  
+	   개념: ReplicaSet이 관리하는 Pod로부터 제외시키는 방법.
+	   용도: 제외시켜서 디버깅용으로 활용 가능. 
+	   방법: 실행중인 Pod의 라벨을 변경하면 제외됨.
+	   
+	   
+	   
+	    1) label 수정
+		
+		    kubectl get pods
+				NAME           READY   STATUS    RESTARTS   AGE
+				rs-pod-4kfmg   1/1     Running   0          17m
+				rs-pod-qpj8b   1/1     Running   0          17m
+				rs-pod-zc2vb   1/1     Running   0          10m
+		
+		    kubectl label pods rs-pod-4kfmg	 app=web2 --overwrite   # app 라벨 수정 
+	  
+	    2) 확인 
+		
+		    kubectl get pods  --show-labels
+			   NAME           READY   STATUS    RESTARTS   AGE   LABELS
+				rs-pod-4kfmg   1/1     Running   0          46m   app=web2   # replicaSet이 관리안함.
+				rs-pod-6gd88   1/1     Running   0          8s    app=web
+				rs-pod-qpj8b   1/1     Running   0          46m   app=web
+				rs-pod-zc2vb   1/1     Running   0          39m   app=web
+				
+				
+	    3) 모두 삭제. 
+
+		   kubectl delete rs --all   # ReplicaSet 삭제하면 관리하고 있는 pod도 모두 삭제됨 .
+		   
+		   kubectl delete rs rs-pod	--cascade=orphan  # ReplicaSet 삭제하면 관리하고 있는 pod 삭제 안됨 . 			
+				
+--------------------------------------------------------------------------------------------------------------	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
