@@ -804,6 +804,19 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
           사. pod 자원 확인
 		   
 		   kubectl top pod 
+		   
+--------------------------------
+13)  이벤트 조회 
+
+https://kubernetes.io/docs/reference/kubectl/generated/kubectl_events/
+
+   문법:
+       kubectl events [(-o|--output=)json|yaml|kyaml|name|go-template|go-template-file|template|templatefile|jsonpath|jsonpath-as-json|jsonpath-file] [--for TYPE/NAME] [--watch] [--types=Normal,Warning]
+	   
+	ex.
+	
+       kubectl events
+ 
 ============================================================================
 ============================================================================
 ============================================================================
@@ -2148,6 +2161,8 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
   
          2)  배포 상태 확인 ( RollingUpdate 이력 확인 가능 )
 		 
+		   kubectl events # RollingUpdate 이력 더 자세하게 확인 가능
+			
 		   kubectl rollout status deployment/deploy-pod
 				
 				  Waiting for deployment "deploy-pod" rollout to finish: 1 out of 3 new replicas have been updated...
