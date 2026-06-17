@@ -1632,4 +1632,120 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 				  - name: php-redis   # 컨테이너이름
 					image: us-docker.pkg.dev/google-samples/containers/gke/gb-frontend:v5 # Pod의 base이미지명
 
-	
+	    ==> selector.matchLabels의 값과 template.metadata의 값과 반드시 일치해야 된다. (*******************)
+	------------------------------------------------------------------------------------------------
+	  실습1>  replicaSet 생성/조회 
+	  
+	     1. replicaSet yaml 작성
+		   # replicaset-pod.yaml
+				apiVersion: apps/v1
+				kind: ReplicaSet
+				metadata:
+				  name: rs-pod
+
+				spec:
+				  # modify replicas according to your case
+				  replicas: 3
+				  selector:
+					matchLabels:
+					  app: web
+
+				  template:
+					metadata:
+					  labels:
+						app: web
+					spec:
+					  containers:
+					  - name: nginx-container
+						image: nginx:1.14.2
+
+	  
+	    2) 생성하고 pod 확인 
+
+			kubectl apply -f replicaset-pod.yaml
+			kubectl get pods 
+			
+			   ==> name값은 ReplicaSet의 이름(rs-pod)을 prefix로 사용함.
+			   
+			  NAME           READY   STATUS    RESTARTS   AGE
+				rs-pod-7v96d   1/1     Running   0          7s
+				rs-pod-tnfvx   1/1     Running   0          7s
+				rs-pod-xs5dz   1/1     Running   0          7s
+			
+       3) replicaset 조회
+				
+		     kubectl get replicasets
+			 kubectl get replicaset
+		     kubectl get rs
+
+              NAME     DESIRED   CURRENT   READY   AGE
+				rs-pod   3         3         3       4m10s
+
+      4) replicaset 상세 조회
+	  
+	      kubectl describe  rs rs-pod
+		   
+		      ..
+			  # 다음 내용이 제일 중요.
+			  Replicas:     3 current / 3 desired
+			 Pods Status:  3 Running / 0 Waiting / 0 Succeeded / 0 Failed
+			 
+-------------------------------------------------------------------------------------------  
+------------------------------------------------------------------------------------------------
+	  실습2>  장애 후에 replicaSet 자동 복구 
+	  
+	  
+	     1.  인위적으로 실행중인 Pod 하나 삭제.
+		  
+		      > kubectl get pods
+				NAME           READY   STATUS    RESTARTS   AGE
+				rs-pod-7v96d   1/1     Running   0          10m
+				rs-pod-tnfvx   1/1     Running   0          10m
+				rs-pod-xs5dz   1/1     Running   0          10m
+				
+			 > kubectl delete pods  rs-pod-7v96d   #rs-pod-7v96d 이름의 pod 삭제..
+			 
+			 
+			 > kubectl get pods  # 다시 확인 
+			   NAME           READY   STATUS    RESTARTS   AGE
+			rs-pod-gpk6z   1/1     Running   0          5s  #  새롭게 만든 pod 임
+			rs-pod-tnfvx   1/1     Running   0          12m
+			rs-pod-xs5dz   1/1     Running   0          12m
+	------------------------------------------------------------------------------------------------
+	  실습3>   replicaSet 스케일링 변경 .
+	   
+	     https://kubernetes.io/docs/reference/kubectl/generated/kubectl_scale/
+		 
+		   문법:
+		    
+			kubectl scale [--resource-version=version] [--current-replicas=count] 
+			         --replicas=COUNT (-f FILENAME | TYPE NAME)
+					 
+		
+		  ex. 
+		  
+		     kubectl scale -f foo.yaml  --replicas=5
+			 kubectl scale rs/rs-pod   --replicas=5
+			 
+		 -------------------------------------------------------	
+		 
+		   1.  스케일 증가 
+		   
+		   kubectl scale rs/rs-pod   --replicas=5
+		   kubectl get pods
+			NAME           READY   STATUS    RESTARTS   AGE
+			rs-pod-46dv9   1/1     Running   0          2s
+			rs-pod-4b62k   1/1     Running   0          63s
+			rs-pod-4kfmg   1/1     Running   0          63s
+			rs-pod-qpj8b   1/1     Running   0          63s
+			rs-pod-wxjf2   1/1     Running   0          2s
+			
+		
+		  2. 스케일 감소 
+		      kubectl scale rs/rs-pod   --replicas=2
+		      kubectl get pods
+			    NAME           READY   STATUS    RESTARTS   AGE
+				rs-pod-4kfmg   1/1     Running   0          2m2s
+				rs-pod-qpj8b   1/1     Running   0          2m2s
+				
+-----------------------------------------------------------------------------				
