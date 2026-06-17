@@ -1870,10 +1870,98 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 		 2) 2가지 방법 
 		 
 		  가. 롤링 업데이트 방식 
+			  
+			   -샘플:
+					 replica: 10
+					 
 		             strategy:
 						rollingUpdate:
-						  maxSurge: 0
-						  maxUnavailable: 1
+						  maxSurge: 3
+						  maxUnavailable: 2
 						type: RollingUpdate
+						
+			https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#proportional-scaling	참조.
+			
+			 - maxUnavailable : 업데이트 중에 삭제할 수 있는  pod 비율 
+			 - maxSurge : replicaset 보다 추가로 더 만들 수 있는 pod 비율 
+			
+			--------------------------------------------------
+			   replica: 10
+			   maxSurge: 3
+			   maxUnavailable: 2
+			
+			step1: 새로운 Pod 3개 생성
+			
+					 구버전: 10
+					 신버전: 3
+					 
+					 총: 13개 (maxSurge)
+			
+			step2:  구버전 2개 삭제가됨
+			      
+				     구버전:8
+					 신버전:3
+					 
+					 총: 11개 (maxUnavailable)
+			
+			step3: 새로운 Pod 2개 생성
+			
+					 구버전:8
+					 신버전:5
+					 
+					 총: 13개 (maxSurge)
+					 
+			step4:  구버전 2개 삭제가됨		 
+					 
+					 구버전:6
+					 신버전:5
+					 
+					 총: 11개 (maxSurge)
+					 
+			step5: 새로운 Pod 2개 생성		 
+					 
+					  
+					 구버전:6
+					 신버전:7
+					 
+					 총: 13개 (maxSurge)
+					 
+			step6:  구버전 2개 삭제가됨		 
+					 		 
+					 구버전:4
+					 신버전:7
+					 
+					 총: 11개 (maxSurge)
+					 
+					 
+			step7: 새로운 Pod 2개 생성	
+                    
+					 구버전:4
+					 신버전:9
+					 
+					 총: 13개 (maxSurge)	
+
+			step8:  구버전 2개 삭제가됨	
+
+                     구버전:2
+					 신버전:9
+					 
+					 총: 11개 (maxSurge)		
+
+            step9: 새로운 Pod 1개 생성 # 최종 신버전 갯수가 10가 필요하기 때문에 1개만 새로 생성됨 .
+
+					  구버전:2
+					 신버전:10
+					 
+					 총: 12개 (maxSurge)	  
+					 
+			step10:  구버전 2개 삭제가됨		
+
+                     구버전:0
+					 신버전:10
+					 
+					 총: 10개 (maxSurge)	  			
+			---------------------------------------------------
+			 
 		  
 		  나. 재생성 방식 
