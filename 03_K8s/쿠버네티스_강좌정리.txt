@@ -1729,7 +1729,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 			 
 		 -------------------------------------------------------	
 		 
-		   1.  스케일 증가 
+		   1.  스케일 증가 ( 명령형 방식 )
 		   
 		   kubectl scale rs/rs-pod   --replicas=5
 		   kubectl get pods
@@ -1741,11 +1741,19 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 			rs-pod-wxjf2   1/1     Running   0          2s
 			
 		
-		  2. 스케일 감소 
+		  2. 스케일 감소  ( 명령형 방식 )
 		      kubectl scale rs/rs-pod   --replicas=2
 		      kubectl get pods
 			    NAME           READY   STATUS    RESTARTS   AGE
 				rs-pod-4kfmg   1/1     Running   0          2m2s
 				rs-pod-qpj8b   1/1     Running   0          2m2s
 				
+				
+		 3. yaml 변경 ( 선언형 방식 )
+		 
+		     replicas: 10 변경 
+			 
+			kubectl apply -f replicaset-pod.yaml # 생성/수정 
+			kubectl get pods 
+			
 -----------------------------------------------------------------------------				
