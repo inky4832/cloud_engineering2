@@ -2178,7 +2178,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 					
 		 3) 배포 이력 조회 
 		   
-		    kubectl rollout history deployment/deploy-pod
+		    > kubectl rollout history deployment/deploy-pod
 			
 			   deployment.apps/deploy-pod 
 				REVISION  CHANGE-CAUSE
@@ -2188,5 +2188,16 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				# 이미지 확인 
 			kubectl describe deploy deploy-pod
 			       Image:         nginx:1.31.1
-			   
+			 
+
+			 
+			>  kubectl rollout history deployment/deploy-pod   --revision=1
+			
+					..
+      					Image:      nginx:1.14.2
+
+            >  kubectl rollout history deployment/deploy-pod   --revision=2
+			
+					..
+					  Image:      nginx:1.31.1
 	----------------------------------------------------------------------------------
