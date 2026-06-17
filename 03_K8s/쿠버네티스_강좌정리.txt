@@ -1859,4 +1859,21 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 				ports:
 				- containerPort: 80
 				
- ==> selector.matchLabels의 값과 template.metadata의 값과 반드시 일치해야 된다. (*******************)
+          ==> selector.matchLabels의 값과 template.metadata의 값과 반드시 일치해야 된다. (*******************)
+		  
+	-----------------------------------------------------------------------
+	  4. Pod 교체 전략 
+	   
+	     1) 개념 
+		   - K8s의 Pod를 교체하는 방법의미. 
+		   
+		 2) 2가지 방법 
+		 
+		  가. 롤링 업데이트 방식 
+		             strategy:
+						rollingUpdate:
+						  maxSurge: 0
+						  maxUnavailable: 1
+						type: RollingUpdate
+		  
+		  나. 재생성 방식 
