@@ -1810,12 +1810,53 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 		   kubectl delete rs rs-pod	--cascade=orphan  # ReplicaSet 삭제하면 관리하고 있는 pod 삭제 안됨 . 			
 				
 --------------------------------------------------------------------------------------------------------------	  
+//////////////////////////////
+ 6장  K8s 주요 객체 4 - Deployment (**************)
+ //////////////////////////////	  
 	  
+	  https://kubernetes.io/docs/concepts/workloads/controllers/deployment
 	  
+	  1. 개념 
+	  - Pod 와 ReplicaSet 기능을 포함 및 추가 기능을 지원하는 리소스.
 	  
+	  2. 추가 기능 
 	  
+	    - pod 자동복구
+		- 버전관리 지원
+		- 롤백 (특정 버전으로 돌아갈 수 있음)
+		- 무중단 업데이트 가능 (롤링 업데이트(Rolling-update)라고 부름)
+		  ex. 기본 Pod를 일부분 삭제하고 , 새로운 Pod를 일부분 생성하면서
+		      전체를 새로운 Pod로 업데이트하는 방법임.
+			  따라서 서비스 중단이 없음.
+	    - scaling 가능.
 	  
+	  3. 기본 Deployment yaml 
 	  
+	  https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
 	  
-	  
-	  
+	    apiVersion: apps/v1
+		kind: Deployment
+		metadata:
+		  name: nginx-deployment   # Deployment이름
+		  labels:				  # 라벨 이름
+			app: nginx
+			
+		spec:
+		  replicas: 3
+		  selector:
+			matchLabels:
+			  app: nginx     #  (*********************)
+			  
+			  
+		  template:             # Deployment 내의 ReplicaSet이 관리한 Pod 정보
+			metadata:
+			  labels:
+				app: nginx    #  (*********************)
+			spec:
+			  containers:
+			  - name: nginx
+				image: nginx:1.14.2
+				ports:
+				- containerPort: 80
+				
+ ==> selector.matchLabels의 값과 template.metadata의 값과 반드시 일치해야 된다. (*******************)
