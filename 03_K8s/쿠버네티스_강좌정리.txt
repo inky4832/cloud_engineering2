@@ -1398,7 +1398,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 
          # kubectl top pods   <== 확인안됨.  error: metrics not available yet 메시지 출력됨.
 			
-		 kubectl get pods	
+		 kubectl get pods      <== 확인됨. 
 		  NAME         READY   STATUS      RESTARTS   AGE
 			stress-cpu   0/1     OOMKilled   0          69s
 
@@ -1406,4 +1406,38 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
       4) 삭제	 
 	  
 	    kubectl delete  -f  pod9.yaml
------------------------------------------------------------------------------------------		
+------------------------------------------------------------------
+ //////////////////////////////
+ 6장  K8s 주요 객체 2 - Namespace
+ //////////////////////////////
+
+      https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+      https://kubernetes.io/docs/reference/kubernetes-api/core/namespace-v1/
+	  
+	  1.개념
+	   - 하나의 K8s의 클러스터를 논리적으로 여러개 분리해서 관리하는 기능임.
+	  
+	  2. 목적
+	   - K8s의 클러스터에 있는 여러 리소스들을 용이하게 관리하기 위함.
+	    (자바의 패키지 기능과 비슷)
+		
+		
+	 3. 특징 
+	   - 하나의 리소스는 하나의 Namespace에 속함.
+	   - 같은 Namespace 안에서는 리소스 이름이 유일.
+	     Namespace가 다르면 리소드 이름이 중복 가능.
+	   - default Namespace가 제공됨.	 
+	   - 모든 리소스가 Namespace를 사용할 수 있는 것은 아니다.
+		  Namespace 적용가능한 리소스: Pod, Serivce,Deployment,ReplicaSet, ConfigMap, Secret,
+                            		  PVC(PersistentVolumeClaim)
+									,StatefulSet
+									Job, CronJob, Ingress
+									
+		  Namespace 적용 불가능한 리소스(클러스터 단위): Node, Namespace, PV(PersistentVolume)
+		 
+		==> 확인방법:  kubectl api-resources 에서 NAMESPACED 항목을 확인하면 됨.
+		
+	  - Namespace를 삭제하면 그 안에 있는 리소스(pod, service 등)들도 같이 삭제가됨.(*******************)
+	  - 리소스를 조회할 때, 반드시 Namespace 명을 지정해야 됨. 
+	     ex. kubectl get pods                 # default Namespace에서 찾음.
+		     kubectl get pods -n 네임스페이스명 #  지정된 Namespace에서 찾음.
