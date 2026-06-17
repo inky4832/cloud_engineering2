@@ -1441,3 +1441,44 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_replace/
 	  - 리소스를 조회할 때, 반드시 Namespace 명을 지정해야 됨. 
 	     ex. kubectl get pods                 # default Namespace에서 찾음.
 		     kubectl get pods -n 네임스페이스명 #  지정된 Namespace에서 찾음.
+			 
+	  - 자동으로 제공되는 Namespace가 있음.
+	    ex. kube-node-lease, kube-public , kube-system
+	    
+	 4. Namespace 관려 주요 명령어.
+	 
+	   1) Namespace 생성 
+	   
+	      가. 명령형 
+		  https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_namespace/
+		  
+		    - 문법: kubectl create namespace NAME [--dry-run=server|client|none]
+			  
+			ex. 
+			     kubectl create namespace my-namespace
+				 
+				 kubectl create namespace my-namespace   --dry-run=client -o yaml
+		  
+		  
+		  
+		  나. 선언형 ( yaml + kubectl apply )
+	     https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
+	 
+				# namespace.yaml
+				
+				apiVersion: v1
+				kind: Namespace
+				metadata:
+				  name: my-namespace
+	 
+			  kubectl apply -f  namespace.yaml
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
