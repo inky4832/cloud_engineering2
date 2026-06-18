@@ -2471,4 +2471,62 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				<head>
 				<title>Welcome to nginx!</title>
 				
-		----------------------------------------------------------------------------------
+		5) 종료
+		
+		     kubectl delete pods nginx-test
+			 kubectl delete pods ubuntu-test
+			 
+----------------------------------------------
+	 실습3> 같은 Pod안의 컨테이너간 통신방법 (localhost:포트번호  이용 )
+	 
+	       Pod ( 10.1.1.10)                  
+		  --------------------
+		     Container-A ( 10.1.1.10:3306)    # 1) 같은 Pod안의 컨테이너간 통신방법: localhost:포트번호 
+			 
+			 Container-B ( 10.1.1.10:80)
+			 
+		   shared Network
+		   shared Volume 
+		  --------------------	  
+		  
+		 1) yaml 작성 
+		 
+		   # multi-container-pod.yaml
+
+		# multi-container-pod.yaml
+
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: multi-container-pod
+			spec:
+			  containers:
+			  - name: ubuntu-container
+				image: ubuntu
+				command: ['sh', '-c', 'apt update && apt full-upgrade -y && apt install curl  -y  && sleep 3600'] 
+
+			  - name: nginx-container
+				image: nginx:1.14.2
+
+
+		
+		 2) 생성 
+		 
+		   kubectl apply -f  multi-container-pod.yaml
+		   
+		   kubectl get pods -o wide
+             NAME                  READY   STATUS    RESTARTS   AGE   IP           NODE             NOMINATED NODE   READINESS GATES
+			multi-container-pod   2/2     Running   0          10s   10.1.1.159   docker-desktop   <none>           <none>
+    
+	   3) ubuntu에서 nginx로 요청하기 
+	   
+	       kubectl exec -it multi-container-pod -- bash
+		   Defaulted container "ubuntu-container" out of: ubuntu-container, nginx-container
+
+		  # 문법
+		   kubectl exec (POD | TYPE/NAME) [-c CONTAINER] [flags] 
+		   kubectl exec -it multi-container-pod -c  ubuntu-container  -- bash
+
+		   root@multi-container-pod:/# curl http://localhost:80 
+		   
+		   
