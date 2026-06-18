@@ -2422,4 +2422,12 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		  --------------------
 		  
 	  -------------------------------
+	 -------------------------------------------------------------------------------
+	  실습1> Pod안에서 외부 인터넷 통신 실습  ( 기본적으로 인터넷 통신이 가능함 )
 	  
+	      1) ubuntu pod 작성 ( 빠른 Pod 작성방법 이용)
+		  
+		  kubectl run -it ubuntu-test --image=ubuntu -- bash
+		   root> apt update && apt full-upgrade -y
+		   root> apt install curl  
+		   root> curl https://www.google.com
