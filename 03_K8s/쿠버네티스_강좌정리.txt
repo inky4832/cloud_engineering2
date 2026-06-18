@@ -2528,7 +2528,10 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		   kubectl exec -it multi-container-pod -c  ubuntu-container  -- bash
 
 		   root@multi-container-pod:/# curl http://localhost:80 
-		   
+	
+   4) 삭제 	
+   
+            kubectl delete  -f  multi-container-pod.yaml
 		-------------------------------------
 		
      실습4>  외부에서 Pod 접근 ( 기본적으로 접근 불가, 추가 작업이 필요 )
@@ -2625,9 +2628,57 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				- port: 80				# Service 의 port 번호 
 				  targetPort: 9376      # Service가 접근하는 Pod의 port 번호 
 			  
-			  type: ClusterIP
+			  type: ClusterIP           # 클러스터 내부에서만 Service 호출 가능. 
 			  
+		--------------------------------------------------------
+        실습1:  
+									  port:80                   targetPort: 80
+										80                         80
+                 Pod -----------------> Service -----------------> Pod 		 
+				(test)										     (nginx)
 			
+			   1) nginx pod yaml 작성.
+			   
+			      # nginx-pod.yaml
+
+					apiVersion: v1
+					kind: Pod
+					metadata:
+					  name: nginx-pod 
+					spec:
+					  containers:
+					  - name: nginx-container
+						image: nginx:1.14.2
+						ports:
+						- containerPort: 80
+			
+			  2) 생성 및 확인 
+			  
+			    > kubectl apply -f nginx-pod.yaml
+				>  kubectl get pods -o wide
+					NAME        READY   STATUS    RESTARTS   AGE   IP           NODE             NOMINATED NODE   READINESS GATES
+					nginx-pod   1/1     Running   0          9s    10.1.1.161   docker-desktop   <none>           <none>
+							
+		 					
+              3) Service yaml 작성 
+
+					# clusterip-service.yaml
+
+						apiVersion: v1
+						kind: Service
+						metadata:
+						  name: nginx-clusterip-service
+						spec:
+						  ports:
+							- port: 80        # Service 포트 즉,  
+							  targetPort: 80
+						  type:
+							ClusterIP
+
+
+
+
+
 	2) NodePort
 	3) LoadBalancer
   
