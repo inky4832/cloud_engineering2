@@ -2329,7 +2329,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
     1. 개념
 	   - 클러스너내의 모든 pod를 하나의 네트워크로 묶어서 관리하는 구조.
 	   - Node단위가 아닌 클러스터 단위의 네트워크임.
-	     즉, Node 위치와 무관함.
+	     즉, Node 위치와 무관함.( NAT,Port forward 등 추가 기능이 필요없음 )
 	     
 	   --------------------------------------------------------------------
 	    가능한 이유?
@@ -2375,3 +2375,51 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		        Pod ----------------> Pod 
 				
 				Pod ----> Service ------------> Pod
+				  Service이름이용     label로 접근
+				 ex. http://hello-service
+				
+	 4) 외부에서 Pod 접근 (추가작업 필요)
+	   
+	    - k8s 에서 기본적으로 Pod ip를 활용해서 직접 접근이 불가능함.(*****************)
+	 
+	    추가작업?
+		  - 포트 포워딩 이용
+		    ex.  kubectl port-forward TYPE/NAME
+			
+	      - Service 이용 
+		  
+	-------------------------------------------------------------
+
+     K8s Cluster 
+ -------------------------------------------------------------------------------
+
+       Node1 ( 192.168.65.3 )  # node ip 조회:  kubectl get node -o wide
+      ------------------------------	   
+	                           # Pod ip 조회:  kubectl get pods -o wide
+	      Pod ( 10.1.1.10)                   # 3) Pod안에서 외부 인터넷 통신 방법: httP://google.com
+		  --------------------
+		     Container-A ( 10.1.1.10:3306)    # 1) 같은 Pod안의 컨테이너간 통신방법: localhost:포트번호 
+			 
+			 Container-B ( 10.1.1.10:80)
+			 
+		   shared Network
+		   shared Volume 
+		  --------------------	  
+	  -------------------------------
+	  
+	  
+       Node2 ( 192.168.66.10 )
+      ------------------------------	   
+	  
+	      Pod ( 10.1.2.10)
+		  --------------------        #2) Pod간 통신방법:  podIP로 접근함 ( Node가 달라도 무관)
+		     Container-C     
+			 
+			 Container-D 
+			 
+		   shared Network
+		   shared Volume 
+		  --------------------
+		  
+	  -------------------------------
+	  
