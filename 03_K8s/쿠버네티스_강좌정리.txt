@@ -2755,9 +2755,87 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				  nodePort: 30007
 			  type: NodePort     
 	
+		라. 용도 
+		    - 실습용
 	
+	--------------------------------------------------------
+        실습2:  
+						
+				http://localhost:30007		     port: 80                 targetPort: 80
+            웹브라우저 --> Node  ---------------> Service -----------------> Pod 		 
+				
+	       1) nginx pod yaml 작성.
+			   
+			      # nginx-pod.yaml
+
+					apiVersion: v1
+					kind: Pod
+					metadata:
+					  name: nginx-pod 
+					  labels:
+					   app: web
+					spec:
+					  containers:
+					  - name: nginx-container
+						image: nginx:1.14.2
+						ports:
+						- containerPort: 80
+
+
+			
+			  2) nginx pod  생성 및 확인 
+			  
+			    > kubectl apply -f nginx-pod.yaml
+				>  kubectl get pods -o wide
+					NAME        READY   STATUS    RESTARTS   AGE   IP           NODE             NOMINATED NODE   READINESS GATES
+					nginx-pod   1/1     Running   0          9s    10.1.1.161   docker-desktop   <none>           <none>
+							
+		 					
+              3) Service yaml 작성 
+
+				# nodeport-service.yaml
+
+						apiVersion: v1
+						kind: Service
+						metadata:
+						  name: nginx-nodeport-service
+						spec:
+						  selector:
+							app: web
+						  ports:
+							- port: 80
+							  targetPort: 80
+							  nodePort: 30007  #  30000~32767 범위값 사용
+						  type:
+							NodePort
+
+              4) Service 생성 및 확인 
+			  
+			      > kubectl apply -f nodeport-service.yaml
+				  
+				  >  kubectl get services
+				     kubectl get service
+					 kubectl get svc 
 	
-	
+					 kubectl get all 
+					 
+			  5) 웹브라우저에서 요청
+			  
+			       http://localhost:30007
+				   
+			  6) Service가 요청해야되는 Pod Ip와 port 정보 조회 	   
+			  
+			      # kubectl get endpoints # deprecated
+				   > kubectl get endpointslice 
+					  NAME                           ADDRESSTYPE   PORTS   ENDPOINTS      AGE
+					kubernetes                     IPv4          6443    192.168.65.3   15d
+					nginx-nodeport-service-tmqmq   IPv4          80      10.1.1.165     10m
+
+				> kubectl get pods -o wide
+				
+					NAME          READY   STATUS    RESTARTS      AGE   IP           NODE             NOMINATED NODE   READINESS GATES
+					nginx-pod     1/1     Running   0             11m   10.1.1.165   docker-desktop   <none>           <none>
+					ubuntu-test   1/1     Running   1 (48m ago)   51m   10.1.1.164   docker-desktop   <none>           <none>
 	---------------------------------------------------------------------------------
 	3) LoadBalancer
   
