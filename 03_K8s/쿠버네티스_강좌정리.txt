@@ -2477,7 +2477,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			 kubectl delete pods ubuntu-test
 			 
 ----------------------------------------------
-	 실습3> 같은 Pod안의 컨테이너간 통신방법 (localhost:포트번호  이용 )
+	 실습3> 같은 Pod안의 컨테이너간 통신방법 (기본적으로 localhost:포트번호  이용 )
 	 
 	       Pod ( 10.1.1.10)                  
 		  --------------------
@@ -2529,4 +2529,106 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 
 		   root@multi-container-pod:/# curl http://localhost:80 
 		   
-		   
+		-------------------------------------
+		
+     실습4>  외부에서 Pod 접근 ( 기본적으로 접근 불가, 추가 작업이 필요 )
+
+          가. port forward 이용 
+
+		  나. Service 이용.
+		  
+	 -------------------------------------------------------------------------------------------------------
+//////////////////////////////
+ 6장  K8s 주요 객체 5 - Service
+ //////////////////////////////	 	    
+ 
+ https://kubernetes.io/docs/concepts/services-networking/service/
+ 
+ 
+    1. 개념 
+	 - Pod는 외부에서 직접 접근이 불가능하기 때문에 Service를 통해서 POd에 접근할 수 있음.
+	 
+	2. 용도 2가지
+
+      1) Pod를 외부에서 접근하도록 하기 위함.
+
+      2) Pod와 Pod 간 연동할 때, Pod IP는 변동될 수 있기 때문에 고정된 값을 가진 Servic를 사용함.	  
+	  
+	3. 역할 
+	  
+	   1) 고정 IP 역할 
+	   2) DNS 제공                      K8s의 CoreDNS 
+	      ex. http://hello-service ----------------------------> IP 번호 
+	   3) 로드밸런싱 역할
+	
+	4. Service가 Pod  선택 
+		
+		# service Yaml 샘플 
+	       
+		    apiVersion: v1             # API Version
+			kind: Service              # 리소스 종류 
+			metadata:
+			  name: my-service        # 서비스 명 
+			spec:
+			  selector:
+				app.kubernetes.io/name: MyApp  # app.kubernetes.io/name: MyApp 값으로 설정된 
+			  									 label를 가진 Pod 선택. ( 여러 Pod tjsxor rksmd )
+			  ports:
+				- protocol: TCP
+				  port: 80				# Service 의 port 번호 
+				  targetPort: 9376      # Service가 접근하는 Pod의 port 번호 
+			  
+			  type: ClusterIP
+	
+	   가. pod ( label 이용 )
+		
+			 labels:
+			    x: y
+	   
+	   
+	   나. Service ( selector 이용 )
+	   
+	        spec:
+			  selector:
+				x: y
+				
+-----------------------------------------------------------------------------
+  5. Service 타입 종류 3가지 
+  
+    1) ClusterIP
+	    가. 개념 
+			- Service를 외부에서 접근이 아닌 클러스너 내부에서만 요청해서 사용할 때 설정.
+			- Service의 기본 타입.
+			
+		나. 구조 
+
+               --------------------------------------- 클러스터
+                              ?(pod): front-end (Vue.js)
+							  
+							  |
+							  
+						   Service (svc)
+	
+					 pod     pod     pod : back-end (SpringBoot)
+			  ---------------------------------------
+			  
+		다. 문법		
+			  
+			apiVersion: v1         
+			kind: Service             
+			metadata:
+			  name: my-service        
+			spec:
+			  selector:
+				x: y 
+			  ports:
+				- port: 80				# Service 의 port 번호 
+				  targetPort: 9376      # Service가 접근하는 Pod의 port 번호 
+			  
+			  type: ClusterIP
+			  
+			
+	2) NodePort
+	3) LoadBalancer
+  
+    
