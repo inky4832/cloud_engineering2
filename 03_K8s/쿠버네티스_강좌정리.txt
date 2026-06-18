@@ -2431,3 +2431,44 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		   root> apt update && apt full-upgrade -y
 		   root> apt install curl  
 		   root> curl https://www.google.com
+		   
+		 2) 종료
+		   
+		    kubectl delete pods ubuntu-test
+	----------------------------------------------
+	 실습2>  Pod와 Pod 통신 실습 ( 기본적으로 Pod IP로 통신이 가능함 )
+	 
+	       
+		     Pod --------------------> Pod
+	        (ubuntu)				  (nginx)
+			
+	    1) ubuntu Pod 생성 ( 빠른 Pod 작성방법 이용)
+		  
+		  kubectl run -it ubuntu-test --image=ubuntu -- bash
+		   root> apt update && apt full-upgrade -y
+		   root> apt install curl  -y
+
+	 
+	    2) nginx Pod 설치 ( 빠른 Pod 작성방법 이용)
+		
+		   kubectl run  nginx-test --image=nginx
+		   
+		 
+		 
+		3) pod ip 조회 
+		
+		  kubectl get pods -o wide
+		    NAME          READY   STATUS    RESTARTS   AGE     IP           NODE             NOMINATED NODE   READINESS GATES
+			nginx-test    1/1     Running   0          80s     10.1.1.158   docker-desktop   <none>           <none>
+			ubuntu-test   1/1     Running   0          2m58s   10.1.1.157   docker-desktop   <none>           <none>
+			
+	    4)ubuntu에서 nginx 의 Pod IP 이용해서 접근
+		
+		  root> curl http://10.1.1.158:80 
+		  
+		      <!DOCTYPE html>
+				<html>
+				<head>
+				<title>Welcome to nginx!</title>
+				
+		----------------------------------------------------------------------------------
