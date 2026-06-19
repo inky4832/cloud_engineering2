@@ -2610,9 +2610,9 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 							  
 							  |
 							  
-						   Service (svc)
+						   Service (svc): 80
 	
-					 pod     pod     pod : back-end (SpringBoot)
+					 pod( 9376 )   pod     pod : back-end (SpringBoot)
 			  ---------------------------------------
 			  
 		다. 문법		
@@ -2629,6 +2629,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				  targetPort: 9376      # Service가 접근하는 Pod의 port 번호 
 			  
 			  type: ClusterIP           # 클러스터 내부에서만 Service 호출 가능. 
+										  생략가능.
 			  
 		--------------------------------------------------------
         실습1:  
@@ -2714,7 +2715,9 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			6) 삭제
   			   
 			   kubectl delete -f nginx-pod.yaml
-			   kubectl delete -f clusterip-service.yaml   
+			   kubectl delete -f clusterip-service.yaml
+
+			   kubectl delete pod --all
 ---------------------------------------------------------------------------------
 	2) NodePort
 	
@@ -2836,7 +2839,52 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 					NAME          READY   STATUS    RESTARTS      AGE   IP           NODE             NOMINATED NODE   READINESS GATES
 					nginx-pod     1/1     Running   0             11m   10.1.1.165   docker-desktop   <none>           <none>
 					ubuntu-test   1/1     Running   1 (48m ago)   51m   10.1.1.164   docker-desktop   <none>           <none>
+					
+			  7) 모두 삭제
+			  
+			    kubectl delete -f nginx-pod.yaml
+			    kubectl delete -f nodeport-service.yaml   
 	---------------------------------------------------------------------------------
 	3) LoadBalancer
-  
     
+	
+	    가. 개념 
+			-  클라우드 환경에서 외부 로드밸런서를 지원 받아서 사용하는 서비스.
+			   ex. AWS, GCP, Azure
+			   
+			
+		나. 구조 
+						     외부 ( 웹브라우저 ) <== http://localhost:85
+		                      |
+							  |
+							ExternalIP (LoadBalancer (AWS)) <== 현재환경에서의 ExternalIP 값이 localhost로 되어 있음.
+							  |	
+               --------------------------------------- 클러스터
+                              |
+						     Node 
+							  |
+							  
+						   Service (svc) port: 85
+	
+					 pod     pod     pod : back-end (SpringBoot)
+					                       targetPort: 80
+			  ---------------------------------------
+			  
+		다. 문법		
+	
+			apiVersion: v1
+			kind: Service
+			metadata:
+			  name: nginx-clusterip-service
+			spec:
+			  selector:
+				app: web
+			  ports:
+				- port: 85
+				  targetPort: 80
+			  type:
+				LoadBalancer
+				
+		==> 최종 외부(웹브라우저)에서 요청은 http://localhost:85 임.
+		    (실제 요청은 http://ExternalIP:85 임)
+		
