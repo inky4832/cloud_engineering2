@@ -3033,18 +3033,36 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			metadata:
 			  name: minimal-ingress           # Ingress 리소스 명 
 			spec:
-			  ingressClassName: nginx-example
-			  rules:
-			  - http:
+			  ingressClassName: nginx-example # Ingress Controller 이름. 
+												현재 설치된 NGINX Ingress Controller의 name값이 nginx임.
+												따라서 nginx로 지정하면 됨. 
+												
+			  rules:                     # 경로규칙 
+			  - http:			         # http 라우팅 규칙임.( host없이 경로만 규칙에 포함)
 				  paths:
-				  - path: /testpath
-					pathType: Prefix
+				  - path: /testpath     # 경로
+					pathType: Prefix    # 종류
+											 Prefix: 접두어만 일치하며 됨. 즉 /testpath 로 시작하면 됨.
+											 Exact: 경로가 정확하게 일치해야됨. 
+											 ImplementationSpecific: Ingress Controller에 따라서 Exact 또는 Prefix로 동작됨.
+											  현재 설치된 NGINX Ingress Controller는 Prefix 동작됨
+						
 					backend:
 					  service:
-						name: test
+						name: test 
 						port:
 						  number: 80
 
+		         - path: /testpath2     # 경로
+					pathType: Prefix
+					backend:
+					  service:
+						name: test2
+						port:
+						  number: 80
+		
+		
+		
 		
 		2) 호스트 정보 
 	 
