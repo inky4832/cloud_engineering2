@@ -2990,7 +2990,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 											     Ingress Controller ( 구현체, 클래스 ) ex. Nginx Ingress Controller 사용함
 																						라우팅 정보가 있는 YAML 읽음.
 																					
-							(경로: /web )                         (경로: /web2 )
+							(경로: /app1 )                         (경로: /app2 )
 						   Service (svc) port: 80           Service (svc) port: 80
 	
 					    pod     pod     pod                         pod     pod     pod 
@@ -3036,6 +3036,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			  ingressClassName: nginx-example # Ingress Controller 이름. 
 												현재 설치된 NGINX Ingress Controller의 name값이 nginx임.
 												따라서 nginx로 지정하면 됨. 
+												kubectl get ingressClass 에서 name 확인 가능.
 												
 			  rules:                     # 경로규칙 
 			  - http:			         # http 라우팅 규칙임.( host(ex. xxx.example.com )없이 경로만 규칙에 포함)
@@ -3097,7 +3098,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 
 	 
 	------------------------------------------------------------------------------
-   실습1>
+   실습1> Ingress Controller 설치
    
 	    1. Ingress Controller 설치하기 
 	 
@@ -3108,7 +3109,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	   namespace/ingress-nginx created  # 자동으로 -n ingress-nginx
 	 
 	 
-	   2. pod 정보 확인 ( 반드시  -n ingress-nginx 지정필수 )
+	   2. ingress 관련 정보 확인 ( 반드시  -n ingress-nginx 지정필수 )
 	    
 		 > kubectl get all -n ingress-nginx
 		   NAME                                            READY   STATUS      RESTARTS   AGE
@@ -3131,10 +3132,95 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			job.batch/ingress-nginx-admission-patch    Complete   1/1           23s        7m54s
 	 
 	 
+	  3. ingress controller 정보 확인 
 	 
+		  > kubectl get ingressClass
+		   
+	        NAME    CONTROLLER             PARAMETERS   AGE
+			nginx   k8s.io/ingress-nginx   <none>       92m 
 	 
+	    ==> 현재 설치된 Ingress Controller 이름이 nginx 인것을  확인함.
+	 ----------------------------------------------------------------------
 	 
-	 
-	 
-	 
-	 
+   실습2>  Service와 Pod 작성 
+   
+      1) 첫번째 서비스와 Pod 작성 (Deployment로 Pod 작성 및 Service 작성 )
+	  
+	  
+	        # app1.yaml
+
+			apiVersion: apps/v1
+			kind: Deployment
+			metadata:
+			  name: app1-deployment
+
+			spec:
+			  replicas: 3
+			  selector:
+				matchLabels:
+				  app: web
+
+
+			  template:
+				metadata:
+				  labels:
+					app: web
+				spec:
+				  containers:
+				  - name: nginx-container
+					image: nginx:1.14.2
+					ports:
+					- containerPort: 80
+					command: ["sh", "-c", "echo '<h1>app1-deployment</h1>' >  /usr/share/nginx/html/index.html   && nginx -g 'daemon off;'"]
+
+			---
+
+			apiVersion: v1
+			kind: Service
+			metadata:
+			  name: app1-service
+			spec:
+			  selector:
+				app: web
+			  ports:
+				- port: 80
+				  targetPort: 80
+			  type:
+				ClusterIP
+	  
+	   2) 실행 확인 
+
+         > kubectl apply -f  app1.yaml
+		
+		 > kubectl get all 
+            NAME                                  READY   STATUS    RESTARTS   AGE
+			pod/app1-deployment-5c5759559-5sfqg   1/1     Running   0          8s
+			pod/app1-deployment-5c5759559-fw2h2   1/1     Running   0          8s
+			pod/app1-deployment-5c5759559-fz7fp   1/1     Running   0          8s
+
+			NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+			service/app1-service                 ClusterIP      10.103.38.207   <none>        80/TCP         8s
+		 
+		 
+	
+      3) 두 번째 서비스와 Pod 작성 (Deployment로 Pod 작성 및 Service 작성 )
+	  
+	     앞서 만든 app1.yaml 복사해서 app2.yaml 작성 ( 파일안의 app1 값을 app2로 변경 )
+		 
+	  4) 실행 확인 
+
+         > kubectl apply -f  app2.yaml
+		
+		 > kubectl get all 
+		   
+		   NAME                                   READY   STATUS    RESTARTS   AGE
+			pod/app1-deployment-5c5759559-5sfqg    1/1     Running   0          6m9s
+			pod/app1-deployment-5c5759559-fw2h2    1/1     Running   0          6m9s
+			pod/app1-deployment-5c5759559-fz7fp    1/1     Running   0          6m9s
+			pod/app2-deployment-67578cbcd4-9kfgg   1/1     Running   0          37s
+			pod/app2-deployment-67578cbcd4-stw48   1/1     Running   0          37s
+			pod/app2-deployment-67578cbcd4-z6jmk   1/1     Running   0          37s
+
+			NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+			service/app1-service                 ClusterIP      10.103.38.207   <none>        80/TCP         6m9s
+			service/app2-service                 ClusterIP      10.104.92.186   <none>        80/TCP         10s
