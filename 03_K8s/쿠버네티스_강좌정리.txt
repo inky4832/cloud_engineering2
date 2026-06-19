@@ -3529,3 +3529,45 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 					 @Value("${app}")
 					 String s2;
 	----------------------------------------------------------------------------
+	 실습1>  K8s의 env 기본 실습
+	 
+	        1)  env 설정된 pod yaml 작성 
+			
+			 # env-basic.yaml
+
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  name: env-basic-pod
+				spec:
+				  containers:
+				  - name: nginx-containers
+					image: nginx
+					env:
+					 - name: GREETING    
+					   value: "Warm greetings to"
+					 - name: HONORIFIC
+					   value: "The Most Honorable"
+					 - name: NAME
+					   value: "Kubernetes"
+					 - name: MESSAGE
+					   value: "$(GREETING) $(HONORIFIC) $(NAME)" 
+					   
+		   2) 실행 
+		     
+			  kubectl apply -f env-basic.yaml
+			  kubectl get pods 
+			  
+		  3) 환경변수 출력 
+		  
+		      kubectl exec env-basic-pod -- printenv 
+			  kubectl exec env-basic-pod -- env
+			  
+			  또는 
+			  
+			  kubectl exec -it env-basic-pod -- bash 
+			  root>env 
+			       printenv
+				   echo $MESSAGE
+				   
+	---------------------------------------------------------------------------------------
