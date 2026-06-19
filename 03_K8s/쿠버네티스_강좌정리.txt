@@ -3359,10 +3359,34 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	  > kubectl apply -f  app-ingress-host.yaml
 	   
 	  > kubectl get ingress
-	
+	     NAME               CLASS   HOSTS               ADDRESS     PORTS   AGE
+		app-ingress        nginx   *                   localhost   80      38m
+		app-ingress-host   nginx   app1.com,app2.com               80      5s
+		
+		
 	  > kubectl describe ingress   app-ingress-host
-	  
-	
+	    
+	      Name:             app-ingress-host
+		Labels:           <none>
+		Namespace:        default
+		Address:          localhost
+		Ingress Class:    nginx
+		Default backend:  <default>
+		Rules:
+		  Host        Path  Backends
+		  ----        ----  --------
+		  app1.com    
+					  /   app1-service:80 (10.1.1.183:80,10.1.1.182:80,10.1.1.184:80)
+		  app2.com    
+					  /   app2-service:80 (10.1.1.187:80,10.1.1.185:80,10.1.1.186:80)
+		Annotations:  <none>
+		Events:
+		  Type    Reason  Age                From                      Message
+		  ----    ------  ----               ----                      -------
+		  Normal  Sync    14s (x2 over 33s)  nginx-ingress-controller  Scheduled for sync
+		  
+		  
+		  
 	12. 요청 
 	
 	  http://app1.com 
@@ -3377,6 +3401,6 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	  kubectl delete -f  app2.yaml
 	  kubectl delete -f  app-ingress-host.yaml
 	  
-	  kubectl delete all -all
+	  kubectl delete all --all
 	  
 -----------------------------------------------------------------------
