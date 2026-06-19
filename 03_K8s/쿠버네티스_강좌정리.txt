@@ -3038,9 +3038,9 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 												따라서 nginx로 지정하면 됨. 
 												
 			  rules:                     # 경로규칙 
-			  - http:			         # http 라우팅 규칙임.( host없이 경로만 규칙에 포함)
+			  - http:			         # http 라우팅 규칙임.( host(ex. xxx.example.com )없이 경로만 규칙에 포함)
 				  paths:
-				  - path: /testpath     # 경로
+				  - path: /testpath     # 경로  http://xxx.example.com/testpath
 					pathType: Prefix    # 종류
 											 Prefix: 접두어만 일치하며 됨. 즉 /testpath 로 시작하면 됨.
 											 Exact: 경로가 정확하게 일치해야됨. 
@@ -3049,9 +3049,9 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 						
 					backend:
 					  service:
-						name: test 
+						name: test      # 서비스명 
 						port:
-						  number: 80
+						  number: 80    # 서비스 포트
 
 		         - path: /testpath2     # 경로
 					pathType: Prefix
@@ -3067,7 +3067,34 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		2) 호스트 정보 
 	 
 	 
-	 
+	        apiVersion: networking.k8s.io/v1
+			kind: Ingress
+			metadata:
+			  name: name-virtual-host-ingress
+			spec:
+			  rules:
+			  - host: foo.bar.com  # http://foo.bar.com
+				http:
+				  paths:
+				  - pathType: Prefix
+					path: "/"
+					backend:
+					  service:
+						name: service1
+						port:
+						  number: 80
+						  
+			  - host: bar.foo.com   # http://bar.foo.com
+				http:
+				  paths:
+				  - pathType: Prefix
+					path: "/"
+					backend:
+					  service:
+						name: service2
+						port:
+						  number: 80
+
 	 
 	 
 	 
