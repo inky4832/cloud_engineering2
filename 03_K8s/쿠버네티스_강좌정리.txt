@@ -3403,4 +3403,63 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	  
 	  kubectl delete all --all
 	  
------------------------------------------------------------------------
+	    kubectl apply -f  . 
+		kubectl delete -f .
+		kubectl apply -f  app1.yaml,app2.yaml,app-ingress-host.yaml 
+		kubectl delete -f app1.yaml,app2.yaml,app-ingress-host.yaml 
+
+//////////////////////////////
+ 6장  K8s 주요 객체 7 - ConfigMap
+ //////////////////////////////	 
+ 
+   1. K8s 환경변수 설정방법 3가지 
+   
+     1) env 
+	 2) ConfigMap
+	 3) Secret
+	 
+  2. env
+  
+     1)개념 
+	    - 컨테이너안 어플리케이션이 실행될 때 참조하는 설정값.
+		
+		가. SpringBoot ( external Configuration )
+		
+		   - application.yaml 에서 환경변수 설정 
+		   
+		       ex.  server: 
+			           port: 80 
+		
+		   - 사용
+		       - @Value("${server.port}") ( 한번에 하나씩 참조 )
+			     String port; 
+		      
+			   - ConfigurationProperties ( 한번에 여러 환경변수 참조 )
+		
+		   - 언제든지 환경변수 동적으로 수정이 가능 
+		   
+		       java -jar  app.jar  --server.port=8090 # 커맨드 라인 아큐먼트 ( 우선권이 가장 높음 )
+		
+		나. Docker 
+		 
+		  - Dockerfile에서는 ENV 사용 
+		  
+		      ex. 
+			       FROM eclipse-temurin:21-jre
+
+					WORKDIR /app
+
+					COPY build/libs/*.jar app.jar
+
+					ENV SERVER_PORT=8080
+					ENV APP_NAME=spring-env-demo
+					
+		  - 실행시 env 사용 
+		  
+		     a.    -e, --env 옵션 이용
+			  
+			     ex. docker run -e key=value  -e key1=value1  이미지명
+			 
+			 b.   --env-file 이용
+			 
+			    docker run --env-file=.env  이미지명
