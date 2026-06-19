@@ -3205,7 +3205,10 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	
       3) 두 번째 서비스와 Pod 작성 (Deployment로 Pod 작성 및 Service 작성 )
 	  
-	     앞서 만든 app1.yaml 복사해서 app2.yaml 작성 ( 파일안의 app1 값을 app2로 변경 )
+	     앞서 만든 app1.yaml 복사해서 app2.yaml 작성 
+		 ( 파일안의 app1 값을 app2로 변경
+           label 과 select 값도 변경.  web ---> web2
+		 )
 		 
 	  4) 실행 확인 
 
@@ -3224,3 +3227,79 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 			service/app1-service                 ClusterIP      10.103.38.207   <none>        80/TCP         6m9s
 			service/app2-service                 ClusterIP      10.104.92.186   <none>        80/TCP         10s
+			
+	  5. 경로기반의 Ingress Yaml 작성 
+	  
+	    #app-ingress-path.yaml
+
+			apiVersion: networking.k8s.io/v1
+			kind: Ingress
+			metadata:
+			  name: app-ingress
+			  
+			  annotations:
+			    nginx.ingress.kubernetes.io/rewrite-target: /   # /app --> / 로 리다이렉트 처리
+			  
+			spec:
+			  ingressClassName: nginx
+			  rules:
+			  - http:
+				  paths:			 # 원래 nginx 경로는 http://localhost:80/index.html
+				  - path: /app1      # http://localhost:80/app1  -----> //localhost:80/app1/index.html
+					pathType: Prefix
+					backend:
+					  service:
+						name: app1-service
+						port:
+						  number: 80
+
+				  - path: /app2   # http://localhost:80/app2
+					pathType: Prefix
+					backend:
+					  service:
+						name: app2-service
+						port:
+						  number: 80
+						  
+	6. yaml 생성 및 확인 
+	
+	  > kubectl apply -f app-ingress-path.yaml
+	  
+	  
+	  > kubectl get ingress
+		   NAME          CLASS   HOSTS   ADDRESS     PORTS   AGE
+		   app-ingress   nginx   *       localhost   80      36s
+	   
+	  > kubectl describe ingress   app-ingress
+	  
+	     Name:             app-ingress
+		Labels:           <none>
+		Namespace:        default
+		Address:          localhost
+		Ingress Class:    nginx
+		Default backend:  <default>
+		Rules:
+		  Host        Path  Backends
+		  ----        ----  --------
+		  *           
+					  /app1   app1-service:80 (10.1.1.177:80,10.1.1.178:80,10.1.1.176:80 + 3 more...)
+					  /app2   app2-service:80 (10.1.1.181:80,10.1.1.177:80,10.1.1.178:80 + 3 more...)
+		Annotations:  nginx.ingress.kubernetes.io/rewrite-target: /
+		Events:
+		  Type    Reason  Age                  From                      Message
+		  ----    ------  ----                 ----                      -------
+		  Normal  Sync    105s (x2 over 2m5s)  nginx-ingress-controller  Scheduled for sync
+		  
+  7. 요청 하기 
+      
+	   http://localhost:80/app1 
+	   http://localhost:80/app2
+  
+  8. 모두 삭제 
+  
+      kubectl delete -f  app1.yaml
+	  kubectl delete -f  app2.yaml
+	  kubectl delete -f  app-ingress-path.yaml
+	  
+	  kubectl delete all -all
+   ----------------------------------------------------------------------------------------------------------
