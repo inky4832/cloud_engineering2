@@ -2999,3 +2999,72 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 					
 					                       
 			  ---------------------------------------
+			  
+	 3. Ingress 필수 요소 2가지 
+	 
+	   1) 라우팅 정보가 저장된 YAML
+	   https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
+	    - 어떤 요청이 오면 어떤 서비스를 선택할지 등과 관련된 라우팅 정보가 저장됨.
+		- 라우팅기본: 경로기준/호스트기준
+	   
+	   2) Ingress Controller 
+	   
+	    https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
+	    https://kubernetes.github.io/ingress-nginx/deploy/ 에서 설치 가이드됨.
+
+       설치방법:
+	   
+	   # v1.15.1 버전은 현재 설치하면 안됨 .
+	   #kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.15.1/deploy/static/provider/cloud/deploy.yaml
+	
+	  # v1.11.2 버전을 현재 설치 가능. 	
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml	
+	
+	   ==> 설치는 NGINX Ingress Controller 가 설치됨. 
+	   
+	 ---------------------------------------------------
+	 4. 라우팅 정보가 저장된 YAML 
+	 https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource 참조하기 
+	 
+	    1) 경로 정보 
+		
+		    apiVersion: networking.k8s.io/v1  # API 버전 
+			kind: Ingress					  # 리소스
+			metadata:
+			  name: minimal-ingress           # Ingress 리소스 명 
+			spec:
+			  ingressClassName: nginx-example
+			  rules:
+			  - http:
+				  paths:
+				  - path: /testpath
+					pathType: Prefix
+					backend:
+					  service:
+						name: test
+						port:
+						  number: 80
+
+		
+		2) 호스트 정보 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
