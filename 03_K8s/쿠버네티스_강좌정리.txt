@@ -3631,7 +3631,14 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 						configMapKeyRef:
 						  name: game-demo
 						  key: ui_properties_file_name
-				  
+		///////////////////////////////////////////
+		  * 개별로 참조하는 방법 .
+		     env:
+			   valueFrom:
+				configMapKeyRef:
+				  name: ConfigMap 이름
+				  key: ConfigMap에서 설정한 data의 key값 
+		//////////////////////////////////////////////
 	  
 	  2) 한번에 참조하는 방법.
 	   ----------------------------------------------------------------------------
@@ -3667,5 +3674,10 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			      value: "user-interface.properties"
 				  
 				...
-
+	///////////////////////////////////////////
+		  * 한번에  참조하는 방법 .
+		     envFrom:
+			   - configMapRef:
+						name: ConfigMap 이름
+		//////////////////////////////////////////////
 		----------------------------------------------------------------------------		
