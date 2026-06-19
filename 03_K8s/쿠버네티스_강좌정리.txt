@@ -3303,3 +3303,80 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	  
 	  kubectl delete all -all
    ----------------------------------------------------------------------------------------------------------
+    9. 호스트기반의 Ingress Yaml 작성 
+	
+	      # app-ingress-host.yaml
+
+			apiVersion: networking.k8s.io/v1
+			kind: Ingress
+			metadata:
+			  name: app-ingress-host
+
+			spec:
+			  ingressClassName: nginx
+			  rules:
+			  - host: app1.com
+				http:
+				  paths:
+				  - pathType: Prefix
+					path: "/"
+					backend:
+					  service:
+						name: app1-service
+						port:
+						  number: 80
+
+			  - host: app2.com
+				http:
+				  paths:
+				  - pathType: Prefix
+					path: "/"
+					backend:
+					  service:
+						name: app2-service
+						port:
+						  number: 80
+
+
+     10.  app1.com -----------> localhost 로 변경 
+	   
+	     리눅스: /etc/hosts 파일에 설정 
+		 
+		 윈도우 : C:\Windows\System32\drivers\etc\hosts
+		   
+		     가. 메모장을 관리자 권한으로 실행.
+			 나. C:\Windows\System32\drivers\etc\hosts 열기 
+			 다. 마지막에 다음 추가 
+			 
+			    127.0.0.1 app1.com  # app1.com 요청 ---------------> 127.0.0.1 변경됨.
+				127.0.0.1 app2.com
+	
+	11. 실행 하고 확인 
+	
+	  > kubectl apply -f  app1.yaml
+	  > kubectl apply -f  app2.yaml
+	  
+	  > kubectl apply -f  app-ingress-host.yaml
+	   
+	  > kubectl get ingress
+	
+	  > kubectl describe ingress   app-ingress-host
+	  
+	
+	12. 요청 
+	
+	  http://app1.com 
+	  
+	  http://app2.com 
+	  
+	
+	13. 삭제.
+	
+	
+      kubectl delete -f  app1.yaml
+	  kubectl delete -f  app2.yaml
+	  kubectl delete -f  app-ingress-host.yaml
+	  
+	  kubectl delete all -all
+	  
+-----------------------------------------------------------------------
