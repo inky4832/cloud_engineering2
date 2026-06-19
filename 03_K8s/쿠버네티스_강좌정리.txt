@@ -3501,3 +3501,13 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 						  value: "$(GREETING) $(HONORIFIC) $(NAME)"   # 다른 env 참조 가능. $(name), 소괄호
 						command: ["echo"]
 						args: ["$(MESSAGE)"]
+						
+		   2) 사용 
+		   
+		        kubectl exec print-greeting -- env
+                kubectl exec print-greeting -- printenv
+
+			  kubectl exec -it print-greeting -- bash  # 직접 접속
+			  root> env 
+			      printenv 
+				  echo $GREETING
