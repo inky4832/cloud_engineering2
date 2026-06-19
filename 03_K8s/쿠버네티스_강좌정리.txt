@@ -3456,10 +3456,48 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 					
 		  - 실행시 env 사용 
 		  
-		     a.    -e, --env 옵션 이용
+		     a.    -e, --env 옵션 이용 ( 우선권이 가장 높음 )
 			  
 			     ex. docker run -e key=value  -e key1=value1  이미지명
 			 
 			 b.   --env-file 이용
 			 
 			    docker run --env-file=.env  이미지명
+				
+		 - 사용 
+		 
+			쉘에 접속해서 
+			docker exec -it nginx-container -- bash
+			root> env 
+			      printenv 
+				  echo $SHELL
+				  
+	--------------------------------------------------------------------------------
+	
+	   다. K8s 
+	   
+	     https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container
+		 
+		   1)개념 
+		     pod안의 env 속성 이용 
+			 
+			  샘플:
+			        apiVersion: v1
+					kind: Pod
+					metadata:
+					  name: print-greeting
+					spec:
+					  containers:
+					  - name: env-print-demo
+						image: bash
+						env:
+						- name: GREETING    # name(key)는 대문자 권장 
+						  value: "Warm greetings to"
+						- name: HONORIFIC
+						  value: "The Most Honorable"
+						- name: NAME
+						  value: "Kubernetes"
+						- name: MESSAGE
+						  value: "$(GREETING) $(HONORIFIC) $(NAME)"   # 다른 env 참조 가능. $(name), 소괄호
+						command: ["echo"]
+						args: ["$(MESSAGE)"]
