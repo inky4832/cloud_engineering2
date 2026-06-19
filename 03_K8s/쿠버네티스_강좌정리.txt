@@ -3511,3 +3511,21 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			  root> env 
 			      printenv 
 				  echo $GREETING
+				  
+			 * SpringBoot 인 경우에는 
+			 
+			     a. application.yaml 에서 참조하기
+				 
+					 server:
+					    port: 80
+						
+				     app: ${GREETING}
+			
+			     b. 빈에서 참조하기 
+
+                     @Value("${GREETING}")
+					 String s;
+					 
+					 @Value("${app}")
+					 String s2;
+	----------------------------------------------------------------------------
