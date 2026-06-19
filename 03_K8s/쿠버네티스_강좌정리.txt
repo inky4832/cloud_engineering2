@@ -2960,3 +2960,42 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			  
 			    kubectl delete -f nginx-pod.yaml
 			    kubectl delete -f loadbalancer-service.yaml   
+		
+---------------------
+//////////////////////////////
+ 6장  K8s 주요 객체 6 - Ingress
+ //////////////////////////////	 	    
+ 
+    1. 개념 
+	  - 클러스터 외부에서 들어오는 트래픽을 호스트 정보 및 경로 정보를 활용해서 
+	    특정 Service로 라우팅 해주는 K8s 리소스임.
+	    
+		요청URL(경로로 구분) :   http://localhost:80/app1     -----------> app1-service 로 라우팅 
+                               http://localhost:80/app2    -----------> app2-service 로 라우팅 
+
+        요청URL(호스트로 구분) :  http://a1.service:80     -----------> app1-service 로 라우팅 
+                               http://a2.service:80    -----------> app2-service 로 라우팅    
+
+							   
+	2. 구조 
+	
+	   
+						                        외부 ( 웹브라우저 ) 요청: http://localhost:80/web
+												                      http://localhost:80/web2
+	
+               --------------------------------------------------------------------------- 클러스터
+													  |
+													 Ingress  (스펙,interface)
+													  |
+											     Ingress Controller ( 구현체, 클래스 ) ex. Nginx Ingress Controller 사용함
+																						라우팅 정보가 있는 YAML 읽음.
+																					
+							(경로: /web )                         (경로: /web2 )
+						   Service (svc) port: 80           Service (svc) port: 80
+	
+					    pod     pod     pod                         pod     pod     pod 
+					                     
+	
+					
+					                       
+			  ---------------------------------------
