@@ -3583,6 +3583,8 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
     1.개념 
 	 - env 설정 정보값을 외부 리소스에 저장하고 필요시 참조해서 사용 가능한 리소스.
 	 - 평이한 값으로 저장됨 ( plain text )
+	 - namespace 단위임. 따라서 동일한 namespace의 Pod 만 참조가 가능 (******************_)
+	   kubectl api-resources 로 확인 가능  ( NAMESPACED 값이 true 임 )
 	 
 	2. ConfigMap YAML 샘플 
 
@@ -3680,4 +3682,153 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			   - configMapRef:
 						name: ConfigMap 이름
 		//////////////////////////////////////////////
-		----------------------------------------------------------------------------		
+		----------------------------------------------------------------------------	
+  실습1> 		
+  
+      1. ConfigMap YAML 작성 
+	  
+	       # game-configmap.yaml
+
+
+			apiVersion: v1
+			kind: ConfigMap
+			metadata:
+			  name: game-configmap
+			data:
+			  # property-like keys; each key maps to a simple value
+			  player_initial_lives: "3"
+			  ui_properties_file_name: "user-interface.properties"
+
+			  # file-like keys
+			  game.properties: |
+				enemy.types=aliens,monsters
+				player.maximum-lives=5
+			  user-interface.properties: |
+				color.good=purple
+				color.bad=yellow
+				allow.textmode=true
+				
+	  2. 생성 및 확인 
+	  
+	    > kubectl apply -f game-configmap.yaml
+		 
+		> kubectl get configmaps
+		> kubectl get cm
+		   NAME               DATA   AGE
+			game-configmap     4      11s
+			kube-root-ca.crt   1      7d17h
+			nginx-config       1      7d17h
+			
+		
+		 > kubectl describe cm game-configmap
+		   Name:         game-configmap
+			Namespace:    default
+			Labels:       <none>
+			Annotations:  <none>
+
+			Data
+			====
+			game.properties:
+			----
+			enemy.types=aliens,monsters
+			player.maximum-lives=5
+
+
+			player_initial_lives:
+			----
+			3
+		 
+	3. Pod에서 개별 참조하는 YAML 작성 
+	
+	
+	    # game-single-pod.yaml
+
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: game-single-pod 
+			spec:
+			  containers:
+			  - name: nginx-container
+				image: nginx:1.14.2
+				env:
+				  - name: PLAYER_INITIAL_LIVES
+					valueFrom:
+					  configMapKeyRef:
+						name: game-configmap           
+						key: player_initial_lives 
+				 
+				  - name: GAME_PROPERTIES
+					valueFrom:
+					  configMapKeyRef:
+						name: game-configmap           
+						key: game.properties 
+	
+	4. 실행 및 확인 
+	 
+	
+	    kubectl apply -f game-single-pod.yaml
+		kubectl get pods 
+		
+		
+    5. 환경변수 확인 
+	
+	        >  kubectl exec game-single-pod  -- printenv 
+			>  kubectl exec game-single-pod  -- env
+			    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+				HOSTNAME=game-single-pod
+				PLAYER_INITIAL_LIVES=3
+				GAME_PROPERTIES=enemy.types=aliens,monsters
+			  
+			  또는 
+			  
+			>  kubectl exec -it game-single-pod  -- bash 
+			  root>env 
+			       printenv
+			
+	 ----------------------------------------------------------------------------
+	6. Pod에서 한꺼번에 참조하는 YAML 작성 
+	
+	
+	    # game-envFrom-pod.yaml
+
+	# game-envFrom-pod.yaml
+
+		apiVersion: v1
+		kind: Pod
+		metadata:
+		  name: game-envfrom-pod 
+		spec:
+		  containers:
+		  - name: nginx-container
+			image: nginx:1.14.2
+			envFrom:
+			   - configMapRef:
+				   name: game-configmap
+	
+	
+	7. 실행 및 확인 
+	 
+	
+	    kubectl apply -f game-envFrom-pod.yaml
+		kubectl get pods 
+		
+		
+    8. 환경변수 확인 
+	
+	        >  kubectl exec game-envfrom-pod  -- printenv 
+			>  kubectl exec game-envfrom-pod  -- env
+			   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+				HOSTNAME=game-envfrom-pod
+				game.properties=enemy.types=aliens,monsters
+				player.maximum-lives=5
+
+				player_initial_lives=3
+				ui_properties_file_name=user-interface.properties
+				user-interface.properties=color.good=purple
+	  
+	9. 전체 삭제 
+	
+	   kubectl delete -f .
+	   
+--------------------------------------------------------------
