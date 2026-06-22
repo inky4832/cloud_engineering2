@@ -3925,3 +3925,40 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 					name: test-secret
 			
 ------------------------------------------------------------------------
+
+   실습1>  Secrete 작성 실습
+   
+         1) secrete YAML 작성 
+		 
+		    # secret.yaml
+
+			apiVersion: v1
+			kind: Secret
+			metadata:
+			  name: secret-test
+
+			data:
+			  email: aW5reTQ4MzJAZGF1bS5uZXQ=
+
+			stringData:
+			  username: root
+			  password: "1234"
+			  database: testdb 
+			  
+			  
+		 2) 실행 
+		 
+		   kubectl apply -f secret.yaml
+
+
+	    3) 확인 
+		
+		    kubectl get secret secret-test
+			kubectl get secret secret-test -o yaml 
+			
+			    apiVersion: v1
+				data:
+				  database: dGVzdGRi
+				  email: aW5reTQ4MzJAZGF1bS5uZXQ=
+				  password: MTIzNA==
+				  username: cm9vdA==
