@@ -4151,19 +4151,75 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 					 - Directory : 반드시 지정된 디렉터리가 존재.
 					 - FileOrCreate : 파일이 있으면 사용하고 없으면 생성
 					 - File : 반드시 지정된 파일이 존재.
-					
-					
-					
-					
-					
-					
 					--------------------------------------------
 	  
 	  3) ConfigMap / Secret 
-	  
+		
+			- ConfigMap의 value값을 Pod의 컨테이너와 연결하는 방식임.
+			
+			- 샘플 YAML
+			
+			   # ConfigMap
+			      apiVersion: v1
+					kind: ConfigMap
+					metadata:
+					  name: log-config
+					data: 
+					  log_level: hello
+			
+			   ---------------------------------------
+	              volumes:
+					- name: config-vol
+					  configMap:
+						name: log-config  # log-config 이름의 ConfigMap이 필요함.
+						items:
+						  - key: log_level
+							path: log_level.conf
+			
+			
 	  4) PV/PVC 
 	  
 	
+=================================================================================
+  실습1>  emptyDir 실습
 	
-	
-	
+      1) Pod YAML 작성 
+	  
+	      # nginx-pod.yaml
+
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: nginx-pod
+			spec:
+			  containers:
+			  - image: nginx
+				name: nginx-container
+
+				volumeMounts:  # Pod의 컨테이너 경로 지정 
+				- mountPath: /usr/share/nginx/index
+				  name: shared-volume
+
+			  volumes:         # Node의 경로 지정 
+			  - name: shared-volume
+				emptyDir: {}
+				
+	  2) Pod 요청하기 위한 서비스 YAML 작성 
+	  
+	       # nginx-pod-service.yaml
+
+				apiVersion: v1
+				kind: Service
+				metadata:
+				  name: nginx-nodeport-service
+				spec:
+				  selector:
+					app: web
+				  ports:
+					- port: 80
+					  targetPort: 80
+					  nodePort: 30007
+				  type:
+					NodePort
+					
+			==> http://localhost: 30007
