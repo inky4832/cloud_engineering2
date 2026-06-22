@@ -3962,3 +3962,52 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				  email: aW5reTQ4MzJAZGF1bS5uZXQ=
 				  password: MTIzNA==
 				  username: cm9vdA==
+				  
+------------------------------------------------------------------------
+
+   실습2>  Secrete 개별 참조  ( valueFrom + secretKeyRef )
+   
+        1) yaml 작성 
+			# pod-valueFrom.yaml
+
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: env-single-secret
+			spec:
+			  containers:
+			  - name: nginx-container
+				image: nginx
+				env:
+				- name: SECRET_USERNAME
+				  valueFrom:
+					secretKeyRef:
+					  name: secret-test
+					  key: username
+					  
+				- name: SECRET_PASSWORD
+				  valueFrom:
+					secretKeyRef:
+					  name: secret-test
+					  key: password
+
+				- name: SECRET_EMAIL
+				  valueFrom:
+					secretKeyRef:
+					  name: secret-test
+					  key: email          
+ 			  
+		2) 생성 
+ 
+          kubectl apply -f  pod-valueFrom.yaml
+		  
+		
+		3) 확인 
+		
+		   kubectl exec  env-single-secret -- printenv 
+		   kubectl exec  env-single-secret -- printenv  SECRET_EMAIL
+		   
+   
+ ------------------------------------------------------------------------
+
+   실습3>  Secrete 전체 참조   
