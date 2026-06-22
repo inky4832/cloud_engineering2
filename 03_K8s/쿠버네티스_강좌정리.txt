@@ -385,7 +385,7 @@
 				container2
 			   --------------
 			   
-			   shared Network
+			   shared Network : container간에 localhost:포트번호 로 접근
 			   shared Volume
 			----------------------------------
 			
@@ -4047,3 +4047,23 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		   kubectl delete -f  pod-envFrom.yaml
 
 ----------------------------------------------------------------------
+--------------------------------------------------------------	---------------------------------------------------------------------------------------//////////////////////////////
+ 6장  K8s 주요 객체 9 - K8s Volume 
+ //////////////////////////////	 
+   https://kubernetes.io/docs/concepts/storage/volumes/
+ 
+    1. 개념 
+	  - K8s의 Pod내의 컨테이너들이 사용할 수 있는 영속성 데이터를 유지하는 방법.
+	  - Pod내의 컨테이너들이 Volume을 공유함.  
+	  
+	2. Volume 종류 
+
+     1) 임시 Volume ( Ephemeral Volume )  
+	   - Pod가 삭제되면 같이 삭제됨.
+	   - ex. emptyDir, ConfigMap, Secret
+
+
+     2) 영속 Volume ( Persitent Volume )	 
+	   - Pod가 삭제되도 유지되는 볼륨.
+	    ex. PV( Persistent Volume)
+		    PVC ( PersistentVolumeClaim )
