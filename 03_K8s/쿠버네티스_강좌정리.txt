@@ -4484,4 +4484,61 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		    kubectl delete -f  configmap-pod.yaml
 			 kubectl delete -f  configmap-pod-service.yaml
 			 
-	--------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------v--------------------------------------------------------------	---------------------------------------------------------------------------------------//////////////////////////////
+ 6장  K8s 주요 객체 10 - PV(Persistent Volume) , PVC (Persistent Volume Claim)
+ //////////////////////////////	 
+ 
+    1.개념 
+	 - 일반적으로 알고 있는 volume 특징을 가진 리소스.
+	 - 영속성을 가짐.
+	 
+	2. PV ( Persistent Volume ) 
+	  - 실제 영속성 데이터가 저장되는 공간임.( 클러스터내에 준비된 저장공간 )
+	  - Pod가 삭제되도 데이터 유지됨. 
+	  
+	  - 샘플 YAML 
+	  https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes 
+	
+	persistentvolumeclaims    pvc   v1  true    PersistentVolumeClaim  # 네임스페이스 단위 
+    persistentvolumes         pv    v1  false   PersistentVolume   # 클러스터 단위 
+	------------------------------------------------------------------------------
+	    apiVersion: v1
+		kind: PersistentVolume
+		metadata:
+		  name: pv0003   # PV 이름 
+		spec:
+		  capacity:
+			storage: 5Gi     # 저장소 크기 
+		  volumeMode: Filesystem
+		  accessModes:
+			- ReadWriteOnce
+		  persistentVolumeReclaimPolicy: Recycle # Recycle은 deprecated 됨. 
+												   현재는  Retain, Delete 만 사용 가능 
+												   Retain: PVC삭제 시 PV 유지.
+												   Delete: PVC삭제 시 PV 같이 삭제.
+		  storageClassName: slow
+		  
+		  
+		 # NFS 관련설정 정보 : 실습은 hostPath로 할 예정임
+		  mountOptions:
+			- hard
+			- nfsvers=4.1
+		  nfs:   # nfs: Network File System ex. AWS의 EBS 대체가능.
+			path: /tmp
+			server: 172.17.0.2
+			
+			-----------------------------------------------
+			 * accessModes 정리 
+			https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+			
+			ReadWriteOnce: 단일 노드에서만 읽기/쓰기 가능.
+			               즉, 여러 노드에서 같은 PV 접근 불가.
+						   
+			ReadOnlyMany: 여러 노드에서 읽기 전용으로 사용 가능 .	 
+			ReadWriteMany : 여러 노드에서 쓰기 전용으로 사용 가능 .	 			
+			
+			ReadWriteOncePod: 단일노드의 특정 pod에서만 읽기/쓰기 가능.
+			----------------------------------------------
+			
+	
+	3. PVC (Persistent Volume Claim)
