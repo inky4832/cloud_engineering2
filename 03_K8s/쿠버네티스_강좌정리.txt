@@ -4549,3 +4549,34 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		   Pod ----------> PVC --------------> PV ----------> 실제저장소
 		   
 		- PVC 샘플 YAML 
+		
+		    apiVersion: v1
+			kind: PersistentVolumeClaim
+			metadata:
+			  name: myclaim
+			spec:
+			  accessModes:
+				- ReadWriteOnce		     # PV의 볼륨에 접근할 때의 권한. PV와 일치해야됨.
+			  volumeMode: Filesystem
+			  resources:
+				requests:
+				  storage: 4Gi			 # 필요한 최소 리소스 크기. PV 보다 같거나 작아야됨.
+			  storageClassName: slow	 # PV의 이름과 동일해야 됨. 일치하지 않으면 연결안됨.
+			  
+			  
+			  selector:
+				matchLabels:
+				  release: "stable"
+				matchExpressions:
+				  - {key: environment, operator: In, values: [dev]}
+				  
+	4.  Pod에서 PVC 사용하는 방법.
+	
+	    샘플예>
+		
+		    https://kubernetes.io/docs/concepts/storage/persistent-volumes/#pod-specification-adding-raw-block-device-path-in-container
+			
+			volumes:
+			- name: data
+			  persistentVolumeClaim:
+				claimName: myclaim
