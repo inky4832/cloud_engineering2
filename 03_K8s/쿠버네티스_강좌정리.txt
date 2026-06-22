@@ -4132,7 +4132,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			 따라서 실무에서는 권장 안함.
 			 
 		    ex.
-                 pod의 경로:  /usr/share/nginx/index 
+                 pod의 경로:  /usr/share/nginx/html
 					|
 			     node의 경로:  /tmp/data 
 				 
@@ -4191,13 +4191,15 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			kind: Pod
 			metadata:
 			  name: nginx-pod
+			  labels:
+				app: web
 			spec:
 			  containers:
 			  - image: nginx
 				name: nginx-container
 
 				volumeMounts:  # Pod의 컨테이너 경로 지정 
-				- mountPath: /usr/share/nginx/index
+				- mountPath: /usr/share/nginx/html
 				  name: shared-volume
 
 			  volumes:         # Node의 경로 지정 
@@ -4222,4 +4224,33 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				  type:
 					NodePort
 					
-			==> http://localhost: 30007
+			==> http://localhost:30007
+			
+	   3) 실행 
+	      kubectl delete -f  nginx-pod.yaml
+	      kubectl delete -f  nginx-pod-service.yaml
+		  
+		  
+	      kubectl apply -f  nginx-pod.yaml
+		  
+		  kubectl apply -f  nginx-pod-service.yaml
+		  
+		  kubectl get all 
+		  
+		  http://localhost:30007 <== 실행결과는 403 Forbidden 출력됨 .
+									 이유는 emptyDir:{} 이 /usr/share/nginx/html를 덮어버림.
+									 따라서 /usr/share/nginx/html의 index.html를 못찾음.
+		  
+		4) index.html 생성   (Pod의 컨테이너 경로에 접속 )
+		
+		   kubectl exec -it nginx-pod -- bash 
+		   
+		   root> echo "<h1>hello emptyDir</h1>" >  /usr/share/nginx/html/index.html 
+		   root> exit 
+		   
+		   
+		5) 다시 요청 
+
+		  http://localhost:30007  < == 실행결과 hello emptyDir 출력됨 .
+		  
+	--------------------------------------------------------------------------------
