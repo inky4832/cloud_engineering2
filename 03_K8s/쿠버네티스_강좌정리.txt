@@ -4380,4 +4380,108 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		    kubectl delete -f  nginx-hostpath-pod.yaml
 			kubectl delete -f  nginx-hostpath-pod-service.yaml
 			
-	-----------------------------------------------------------------------
+	-----------------------------------------------------------------------=================================================================================
+  실습3 >  ConfigMap 실습
+    
+	
+	      1) ConfigMap YAML 작성 
+		  
+		   # configmap.yaml
+
+				apiVersion: v1
+				kind: ConfigMap
+				metadata:
+				  name: nginx-configmap
+				data:
+				  index_data: |
+					<h1>Hello ConfigMap</h1>
+					<p>K8s ConfigMap</p>
+					
+		
+		  2) Pod YAML 작성 
+		  
+		     # configmap-pod.yaml
+
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  name: nginx-pod
+				  labels:
+					app: web
+				spec:
+				  containers:
+				  - image: nginx
+					name: nginx-container
+
+					volumeMounts:
+					- mountPath: /usr/share/nginx/html
+					  name: shared-volume
+
+				  volumes:
+				  - name: shared-volume
+					configMap:
+						name: nginx-configmap
+						items:
+						  - key: index_data
+							path: index.html
+							
+		
+		3) Pod 요청하기 위한 서비스 YAML 작성 
+		
+		    # configmap-pod-service.yaml
+
+				apiVersion: v1
+				kind: Service
+				metadata:
+				  name: nginx-nodeport-service
+				spec:
+				  selector:
+					app: web
+				  ports:
+					- port: 80
+					  targetPort: 80
+					  nodePort: 30007
+				  type:
+					NodePort
+					
+		4) 실행 
+		
+		   kubectl apply -f  configmap.yaml
+		    kubectl apply -f  configmap-pod.yaml
+			 kubectl apply -f  configmap-pod-service.yaml
+			 
+		   http://localhost:30007   <== 실행결과 Hello ConfigMap K8s ConfigMap 출력됨.
+		   
+		   
+		---------------------------------------------------------------------------------------------
+		
+	    5) Configmap 수정 
+		
+		  kubectl edit configmap nginx-configmap  하면 메모장이 열림.
+		  
+		  다음 코드 추가하고 저장하고 닫기.
+		  <h1>Configmap Updated.</h1>
+		  
+		  조금 기다렸다가 새로 고침하자 .
+		   http://localhost:30007   <== 실행결과 Hello ConfigMap K8s ConfigMap Configmap Updated. 출력됨.
+		   
+		6) Pod  삭제후 재시작해서 볼륨 유지 확인 하기  ( 볼륨 유지됨 ) 
+ 
+			# pod 삭제 
+            kubectl delete pods  nginx-pod
+			
+			
+			# pod 다시 생성 
+			kubectl apply -f  configmap-pod.yaml
+			
+			# 다시 요청 
+			http://localhost:30007  # pod는 삭제되도  configMap  볼륨은 유지됨을 확인할 수 있음.
+				
+	    7) 모두 삭제 
+ 
+   
+		    kubectl delete -f  configmap.yaml
+		    kubectl delete -f  configmap-pod.yaml
+			 kubectl delete -f  configmap-pod-service.yaml
+			 
+	--------------------------------------------------------------------------------
