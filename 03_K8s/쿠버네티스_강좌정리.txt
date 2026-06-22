@@ -3586,6 +3586,9 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	 - namespace 단위임. 따라서 동일한 namespace의 Pod 만 참조가 가능 (******************_)
 	   kubectl api-resources 로 확인 가능  ( NAMESPACED 값이 true 임 )
 	 
+	 - ConfigMap 수정후에는 반드시 Pod를 delete 하고 다시 재생성해야 됨. (*******************)
+	   만약 Deployment로 Pod를 만들었다면 kubectl rollout restart 로 적용가능 (*******************)
+	 
 	2. ConfigMap YAML 샘플 
 
        	    apiVersion: v1
@@ -3642,7 +3645,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 				  key: ConfigMap에서 설정한 data의 key값 
 		//////////////////////////////////////////////
 	  
-	  2) 한번에 참조하는 방법.
+	  2) 한번에 참조하는 방법. ( envFrom + configMapRef )
 	   ----------------------------------------------------------------------------
 	       apiVersion: v1
 			kind: Pod
@@ -3696,7 +3699,7 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			  name: game-configmap
 			data:
 			  # property-like keys; each key maps to a simple value
-			  player_initial_lives: "3"
+			  player_initial_lives: "30"
 			  ui_properties_file_name: "user-interface.properties"
 
 			  # file-like keys
@@ -3831,4 +3834,94 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 	
 	   kubectl delete -f .
 	   
---------------------------------------------------------------
+--------------------------------------------------------------	---------------------------------------------------------------------------------------//////////////////////////////
+ 6장  K8s 주요 객체 8 - Secrets
+ //////////////////////////////	 
+	
+	https://kubernetes.io/docs/concepts/configuration/secret/
+	
+	
+	-----------------------------------
+	 -인코딩(encoding)
+	  => 데이터를 처리하는 시스템이 데이터를 좀 더 쉽게 처리 가능하도록 변환하는 작업. ex. utf-8, base64
+	  => 누구나 디코딩(decoding) 가능.
+	
+	 -암호화(encryption)
+	  => 데이터를 숨기기 위한 목적이 큼
+	  => 누구나 복호화(decryption) 불가능.
+	    반드시 암호화할 때 사용했던 키(개인키 또는 공유키 )가 있어야 됨.
+	------------------------------------
+ 
+ 
+   1. 개념 
+     - ConfigMap과 동일한 구조.
+	   차이점은 인코딩(base 64)된 데이터로 저장해야됨.
+
+   2. 특징 
+    - 암호화 아님 
+	- K8s에서 사용하는 비밀번호, API 키등 민감한 정보를 저장하기 위한 리소스. 
+   
+   
+   3. Secrete 기본 구조 
+   
+     https://kubernetes.io/docs/concepts/configuration/secret/
+	 
+	  가. 직접 인코딩해서 설정 
+	  
+	        apiVersion: v1
+			kind: Secret
+			metadata:
+			  name: dotfile-secret
+			data:
+			  .secret-file: dmFsdWUtMg0KDQo=
+			  
+	  나. 자동으로으로 인코딩되어 설정 
+
+			apiVersion: v1
+			kind: Secret
+			metadata:
+			  name: secret-basic-auth
+			type: kubernetes.io/basic-auth  # 범용: Opaque
+											  https://kubernetes.io/docs/concepts/configuration/secret/#secret-types
+			stringData:
+			  username: admin # 인코딩이 아닌 일반 plain text 지정
+			  password: t0p-Secret # required field for kubernetes.io/basic-auth
+	  
+  4. Secret 참조해서 사용하는 기본 구조 
+  
+  https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-a-container-environment-variable-with-data-from-a-single-secret 
+       
+	   가. 개별적으로 참조 ( valueFrom + secretKeyRef )
+	   
+	       apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: env-single-secret
+			spec:
+			  containers:
+			  - name: envars-test-container
+				image: nginx
+				env:
+				- name: SECRET_USERNAME
+				  valueFrom:
+					secretKeyRef:
+					  name: backend-user
+					  key: backend-username
+	   
+	   
+	   
+	   나. 한꺼번에 참조  (envFrom + secretRef )
+    
+	       apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: envfrom-secret
+			spec:
+			  containers:
+			  - name: envars-test-container
+				image: nginx
+				envFrom:
+				- secretRef:
+					name: test-secret
+			
+------------------------------------------------------------------------
