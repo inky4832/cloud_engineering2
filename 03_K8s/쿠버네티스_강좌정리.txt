@@ -4285,5 +4285,80 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 			# 다시 요청 
 			http://localhost:30007  < == 403 Forbidden 출력됨.
 									   따라서 pod는 삭제되면 emptyDir 볼륨은 유지 안됨을 확인할 수 있음.
-									   
-	------------------------------------------------------------------------------------------------
+				
+	    8) 모두 삭제 
+ 
+   
+		    kubectl delete -f  nginx-pod.yaml
+			kubectl delete -f  nginx-pod-service.yaml
+=================================================================================
+  실습2>  hostPath 실습
+  
+         1) Pod YAML 작성 
+		  
+		   # nginx-hostpath-pod.yaml
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: nginx-pod
+			  labels:
+				app: web
+			spec:
+			  containers:
+			  - image: nginx
+				name: nginx-container
+
+				volumeMounts:
+				- mountPath: /usr/share/nginx/html
+				  name: shared-volume
+
+			  volumes:
+			  - name: shared-volume
+				hostPath:
+				  path: /tmp/data          # Node의 경로. 없으면 생성하고 있으면 재사용
+				  type: DirectoryOrCreate 
+		 
+		 
+		 
+		 2) Pod 요청하기 위한 서비스 YAML 작성 
+		 
+		    # nginx-hostpath-pod-service.yaml
+
+			apiVersion: v1
+			kind: Service
+			metadata:
+			  name: nginx-nodeport-service
+			spec:
+			  selector:
+				app: web
+			  ports:
+				- port: 80
+				  targetPort: 80
+				  nodePort: 30007
+			  type:
+				NodePort
+				
+		  3) 실행 
+		  
+		     kubectl apply -f  nginx-hostpath-pod.yaml
+			 
+			 kubectl apply -f  nginx-hostpath-pod-service.yaml
+			 
+			 http://localhost:30007 <== 실행결과는 403 Forbidden 출력됨 .
+			                            이유는 hostPath:/tmp/data   이 /usr/share/nginx/html를 덮어버림.
+									    따라서 /usr/share/nginx/html의 index.html를 못찾음.
+										
+										
+		 4) index.html 생성   (Pod의 컨테이너 경로에 접속 )
+		
+		   kubectl exec -it nginx-pod -- bash 
+		   
+		   root> echo "<h1>hello hostPath</h1>" >  /usr/share/nginx/html/index.html 
+		   root> exit 
+		   
+		   
+		5) 다시 요청 
+
+		  http://localhost:30007  < == 실행결과 hello hostPath 출력됨 .
+		  
+	--------------------------------------------------------------------------------
