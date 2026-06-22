@@ -4254,3 +4254,36 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/#see-also
 		  http://localhost:30007  < == 실행결과 hello emptyDir 출력됨 .
 		  
 	--------------------------------------------------------------------------------
+	
+	    6) 컨테이너 삭제후 재시작해서 볼륨 유지 확인 하기  ( 볼륨 유지 됨 ) 
+		
+		   kubectl get pods -o wide
+			NAME        READY   STATUS    RESTARTS   AGE   IP          NODE             NOMINATED NODE   READINESS GATES
+			nginx-pod   1/1     Running   0          12m   10.1.2.28   docker-desktop   <none
+
+		   kubectl exec -it nginx-pod -- sh -c "kill 1" # 죽고 다시 실행됨. 
+		   
+		   kubectl get pods -o wide  # restart 값으로 container가 죽었다는 것을 알수 있음 .
+		     NAME        READY   STATUS    RESTARTS     AGE   IP          NODE             NOMINATED NODE   READINESS GATES
+			 nginx-pod   1/1     Running   1 (5s ago)   13m   10.1.2.28   docker-desktop   <none>           <none>
+			 
+	     
+		   다시 요청 
+
+		  http://localhost:30007  < == 실행결과 hello emptyDir 출력됨 .
+									  따라서 컨테이너는 삭제되도 emptyDir 볼륨은 유지됨을 확인할 수 있음.
+									  
+       7) Pod  삭제후 재시작해서 볼륨 유지 확인 하기  ( 볼륨 유지 안됨 ) 
+ 
+			# pod 삭제 
+            kubectl delete pods  nginx-pod
+			
+			
+			# pod 다시 생성 
+			kubectl apply -f  nginx-pod.yaml
+			
+			# 다시 요청 
+			http://localhost:30007  < == 403 Forbidden 출력됨.
+									   따라서 pod는 삭제되면 emptyDir 볼륨은 유지 안됨을 확인할 수 있음.
+									   
+	------------------------------------------------------------------------------------------------
