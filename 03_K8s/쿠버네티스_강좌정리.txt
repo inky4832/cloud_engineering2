@@ -4878,3 +4878,101 @@ https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolume
 	       kubectl delete -f  nginx-dynamic-pod-service.yaml
 	      kubectl delete -f  nginx-dynamic-pod.yaml
 		  kubectl delete -f  pvc.yaml
+		  
+
+		 
+	--------------------------------------------------------------------------------v--------------------------------------------------------------	---------------------------------------------------------------------------------------//////////////////////////////
+ 6장  K8s 주요 객체 11 - HPA ( Horizontal Pod Autoscaler:  수평적 Pod 자동갯수증가/감소 리소스 )
+ //////////////////////////////	 
+ 
+    1.개념 
+	 - 트래픽(클라이언트 요청)이 증가하면 자동으로 Pod 갯수를 증가하고 
+	   트래픽(클라이언트 요청)이 감소하면 자동으로 Pod 갯수를 감소하는 리소스임.
+	   
+	 - 반드시 기준이 되는 값이 필요함.
+	   이 값은 resources.requests 값이 됨. (***************)
+	   
+	2. 확장 방법 
+	
+	  1) 수평 확장 ( scale out )
+	     - Pod의 갯수를 늘림. ( ex. 노트북을 새로 구매 )
+	  
+	  
+	  2) 수직 확장 ( scale up )
+	    -  기본 Pod의 CPU/Memory 자원을 늘림 ( ex. 기존 노트북 업그레이드 )
+		
+    3. 구성요소 
+	
+	  1) Metrics Server 
+	    - 기본 15초마다 metrics 수집 ( CPU, Memory 등 )
+		- kubectl top node 실행되어야 됨.
+		  -----------------------------------------------------------
+		     가. metric-server 설치.
+           kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+		   kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+		   
+		   나. 로컬 환경 ( Docker Desktop/ Minikube ) 필수 설정
+	           
+			kubectl edit deployment metrics-server -n kube-system
+
+		   다. 수정
+		   
+		     containers.args 에 아래 추가
+
+		   args:
+		  - --kubelet-insecure-tls
+		  - --kubelet-preferred-address-types=InternalIP
+
+           라. 수정 후 재시작
+			
+			kubectl rollout restart deployment metrics-server -n kube-system
+
+		  마. 정상 동작 확인
+
+			 kubectl get pod -n kube-system
+			 
+		  바. Node 자원 확인
+		   
+		   kubectl top node
+
+          사. pod 자원 확인
+		   
+		   kubectl top pod 
+		   
+		 -------------------------------------------------------------------------------------
+	 2) Pod를 포함하고 있는 Deployment 작성 
+	 
+	    - 반드시 기준이 되는 값이 필요함.
+	      이 값은 resources.requests 값이 됨.
+		  
+	 3) HPA 작성 
+	 
+	 
+	        apiVersion: autoscaling/v2
+			kind: HorizontalPodAutoscaler  # HPA 리소스 
+			metadata:
+			  name: php-apache			   # HPA 명 
+			spec:
+			
+			  scaleTargetRef:			   # 어떤 리소스를 자동확장/축소할 건지 설정 
+				apiVersion: apps/v1
+				kind: Deployment		   # 이름이 php-apache인 Deployment를 살펴봄.
+				name: php-apache
+			  minReplicas: 1                # 최소 Pod 수. 아무리 트래픽이 없어도 최소 1개는 유지함.
+			  maxReplicas: 10               # 최대 Pod 수. 아무리 트래픽이 많아도 최대 10까지만 생성함.
+			  
+			  
+			  metrics:
+			  - type: Resource				# 리소스(CPU/Memory)를 기준 
+				resource:
+				  name: cpu                 # CPU 기준으로 처리 
+				  target:
+					type: Utilization       
+					averageUtilization: 50  # CPU 목표 사용률: 50% 의미.
+					                          기준은 Deployment의 resources.requests 임. 
+											  ex. resources.requests.cpu: 200m
+											  
+											  CPU 목표값:  200m * 50% = 100m 
+											  
+											  만약에 
+											  현재 CPU값이 150이면 Pod를 늘림.
