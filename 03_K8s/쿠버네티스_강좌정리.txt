@@ -4583,7 +4583,7 @@ https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolume
 			  persistentVolumeClaim:
 				claimName: myclaim
 
-    4. Pod 접속하기 위한 Service YAML 작성 
+    5. Pod 접속하기 위한 Service YAML 작성 
 	
 	     # nginx-static-pod-service.yaml
 
@@ -4601,7 +4601,7 @@ https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolume
 			  type:
 				NodePort
 	 -------------------------------------
-   5. 실행 
+   6. 실행 
 
         kubectl apply -f pv.yaml 
 		kubectl apply -f pvc.yaml 
@@ -4610,8 +4610,31 @@ https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolume
 		  
 		  
 		http://localhost:30007
-		  
-		  
+	------------------------------------------------------------
+	7. PV를 생성하는 주체가 누구냐에 따른 종류 
+	
+	 https://kubernetes.io/docs/concepts/storage/persistent-volumes/#provisioning
+	 
+	  1) 정적 프로비저닝( Static Provisioning )
+	    - pv 생성 주체: 개발자가 직접 생성 
+		- 필요한 YAML:  pv + pvc + pod 
+		- StorageClass 용도: pv와 pvc 연결해주는 용도.
+	  
+	  2) 동적 프로비저닝 ( Dynamic Provisioning )
+		- pv 생성 주체: k8s의 StorageClass가 자동 생성.
+		 K8s의 리소스:  storageclasses  sc  storage.k8s.io/v1   false StorageClass
+		  만약 필요하면 다음과 같이 YAML 작성하고 생성해서 사용하면 됨.
+             apiVersion: storage.k8s.io/v1
+			kind: StorageClass
+			metadata	    
+		 
+		 그런데 DockerDesktop 환경에서는 StorageClass 제공함.
+		 > kubectl get sc
+			NAME                 PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+			hostpath (default)   docker.io/hostpath   Delete          Immediate           false                  19d
+					 
+        - 필요한 YAML:  pvc + pod 
+		- StorageClass 용도: PV를 생성하는 역할 (매우 중요 )
 ----------------------------------------------------------------------
   실습1>  static 방식 : PV와 PVC 모두 직접 작성 
   
