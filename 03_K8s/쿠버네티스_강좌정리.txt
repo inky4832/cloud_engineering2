@@ -4976,3 +4976,132 @@ https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolume
 											  
 											  만약에 
 											  현재 CPU값이 150이면 Pod를 늘림.
+											  
+---------------------------------------------------------------------------
+ 실습>  HPA 실습
+ 
+     1) Metrics Server 설치 
+	 
+	 2) Deployement 작성 
+	 https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics
+ 
+ 
+       # hpa-deployment-service.yaml
+
+		apiVersion: apps/v1
+		kind: Deployment
+		metadata:
+		  name: php-apache
+		spec:
+		  selector:
+			matchLabels:
+			  run: php-apache
+		  template:
+			metadata:
+			  labels:
+				run: php-apache
+			spec:
+			  containers:
+			  - name: php-apache
+				image: registry.k8s.io/hpa-example
+				ports:
+				- containerPort: 80
+				resources:
+				  limits:
+					cpu: 500m
+				  requests:		 # HPA 기준이 되는 값
+					cpu: 200m
+		---
+		apiVersion: v1
+		kind: Service
+		metadata:
+		  name: php-apache
+		  labels:
+			run: php-apache
+		spec:
+		  ports:
+		  - port: 80
+		  selector:
+			run: php-apache
+
+     3) HPA 작성 
+	 
+	    # hpa.yaml
+
+			apiVersion: autoscaling/v2
+			kind: HorizontalPodAutoscaler
+			metadata:
+			  name: php-apache
+			spec:
+			  scaleTargetRef:
+				apiVersion: apps/v1
+				kind: Deployment
+				name: php-apache
+			  minReplicas: 1
+			  maxReplicas: 10
+			  metrics:
+			  - type: Resource
+				resource:
+				  name: cpu
+				  target:
+					type: Utilization
+					averageUtilization: 50   # 50% 의미.  Deployment의 resources.requests.cpu=200m 값의 50% 의미.
+		                                      최종 CPU 목표값: 200m * 50% = 100m			
+		
+	-----------------------------------------------------------------------
+	  4) 실행 
+	  
+	     kubectl apply -f hpa-deployment-service.yaml
+		 
+		 kubectl apply -f hpa.yaml
+		 
+		 kubectl get pods 
+		   NAME                          READY   STATUS    RESTARTS   AGE
+			php-apache-6f9b6b7987-nb7vn   1/1     Running   0          11s
+			
+			
+		 kubectl get hpa
+		   NAME         REFERENCE               TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+			php-apache   Deployment/php-apache   cpu: <unknown>/50%   1         10        0          11s
+			
+
+      5) 부하 발생하기 
+	  
+	  https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#increase-load 참조
+	  
+	  # Run this in a separate terminal
+# so that the load generation continues and you can carry on with the rest of the steps
+kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+	  
+	  
+	  6) hpa 실시간 보기  ( REPLICAS 값이 증가되는 것을 확인하면 됨 )
+	    
+		kubectl get hpa -w  #  -w 옵션은 실시간 확인 옵션임.
+		
+		   NAME         REFERENCE               TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+			php-apache   Deployment/php-apache   cpu: 0%/50%   1         10        1          7m47s
+			php-apache   Deployment/php-apache   cpu: 250%/50%   1         10        1          8m
+			php-apache   Deployment/php-apache   cpu: 67%/50%    1         10        4          9m
+			php-apache   Deployment/php-apache   cpu: 46%/50%    1         10        6          10m
+			php-apache   Deployment/php-apache   cpu: 47%/50%    1         10        6          11m
+			php-apache   Deployment/php-apache   cpu: 46%/50%    1         10        6          12m
+			php-apache   Deployment/php-apache   cpu: 47%/50%    1         10        6          13m
+			php-apache   Deployment/php-apache   cpu: 52%/50%    1         10        6          14m
+			
+	    
+		7) 부하 중지하기 
+		 - 부하를 중지했다고해서 바로 REPLICAS 갯수가 줄어들지 않음.
+		   하지만 최종적으로 줄어듬.
+		   
+		   kubectl delete pod load-generator 
+		   
+		   
+		8) 모두 삭제
+		
+		 kubectl delete -f hpa.yaml
+		 kubectl delete -f hpa-deployment-service.yaml
+		 
+		 # 필요시 Metrics Server 삭제
+		 kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+		 
+------------------------------------------------------------------------
