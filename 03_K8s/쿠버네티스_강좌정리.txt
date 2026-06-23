@@ -5256,6 +5256,12 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 			  periodSeconds: 3
 			  failureThreshold: 3    
 	 
+	   https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#readiness-probe
+
+		== >If the readiness probe returns a failed state, the EndpointSlice controller 
+		   removes the Pod's IP address from the EndpointSlices of all Services that match the Pod.
+		    Readiness probes run on the container during its whole lifecycle
+
 	 --------------------------------------------------------------------------
 	  * SpringBoot에서 health check 하기 
 	   - actuator 프레임워크 이용.
