@@ -5220,12 +5220,93 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 	  -------------------------------------------------------------------------------------
 	  
 	 2) Readiness Probe 
-	 
+	   
+	   - 용도: 컨테이너가 요청(트래픽)을 받을 준비가 되었는지 판단하는 검사임.
+	   
+		- 예> 
+		      MySQL DB 연결중.
+			  설정 파일 읽는중.
+			  외부 API 연동중.
+			  SpringBoot 실행중.
+			  
 	    
 	   - 응답이 failure이면 컨테이너를 재시작하는 방법으로 
 	     처리하지 않고 Service가 요청하는 목록에서 제외시킴.
 		 
+		- 샘플 YAML 예> 
+
+         # exec 명령어 이용 
+ 		    readinessProbe:
+			  exec:
+				command:
+				- cat
+				- /tmp/healthy
+			  initialDelaySeconds: 5
+			  periodSeconds: 5
+		 
+		  # httpGet 명령어 이용 (권장방법 )
+		   readinessProbe:
+			  httpGet:
+				path: /healthz
+				port: 8080
+				httpHeaders:
+				- name: Custom-Header
+				  value: Awesome
+			  initialDelaySeconds: 3
+			  periodSeconds: 3
+			  failureThreshold: 3    
 	 
+	 --------------------------------------------------------------------------
+	  * SpringBoot에서 health check 하기 
+	   - actuator 프레임워크 이용.
+	   
+	    1) 의존성 설정 
+		 implementation 'org.springframework.boot:spring-boot-starter-actuator’
+	 
+	    2) 웹에서 요청 가능 .
+		
+		  - httP://locahost:8080/actuator/엔드포인트  
+		  
+		3) 사용하고하는 엔드포인트를 노출시켜야 됨.  ( health는 자동노출 )
+		
+		    -application.yml 
+			
+			  managements:
+			    endpoints:
+					web:
+					exposure:
+					include: health,info,metrics   # 모두 노출:  *
+		   
+		4) K8s 와 연동 
+
+              httP://locahost:8080/actuator/health/liveness		
+	          httP://locahost:8080/actuator/health/readiness
+			  
+			  
+			  ex.
+			    livenessProbe:
+				  httpGet:
+					path: /actuator/health/liveness	
+					port: 8080
+					httpHeaders:
+					- name: Custom-Header   # SpringSecurity Authoriztion: Bearer token값
+					  value: Awesome
+				  initialDelaySeconds: 3
+				  periodSeconds: 3
+				  failureThreshold: 3    
+				  
+				  
+			    readinessProbe:
+				  httpGet:
+					path: /actuator/health/readiness
+					port: 8080
+					httpHeaders:
+					- name: Custom-Header
+					  value: Awesome
+				  initialDelaySeconds: 3
+				  periodSeconds: 3
+				  failureThreshold: 3    
+	 --------------------------------------------------------------------------
 	 3) Startup Probe 
 	 
 	 
