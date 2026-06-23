@@ -5432,13 +5432,55 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 			
 			   kubectl delete  -f liveness-httpGet.yaml
 	 
-	--------------------------------------------------------------------------------
+	 ---------------------------------------------------------------------------------------  
+	 실습3 >  readinessProbe - httpGet 방식 
 	
+	   1) YAML 작성 
 	 
-	 
-	 
-	 
-	 
+			# readiness-httpGet.yaml
+
+			apiVersion: apps/v1
+			kind: Deployment
+			metadata:
+			  name: readiness-httpget-pod
+
+			spec:
+			  replicas: 2
+			  selector:
+				matchLabels:
+				  app: web
+			  template:
+				metadata:
+				  labels:
+					app: web
+				spec:
+				  containers:
+				  - name: nginx-container
+					image: nginx:1.14.2
+					ports:
+					- containerPort: 80
+
+					readinessProbe:
+					  httpGet:
+					   path: /ready.html
+					   port: 80
+					  initialDelaySeconds: 3
+					  periodSeconds: 3
+					  failureThreshold: 3  
+
+			---  
+			apiVersion: v1
+			kind: Service
+			metadata:
+			  name: nginx-clusterip-service
+			spec:
+			  selector:
+				app: web
+			  ports:
+				- port: 80
+				  targetPort: 80
+			  type:
+				ClusterIP	 
 	 
 	 
 	 
