@@ -5482,6 +5482,81 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 			  type:
 				ClusterIP	 
 	 
+	    2. 실행 
+		
+		 > kubectl apply -f readiness-httpGet.yaml
 	 
-	 
-	 
+		 > kubectl get pods   # 
+	       NAME                                     READY   STATUS    RESTARTS   AGE
+			readiness-httpget-pod-7bfb495744-2h7bn   0/1     Running   0          20s
+			readiness-httpget-pod-7bfb495744-fqc74   0/1     Running   0          20s
+		
+		 >  kubectl events  
+		  
+	
+	     3. Service 엔드포인트 확인 
+		 
+		  # Service가 요청해야되는 Pod Ip와 port 정보 조회 	   
+			  
+			      # kubectl get endpoints # deprecated
+				   > kubectl get endpointslice 
+		
+
+				   > kubectl get svc 
+				   	     NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+						kubernetes                ClusterIP   10.96.0.1        <none>        443/TCP   31h
+						nginx-clusterip-service   ClusterIP   10.106.117.114   <none>        80/TCP    7m47s
+				   
+				   
+				   > kubectl get endpoints  nginx-clusterip-service # 2개의 pod가 모두 제외되었기 때문에 
+				                                                      ENDPOINTS 값이 비워져 있음.
+				   
+				      Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+						NAME                      ENDPOINTS   AGE
+						nginx-clusterip-service               8m33s
+				
+				
+				> kubectl describe endpointslice -l kubernetes.io/service-name=nginx-clusterip-service # ready 상태값 확인
+							
+								....
+								  Conditions:
+									 Ready:    false  # Ready값 false
+		------------------------------------------------------------------------------------------
+	    4. 	ready.html 추가 
+		
+		    > kubectl get pods 
+			
+			   NAME                                     READY   STATUS    RESTARTS   AGE
+				readiness-httpget-pod-7bfb495744-2h7bn   0/1     Running   0          26m
+				readiness-httpget-pod-7bfb495744-fqc74   0/1     Running   0          26m
+
+	        > 첫번째 pod 접속해서 ready.html 추가 
+			
+			  kubectl exec -it readiness-httpget-pod-7bfb495744-2h7bn -- bash
+			  root# echo "<h1>hello world</h1>" > /usr/share/nginx/html/ready.html 
+			  root# cat /usr/share/nginx/html/ready.html
+			  root# exit
+			  
+			# 엔드포인트 확인 
+			
+			> kubectl get endpoints  nginx-clusterip-service  # 하나의 Pod에 요청할 수 있음.
+			
+			   Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+				NAME                      ENDPOINTS      AGE
+				nginx-clusterip-service   10.1.2.75:80   31m
+				
+		--------------------------------------------------------------------
+		   
+	        > 두번째 pod 접속해서 ready.html 추가 
+			
+			  kubectl exec -it readiness-httpget-pod-7bfb495744-fqc74 -- bash
+			  root# echo "<h1>hello world2</h1>" > /usr/share/nginx/html/ready.html 
+			  root# cat /usr/share/nginx/html/ready.html
+			  root# exit
+			  
+			# 엔드포인트 확인 
+			
+			> kubectl get endpoints  nginx-clusterip-service  # 두개의 Pod에 모두  요청할 수 있음.
+			  Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+				NAME                      ENDPOINTS                   AGE
+				nginx-clusterip-service   10.1.2.75:80,10.1.2.76:80   33m
