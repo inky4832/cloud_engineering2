@@ -4635,6 +4635,8 @@ https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolume
 					 
         - 필요한 YAML:  pvc + pod 
 		- StorageClass 용도: PV를 생성하는 역할 (매우 중요 )
+		
+		
 ----------------------------------------------------------------------
   실습1>  static 방식 : PV와 PVC 모두 직접 작성 
   
@@ -4762,3 +4764,66 @@ https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolume
   ----------------------------------------------------------------------
   
   실습2>  dynamic 방식 : PVC만 직접 작성하고 PV 자동생성 
+  
+   
+        1) PVC YAML 작성 
+		
+		   # pvc.yaml
+
+				apiVersion: v1
+				kind: PersistentVolumeClaim
+				metadata:
+				  name: dynamic-pvc
+				spec:
+				  accessModes:
+					- ReadWriteOnce
+				  volumeMode: Filesystem
+				  resources:
+					requests:
+					  storage: 500Mi
+				  storageClassName: hostpath   # 실제 존재하는 StorageClass 명을 지정해야 된다. (***********)
+				                                  kubectl get sc  이용해서 확인 가능 
+												  
+												  
+        2) Pod YAML 작성												     
+		   
+		    # nginx-dynamic-pod.yaml
+
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: dynamic-nginx-pod
+			  labels:
+				app: web
+			spec:
+			  containers:
+			  - image: nginx
+				name: nginx-container
+
+				volumeMounts:
+				- mountPath: /usr/share/nginx/html
+				  name: shared-volume
+
+			  volumes:
+			  - name: shared-volume
+				persistentVolumeClaim:
+				  claimName: dynamic-pvc
+				  
+				  
+		3) Pod 접속하는 Servcie YAML 작성 
+		
+		     #nginx-dynamic-pod-service.yaml
+
+				apiVersion: v1
+				kind: Service
+				metadata:
+				  name: nginx-nodeport-service
+				spec:
+				  selector:
+					app: web
+				  ports:
+					- port: 80
+					  targetPort: 80
+					  nodePort: 30007
+				  type:
+					NodePort
