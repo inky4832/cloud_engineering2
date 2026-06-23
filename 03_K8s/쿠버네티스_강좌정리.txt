@@ -5350,4 +5350,96 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 	  terminationGracePeriodSeconds:  graceful shutdown하기 위한 시간. 기본: 30 초 
 	  
 	----------------------------------------------------------------------------------------  
-	  
+	 실습1>  livenessProbe -exec 방식 
+	 https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command
+	 
+	      1) YAML 작성 
+		     # liveness-exec.yaml
+
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  labels:
+					test: liveness
+				  name: liveness-exec
+				spec:
+				  containers:
+				  - name: liveness
+					image: registry.k8s.io/busybox:1.27.2
+					args:
+					- /bin/sh
+					- -c
+					- touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+					livenessProbe:
+					  exec:
+						command:
+						- cat
+						- /tmp/healthy
+					  initialDelaySeconds: 5
+					  periodSeconds: 5
+					  failureThreshold: 3  
+
+	       2) 실행 
+		    
+			  kubectl apply -f liveness-exec.yaml
+			  
+			  
+			3) 확인  ( restart 항목이 증가되는 것 확인 )
+
+              kubectl get pod  liveness-exec -w 
+
+            4) 삭제 
+			
+			   kubectl delete  -f liveness-exec.yaml
+	 ---------------------------------------------------------------------------------------  
+	 실습2>  livenessProbe - httpGet 방식 
+	 
+	 
+	 
+	      1) YAML 작성 
+		  
+		      # liveness-httpGet.yaml
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  name: liveness-httpget-pod
+				spec:
+				  containers:
+				  - name: nginx-container
+					image: nginx:1.14.2
+					ports:
+					 - containerPort: 80
+
+					livenessProbe:
+					  httpGet:
+						path: /wrong
+						port: 80
+					  initialDelaySeconds: 3
+					  periodSeconds: 3
+					  failureThreshold: 3  
+	 
+	       2) 실행 
+		   
+		      kubectl apply -f  liveness-httpGet.yaml
+	 
+	 
+	        	  
+			3) 확인  ( restart 항목이 증가되는 것 확인 )
+
+              kubectl get pod  liveness-httpget-pod   -w 
+
+            4) 삭제 
+			
+			   kubectl delete  -f liveness-httpGet.yaml
+	 
+	--------------------------------------------------------------------------------
+	
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
