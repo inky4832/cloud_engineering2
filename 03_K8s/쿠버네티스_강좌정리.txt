@@ -5331,8 +5331,17 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 	  periodSeconds:       검사 반복 주기.  기본: 10 초 
 						   문서에서는 컨테이너가 ready 상태가 아닌 경우, 지정된 periodSeconds 값보다 
 						   더 자주 실행될 수 있음. 이유는 더 빨리 서비스 준비 상태를 확인하기 위해서.
-	  timeoutSeconds:
-	  successThreshold:
-	  failureThreshold:
-	  terminationGracePeriodSeconds:
+	  timeoutSeconds:      probe 검사 후 기다리는 시간. 기본: 1초 
+	                       상황봐서 3~5 초 늘리자.
+						   
+	  successThreshold:  몇번 성공해야 실제 성공으로 간주할 지 횟수.  기본: 1 
+						  livenessProbe 와 startup 는 무조건 1 지정.
+						  즉.  readinessProbe 에서 사용하는 옵션임.
+	  
+	  failureThreshold:  몇번 실패해야 실제 실패로 간주할 지 횟수.  기본: 3
+	  
+	  
+	  terminationGracePeriodSeconds:  graceful shutdown하기 위한 시간. 기본: 30 초 
+	  
+	----------------------------------------------------------------------------------------  
 	  
