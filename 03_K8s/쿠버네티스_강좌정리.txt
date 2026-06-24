@@ -5750,7 +5750,30 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
   
   
   
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------v--------------------------------------------------------------	---------------------------------------------------------------------------------------//////////////////////////////
+ 6장  K8s 주요 객체 13 - StatefulSet
+ //////////////////////////////	 
+ statefulsets    sts   apps/v1  true StatefulSet
+ 
+       https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
   
   
-  
-  
+      1. 개념 
+	   
+	    - 상태값을 갖는 Deployment 역할.
+		  상태값(특징)? 
+		    - Pod 이름이 고정된 이름을 가짐.
+			   규칙: <StatefulSet명>-<순번>
+			      ex. web-0, web-1, web-2
+				  
+			- Pod 생성 순서가 보장됨.  ex.  web-0 생성 -----> web-1 생성 ---> 
+			  Pod 삭제 순서가 보장됨(역순으로 삭제)  ex.  web-2 삭제 --> web-1 삭제 --> web-0 삭제
+			  
+			- 볼륨은 동적 프로비저닝(Dynamic Provisioning) 지원.
+				기존 deployment(pod):  volumeMounts + volumes 사용 
+				StatefulSet : volumeMounts + volumeClaimTemplates 사용. 
+			     이름규칙: pvc이름-pod명  ex. www-nginx
+				 
+            - 네트워크은 고정된 이름의 DNS 제공. 
+			  
+		
