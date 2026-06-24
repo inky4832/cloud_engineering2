@@ -6022,3 +6022,33 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 				 web-1            1/1     Running   0          133m
 				 
 		------------------------------------------------------------------------
+		7. 삭제 
+		
+		   1) StatefulSet 삭제 ( pod도 같이 삭제됨 )
+		   
+		     kubectl delete statefulset  web 
+			 
+			  kubectl get sts
+			  kubectl get pod
+			 
+		   2) PVC 삭제 여부 ( 기본적으로 PVC 삭제 안됨, 명시적으로 삭제 필요 )
+		   
+			  kubectl get pvc  # 삭제가 안됨 
+			         NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+					www-web-0   Bound    pvc-4589ee56-1c1b-4a33-9c47-57cde5978aa8   1Gi        RWO            hostpath       <unset>                 20h
+					www-web-1   Bound    pvc-3757bf8e-8ed0-45d9-9672-2da61ef99556   1Gi        RWO            hostpath       <unset>                 20h
+					
+			 # 명시적으로 삭제 필요성 
+			 
+				kubectl delete pvc 	www-web-0
+				kubectl delete pvc 	www-web-1
+				kubectl delete pvc 	www-web-2
+				kubectl delete pvc 	www-web-3
+				kubectl delete pvc 	www-web-4
+				
+			    또는
+				
+				kubectl delete pvc --all    # 한꺼번에 삭제
+				
+			------------------------------------------------------------------	
+				
