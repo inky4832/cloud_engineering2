@@ -1,0 +1,44 @@
+# init-volume-basic.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: web
+spec:
+
+  initContainers:
+  - name: init-html
+    image: busybox:1.28
+    command: ['sh', '-c', "echo '<h1>Init Container</h1>' >> /xxx/index.html"]
+    volumeMounts:
+    - mountPath: /xxx
+      name: shared-volume
+
+  containers:
+  - image: nginx
+    name: nginx-container
+
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: shared-volume
+
+  volumes:
+  - name: shared-volume
+    emptyDir: {}
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-nodeport-service
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30007
+  type:
+    NodePort

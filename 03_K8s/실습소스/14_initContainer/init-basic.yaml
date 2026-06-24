@@ -1,0 +1,20 @@
+# init-basic.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-basic-pod
+  labels:
+    app: nginx
+    env: dev
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+
+  initContainers:
+  - name: init-message
+    image: busybox:1.28
+    command: ['sh', '-c', "echo '1. init Container ' && sleep 5 &&  echo '2. init Container ' && sleep 10"]
