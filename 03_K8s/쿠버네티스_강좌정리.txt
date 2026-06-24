@@ -5705,6 +5705,15 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 		  labels:
 			app: web
 		spec:
+
+		  initContainers:
+		  - name: init-html
+			image: busybox:1.28
+			command: ['sh', '-c', "echo '<h1>Init Container</h1>' >> /xxx/index.html"]
+			volumeMounts:
+			- mountPath: /xxx
+			  name: shared-volume
+
 		  containers:
 		  - image: nginx
 			name: nginx-container
@@ -5733,7 +5742,7 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 			NodePort
   
        2) 실행 
-	   
+	       kubectl delete  -f init-volume-basic.yaml
 	      kubectl apply -f init-volume-basic.yaml
   
           http://localhost:30007
