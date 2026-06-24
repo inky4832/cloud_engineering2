@@ -6075,5 +6075,25 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 			 
 			     kubectl get pv   # pvc 삭제할 때 pv도 같이 삭제됨.
 			------------------------------------------------------------------	
---------------------------------------------------------------------------------------			
-				
+--------------------------------------------------------------------------------------							 
+ 8장  helm 유틸리티 
+ //////////////////////////////	 
+ 
+  1. 설치 
+  
+     - 윈도우 설치 방법 
+	 
+	  1) 관리자 권한으로 PowerShell 시작하기 
+	  2) 다음 명령어로 helm 설치 한다. 
+	  
+	    https://helm.sh/docs/intro/install 문서 참조 
+	  
+	      winget install Helm.Helm
+		  
+	- 리눅스 설치 방법 
+
+       curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+		chmod 700 get_helm.sh
+		./get_helm.sh	
+		
+------------------------------------------------------------------
