@@ -5956,28 +5956,47 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 			
 			   kubectl exec -it web-0 -- bash
 			   root> echo "Hello StatefulSet web-0" >>  /usr/share/nginx/html/index.html 
+			   root> cat /usr/share/nginx/html/index.html
 			   
 			   
 			2) 두 번째 Pod 접속해서 index.html 작성 
 			
 			   kubectl exec -it web-1 -- bash
 			   root> echo "Hello StatefulSet web-1" >>  /usr/share/nginx/html/index.html    
+				root> cat /usr/share/nginx/html/index.html
 
             3) 세번째 Pod 접속해서 index.html 작성 
 			
 			   kubectl exec -it web-2 -- bash
 			   root> echo "Hello StatefulSet web-2" >>  /usr/share/nginx/html/index.html 
+				root> cat /usr/share/nginx/html/index.html
 
+			4) web-0에서 web-1 DNS로 요청 
+			
+			   kubectl exec -it web-0 -- bash
+			   root> curl web-1.nginx         # StatefulSet의 가장 중요한 특징.고정된 DNS로 접근.
+                   Hello StatefulSet web-1
 
+------------------------------------------------------------------------------------------------
+		 5. 특정 Pod 삭제 후 데이터 유지 확인
+		 
+		    1) 첫번째 pod 삭제 
+			
+		      kubectl delete pod web-0 
+            
+			2) 다시 Pod가 자동으로 생성됨. (동일한 이름인 web-0으로 만들어짐 )
+			
+			  kubect get pods 
+			  
+					web-0            1/1     Running   0          6s  # 동일한 web-0으로 만들어짐
+					web-1            1/1     Running   0          125m
+					web-2            1/1     Running   0          125m
 
+			3) web-0 접속해서 데이터 유지 확인 
 
+               kubectl exec -it web-0 -- bash
+			   root> cat /usr/share/nginx/html/index.html
+			           Hello StatefulSet web-0
 
-
-
-
-
-
-
-
-
+-----------------------------------------------------------------------------------
 	 
