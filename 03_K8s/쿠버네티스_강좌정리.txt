@@ -6097,3 +6097,41 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 		./get_helm.sh	
 		
 ------------------------------------------------------------------
+ 2. 개요 
+   - K8s의 패키지 관리자 도구. 
+     K8s의 리소스 ( Pod, Service, Deployment, ConfigMap, Secret, PVC, PV, ...)들을 
+	 뭉쳐서 한번에 생성/수정(버전관리)/삭제를 지원하는 도구.
+	 
+   - 뭉치 패키지를 Chart라고 부름.
+   
+ 3. Chart 구조 
+  
+  https://helm.sh/docs/topics/charts#the-chart-file-structure
+  
+       wordpress/   #Chart 이름 
+		  Chart.yaml          #  현재 사용중인 Chart의 메타데이터 저장
+		  values.yaml         # templates/ 내 리소스들이 공통으로 참조해서 사용할 수 있는 key:value값 설정.         
+		  templates/          # 실제 리소스 YAYML 파일들이 저장되는 위치.
+		       Pod.yaml
+			   Service.yaml
+			   Deployment.yaml
+			   ..
+			   
+ 4. Chart 명령어 
+ 
+     https://helm.sh/docs/intro/CheatSheet
+	 
+	1) 버전 확인 
+	  helm version 
+	  
+	2) chart 생성 
+	
+	    helm create <name>   # 지정된 이름으로 디렉터리가 생성됨 
+		
+		ex. helm create nginx-chart 
+		
+		   
+  
+    
+	 
+	 
