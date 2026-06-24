@@ -5999,4 +5999,26 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 			           Hello StatefulSet web-0
 
 -----------------------------------------------------------------------------------
+	    6. 스케일링 실습 ( 순서대로 생성되고 역순으로 삭제됨 )
+		
+		  1) scale-out ( 증가 )
+			
+			 kubectl scale sts web --replicas=5	
+			
+			 kubectl get pods 
+		            web-0            1/1     Running   0          6m59s
+					web-1            1/1     Running   0          132m
+					web-2            1/1     Running   0          132m
+					web-3            1/1     Running   0          33s
+					web-4            1/1     Running   0          13s
+		  
+		  2) scale-in  ( 감소 )
+
+              kubectl scale sts web --replicas=2	
 	 
+			  kubectl get pods
+			  
+			     web-0            1/1     Running   0          7m51s
+				 web-1            1/1     Running   0          133m
+				 
+		------------------------------------------------------------------------
