@@ -1,0 +1,574 @@
+////////////////////////////////////////////////////////////////////
+//// K8s 클러스터 환경구성
+////////////////////////////////////////////////////////////////////
+master:   4core/4G RAM/20G / 172.16.8.10
+node1:    2core/2GB / 20G  / 172.16.8.11
+node2:    2core/2GB / 20G  / 172.16.8.12          
+-------------------------------------------------------------------------------------------------------------------------
+1.  ubuntu에 S/W 설치 
+ -  1대만 설치, 기본 패키지 설치 등을 한 뒤, 이를 복사(clone) 하여 사용
+ --------------------------------------------------------------------------------------------
+  #기능: user1은 모든 명령을 sudo로 실행할 수 있으며, 비밀번호 입력이 필요 없다.
+	 $ sudo -i                                  # root 계정으로 로그인 
+	  [sudo] password for user1: 1234    #  최초 1회는 현재 사용자(user1)의 비밀번호 필요.
+	  root@master:~# apt update && apt install -y curl git wget vim ssh  # 패키지 목록 갱신 및 설치
+	  root@master:~# vim /etc/sudoers
+         
+	   54행에  user1  ALL=(ALL)     NOPASSWD: ALL  추가 
+ --------------------------------------------------------------------------------------------
+  #기능:  ip값이 아닌 호스트 이름으로 통신 가능하도록  
+  root@master:~# vi /etc/hosts
+      127.0.0.1   localhost
+      172.16.8.10  master
+      172.16.8.11  node1
+      172.16.8.12  node1
+ --------------------------------------------------------------------------------------------
+  #기능: 가상메모리(swap 메모리) 사용중지
+	  root@master:~# swapoff -a
+	  root@master:~# vi /etc/fstab
+
+    제일 마지막 줄 /swp.img … 을 주석 처리한다
+ --------------------------------------------------------------------------------------------
+  #기능: 방화벽 사용 중지 & ssh 활성화 && root 로 ssh연결 가능하도록 설정
+
+	  root@master:~# systemctl disable ufw	# 부팅시 자동 시작 안함 
+	  root@master:~# systemctl stop ufw		# 방화벽 비활성화(중지)
+
+	  root@master:~# systemctl start ssh		# ssh 서버 시작 
+	  root@master:~# systemctl enable ssh         # 부팅 시 자동 시작
+	  root@master:~# vi /etc/ssh/sshd_config    ( :set nu )
+	      42 PermitRootLogin  yes  수정            #  Root 계정 SSH 로그인 허용
+								 기존 설정값은 PermitRootLogin prohibit-password 는
+                                                                  Root 계정으로 SSH 접속 금지였음.
+								 ex. ssh root@192.168.0.10 가능해짐.
+
+	  root@master:~# systemctl restart ssh       # 수정한 설정 적용하기 위해서 재시작 
+	  root@master:~# passwd root  			# root 계정 비번 설정 
+	   패스워드 설정 ( 1234 )
+
+ --------------------------------------------------------------------------------------------
+ # 기능: master 노드 IP 주소 설정 
+    
+    Wired Settings > 설정 > IPv4 > Manual 선택 
+
+      172.16.8.10   24   172.16.8.2  8.8.8.8   입력하고 apply 선택 
+
+   확인방법
+    root@master:~# ip a
+	
+           inet 172.16.8.10/24  출력됨.
+-------------------------------------------------------------------------------------------
+
+2. MobaXterm Linux 원격 접속
+
+   # 기능: pem 파일 이용한 Linux에 로그인하기
+
+   # 공개키(public key) 와 개인키 (private key) 생성하기
+      user1@master:~$  ssh-keygen  -q  -N  ""  -f    master_key.pem
+	
+	 ==> 실행결과:   master_key.pem
+			     master_key.pem.pub   파일 생성됨.
+	
+    # 공개키의 내용을  authorized_keys 파일에 기록한다
+   	user1@master:~$   cat   master_key.pem.pub >> ~/.ssh/authorized_keys
+
+    # 권한 낮추기 
+	user1@master:~$   chmod 600 ~/.ssh/authorized_keys
+  -------------------------------------------------------------------------------------------
+3. VSC에서 Linux에 접속하기
+  
+   0)  C:\Users\User\.ssh 폴더를 먼저 삭제하자.
+
+   1) Remote SSH 확장팩 설치
+   2) >< 아이콘 클릭 > Connect to Host... 선택 > Add New SSH Host.. 선택 
+   3) 접속 정보 입력
+
+       user1@172.16.8.10
+
+   4) 접속정보 저장할 파일 선택 
+     C:\Users\User\.ssh\config 선택 > config 파일이 생성되고 다음 내용이 저장됨.
+
+        Host 172.16.8.10   #  master로 변경하자 
+         HostName 172.16.8.10
+         User user1
+ 
+   5) 다시  >< 아이콘 클릭  > Connect to Host... 선택 >  master 선택 > 새창이 열림 
+      > Linux > Continue > 1234 > Open Folder 선택 
+--------------------------------------------------------------------------------------------------------- 
+4. Docker 설치 
+////////////////////////////////////////////////////////////////////
+////작업1: Docker 설치
+////////////////////////////////////////////////////////////////////
+# Add Docker's official GPG key:
+sudo apt-get update -y				# 패키지 목록 갱신 
+sudo apt-get install ca-certificates curl -y	# HTTPS 통신용 패키지 설치
+							 ca-certificates(인증서 모음) 는 HTTPS 통신 시 신뢰여부를 검증함.	
+sudo install -m 0755 -d /etc/apt/keyrings       # key 저장 폴더 생성
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc  # Docker 공개키 다운로드 ( Docker가 제공한 패키지가 진짜인지 검증하기 위한 공개키 다운로드. )
+sudo chmod a+r /etc/apt/keyrings/docker.asc   # 모든 사용자가 읽을 수 있게 설정.
+
+# Add the repository to Apt sources:
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null   # Docker 저장소 등록  (실행결과: 파일 생성 )
+
+sudo apt-get update -y   # Docker 저장소 목록 갱신
+
+apt-cache madison docker-ce   # 설치 가능한 Docker 버전 확인 (선택 사항)
+
+   # Docker 28.5.1 정확히 지정 설치 
+sudo apt-get install -y \
+  docker-ce=5:28.5.1-1~ubuntu.24.04~noble \
+  docker-ce-cli=5:28.5.1-1~ubuntu.24.04~noble \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+
+sudo apt-mark hold docker-ce docker-ce-cli   #  Docker 자동 업그레이드 방지 (버전 고정)
+
+ # 최종 Docker 설치 확인 
+docker version
+systemctl status docker
+
+docker run hello-world   # 현재는 permission denied 오류발생됨. 
+                                이유는 usr1 계정이 Docker 그룹에 포함되지 않았기 때문임.
+
+				ls -l /var/run/docker.sock  실행하면 다음과 같이 출력됨.
+				즉, 소유자는 root, 그룹: docker ( 따라서 root 사용자 또는 docker 그룹사용자만 접근 가능)
+                                srw-rw---- 1 root docker 0 Jun 24 17:39 /var/run/docker.sock
+
+----------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
+5. K8s 설치 
+////////////////////////////////////////////////////////////////////
+////작업2: K8s 설치
+////////////////////////////////////////////////////////////////////
+
+    # kubernetes -cri (containerd, cri-o | cri-dockerd) - dockerd 
+    # cri-dockerd 는 cri 환경에서 기존의 dockerd 를 사용할수 있도록 해준다. 
+> wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.15/cri-dockerd-0.3.15.amd64.tgz
+
+> tar xvf cri-dockerd-0.3.15.amd64.tgz
+
+> sudo mv cri-dockerd/cri-dockerd  /usr/local/bin/
+
+[확인]
+> su - 
+   password: 1234
+root@master:~# which cri-dockerd
+    /usr/local/bin/cri-dockerd
+
+root@master:~# exit
+
+
+[서비스 등록 및 실행]
+ # usre1에서 실습
+
+> wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
+> wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
+> sudo mv cri-docker.socket cri-docker.service /etc/systemd/system/
+> sudo sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+ 
+
+> sudo systemctl daemon-reload
+> sudo systemctl enable cri-docker.service --now
+> sudo systemctl enable cri-docker.socket --now
+
+
+[확인]
+> su - 
+   password: 1234
+root@master:~# systemctl status cri-docker
+    cri-docker.service - CRI Interface for Docker Application Container Engine
+     Loaded: loaded (/etc/systemd/system/cri-docker.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2026-05-01 22:48:46 KST; 1min 31s ago
+
+root@master:~# exit
+--------------------------------------------------------------------------------------------------------
+6.  리소스 관리 통합 
+////////////////////////////////////////////////////////////////////
+//// 작업3:리소스 관리 통합
+////
+////  도커의  리소스 관리는 cgroup이 담당.
+////  K8s의 리소스 관리는 systemd 담당.
+////  따라서 충돌이 발생될수 있음. 
+////  해결: 한곳에서 일원화하여 리소스를 관리하도록 설정.
+///////////////////////////////////////////////////////////////////
+> cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+"exec-opts": ["native.cgroupdriver=systemd"],
+"log-driver": "json-file",
+"log-opts": {
+"max-size": "100m"
+},
+"storage-driver": "overlay2"
+}
+EOF
+
+> sudo systemctl restart docker && sudo systemctl restart cri-docker
+
+[확인]
+> sudo docker info | grep Cgroup
+   Cgroup Driver: systemd
+   Cgroup Version: 2
+
+--------------------------------------------------------------------------------------------------------
+7.  K8s 동작을 위한 패키지 설치
+
+////////////////////////////////////////////////////////////////////
+////작업4: K8s 동작을 위한 패키지 설치
+////////////////////////////////////////////////////////////////////
+> sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+
+> sudo mkdir -p -m 755 /etc/apt/keyrings
+
+> sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+> sudo echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+# 다음 작업들은 시간이 약간 걸림. 기다릴것.
+> sudo apt-get update  
+
+> sudo apt-get install -y kubelet kubeadm kubectl
+
+> sudo apt-mark hold kubelet kubeadm kubectl       # upgrade 를 통해 버전업 되지 않도록
+
+> sudo systemctl daemon-reload
+
+> sudo systemctl restart kubelet
+
+
+---------------------------------------------------------------------------------------------------------- 
+8.  노드 clone 하기
+###########################################################
+###작업5: 생성된 인스턴스를 복제하여 3대의 노드로 작성.
+###########################################################
+1. 인스턴스 종료(Power off).
+2. K8s_master 탭 > 오른쪽 클릭 > Manage > Clone > 다음 >
+    The current state in the virtual machine > Create a full clone (중요) >
+
+   virtual machine name: node1 입력하고 마침클릭.
+
+
+3. VMWare 목록에 node1이 보임.
+4. node1 리소스 조정하기. ( Memory: 2GB, Processor: 2)
+5. 동일한 방법으로 node2와 node3도 만들자.
+6. clone이 모두 끝났으면 각 노드별로 IP, hostname을 수정해야 됨.
+
+   ex.  node1 변경 예
+      1) node1 실행
+      2) 이름변경:  환경설정 > System 항목 > About > Device Name 항목을 node1 변경하고 옆 체크 클릭(****)
+      3) IP변경:  환경설정 > Network > 설정 > IPv4 > Manual >
+       
+            Address: 172.16.8.11
+	    netmask: 24
+	    Gateway: 172.16.8.2
+	    DNS: 8.8.8.8
+
+ 7. 리소스 줄이기 위해서 init 3으로 부팅하기
+  
+   - ssh로 접속하여 다음 명령어 실행
+   
+   sudo su -
+   systemctl set-default multi-user.target && reboot  
+
+
+-----------------------------------------------------------------------------------------------------
+10. VSC 이용해서 master, node1, node2 접근하기
+
+-----------------------------------------------------------------------------------------------------
+11.  Token 이용한 Docker 로그인 하기
+
+###########################################################
+### 작업7:  Docker 로그인  ( 패스워드가 아니라 토큰으로 로그인 하기 )
+     https://hub.docker.com/
+     inky4832@gmail.com / 80~
+     계정명: kyongyeolin
+###########################################################    
+
+1) https://hub.docker.com/  로그인
+2) Account Settings 선택
+3) 메뉴 하단에서 Personal access tokes
+4) Generate new token 선택
+
+     Access token description:  k8s cluster 실습용 토큰
+     Expiration data:  90days
+     Optional: Read,Write, Deelte
+
+     Generate 버튼 클릭
+
+ 5) Copy access token ( 토큰 복사하기 )
+
+    # 다음과 같이 가이드됨 .
+
+     Run:  docker login -u kyongyeolin
+     token: 토큰값
+
+ 
+ 6)  토큰값 이용해서 master, node1, node2 에 모두 로그인하자. 
+
+   $ docker login -u  kyongyeolin(계정명)
+
+      password:  token값
+  
+      /////////////////////////////////////////////////
+        user1@master:~$ docker login -u kyongyeolin
+
+		i Info → A Personal Access Token (PAT) can be used instead.
+			 To create a PAT, visit https://app.docker.com/settings
+
+
+		Password:    # Ctrl + C 하고 Ctrl + V 하면 됨. (눈에 보이지 않음 )
+
+		WARNING! Your credentials are stored unencrypted in '/home/user1/.docker/config.json'.
+		Configure a credential helper to remove this warning. See
+		https://docs.docker.com/go/credential-store/
+
+		Login Succeeded
+		user1@master:~$
+      /////////////////////////////////////////////////
+   
+ 7) 위 토큰을 이용하여 모든 노드(master,node1, node2, node3 )에서 로그인한다.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+12. Token 이용하여 로그인 후 master 노드에서 해야할 작업 
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+/// 토큰을 이용하여 모든 노드(master,node1, node2, node3 )에서 로그인후 작업
+/// 작업8:  가. master노드에서 해야될 작업 ( 하기전에 snapshop 찍음. 이름:  token설정완료 )
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+# master 노드의 root에서 작업
+sudo -i
+modprobe br_netfilter
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+# 다음 작업은 pull 하기 때문에 시간이 많이 걸림
+kubeadm config images pull --cri-socket unix:///run/cri-dockerd.sock 
+kubeadm init --cri-socket /var/run/cri-dockerd.sock
+  
+  //////////////////////////////////////////////////////////
+	user1@master:~$ sudo -i
+	root@master:~# modprobe br_netfilter
+	root@master:~# echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+	root@master:~# kubeadm config images pull --cri-socket unix:///run/cri-dockerd.sock
+		I0502 13:33:55.582227    6158 version.go:256] remote version is much newer: v1.36.0; falling back to: stable-1.29
+
+		[config/images] Pulled registry.k8s.io/kube-apiserver:v1.29.15
+		[config/images] Pulled registry.k8s.io/kube-controller-manager:v1.29.15
+		[config/images] Pulled registry.k8s.io/kube-scheduler:v1.29.15
+		[config/images] Pulled registry.k8s.io/kube-proxy:v1.29.15
+		[config/images] Pulled registry.k8s.io/coredns/coredns:v1.11.1
+		[config/images] Pulled registry.k8s.io/pause:3.9
+		[config/images] Pulled registry.k8s.io/etcd:3.5.16-0
+        root@master:~#
+	root@master:~# kubeadm init --cri-socket /var/run/cri-dockerd.sock       # 반드시 실행된 다음 출력값을 복사해두자. (********************)
+		W0502 13:36:27.362940    7438 initconfiguration.go:125] Usage of CRI endpoints without URL scheme is deprecated
+               and can cause kubelet errors in the future. Automatically prepending scheme "unix" to the "criSocket" with value "/var/run/cri-dockerd.sock". 
+                Please update your configuration!
+		I0502 13:36:27.402151    7438 version.go:256] remote vers
+		...
+                
+		Your Kubernetes control-plane has initialized successfully!
+
+		To start using your cluster, you need to run the following as a regular user:
+
+		# 다음 3개의 명령어는 user1 계정에서 kubectl 명령어를 사용할 수 있게 해주는 방법임.
+		# root 계정이 아닌 user1 계정에서 실행해야됨.
+		  mkdir -p $HOME/.kube
+		  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+		  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+		Alternatively, if you are the root user, you can run:
+
+		 # 다음 명령어는 user1에서 작업하기 때문에 필요없음.
+		  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+		You should now deploy a pod network to the cluster.
+		Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+		  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+		Then you can join any number of worker nodes by running the following on each as root:
+     
+	# 다음값은 node에서 사용함 (**********************)
+	 그대로 사용하지 않고 추가옵션이 있음. ( .(--cri-socket unix:///var/run/cri-dockerd.sock )
+    
+	kubeadm join 172.16.8.10:6443 --token whivzr.fbg0jv7szlrckklg \
+        --discovery-token-ca-cert-hash sha256:82ea107ebc2a643fab096a633c0b3f7a0bc7fc7eee816aff4a672aa3d6ff9d44  
+       ------------------------------------------------------------------------------------------------------------------------------------------ master 클러스터 1대 생성됨.
+	root@master:~#exit 
+
+/////////////////////////////////////////////////////////
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# 다음은 root로 로그인한 경우 ( 실습에서는 안함)
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+ //////////////////////////////////////////////
+        user1@master:~# mkdir -p $HOME/.kube
+	user1@master:~# sudo cp -i /etc/kubernetes/admin.conf  $HOME/.kube/config
+	user1@master:~# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+        user1@master:~# kubectl get nodes
+
+	     NAME     STATUS     ROLES           AGE   VERSION
+             master   NotReady   control-plane   13m   v1.29.15    # 아직 CNI가 없기 때문에 NotReady로  출력됨.
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+13. Token 이용하여 로그인 후 node1, node2 노드에서 해야할 작업 
+////////////////////////////////////////////////////////////////////
+/// 작업8:   나. node1 ~ node3 노드에서 해야될 작업 (worker node 들에게만 할 작업) 
+////////////////////////////////////////////////////////////////////
+
+   #메모리가 32G 임에도 불구하고 중간에 멈춤. 
+    실제 실습은 master 1개와 node 1개로 실행해야될 것 같음. (**********************)
+
+# 1. 브릿지 네트워크 필터 활성화 (Pod 간 통신을 위해 필수)
+sudo -i
+modprobe br_netfilter
+
+# 2. iptables가 브릿지된 트래픽을 볼 수 있도록 커널 파라미터 수정
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+# 3. 모든 worker 노드를 마스터 노드에 연결
+    주의할점은 --cri-socket unix:///var/run/cri-dockerd.sock  옵션은 반드시 추가한다.(*************)
+
+ # 다음 명령어 바로 복사해서 사용하면 절대 안됨. (************************************************)
+ # 반드시 위 master 실행결과로 나온  명령어 값 + 옵션추가해서 해야됨 (***************************)
+ # 반드시 위 master 실행결과로 나온  명령어 값 + 옵션추가해서 해야됨 (***************************)
+kubeadm join 172.16.8.10:6443 --token whivzr.fbg0jv7szlrckklg \
+        --discovery-token-ca-cert-hash sha256:82ea107ebc2a643fab096a633c0b3f7a0bc7fc7eee816aff4a672aa3d6ff9d44   \
+  --cri-socket unix:///var/run/cri-dockerd.sock
+ 
+        ////////////////////////////////////////////////////////
+	  node1과 node2 모두 실행.
+
+	   # node1에서 작업 
+
+                user1@node1:~# sudo -i
+
+		root@node1:~# modprobe br_netfilter
+		root@node1:~# echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+		root@node1:~# kubeadm join 172.16.8.10:6443 --token whivzr.fbg0jv7szlrckklg \
+        --discovery-token-ca-cert-hash sha256:82ea107ebc2a643fab096a633c0b3f7a0bc7fc7eee816aff4a672aa3d6ff9d44   \
+  --cri-socket unix:///var/run/cri-dockerd.sock
+
+
+
+		[preflight] Running pre-flight checks  # 시간이 걸림.
+		[preflight] Reading configuration from the cluster...
+		[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+		[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+		[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+		[kubelet-start] Starting the kubelet
+		[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+
+		This node has joined the cluster:
+		* Certificate signing request was sent to apiserver and a response was received.
+		* The Kubelet was informed of the new secure connection details.
+
+		Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+		root@node1:~#exit
+
+   --------------------------------------------------------------------------------------------------
+        
+        # node2에서 작업 
+
+               user1@node2:~# sudo -i
+
+		root@node2:~# modprobe br_netfilter
+		root@node2:~# echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+		root@node2:~# kubeadm join 172.16.8.10:6443 --token whivzr.fbg0jv7szlrckklg \
+        --discovery-token-ca-cert-hash sha256:82ea107ebc2a643fab096a633c0b3f7a0bc7fc7eee816aff4a672aa3d6ff9d44   \
+  --cri-socket unix:///var/run/cri-dockerd.sock
+
+
+
+		[preflight] Running pre-flight checks  # 시간이 걸림.
+		[preflight] Reading configuration from the cluster...
+		[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+		[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+		[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+		[kubelet-start] Starting the kubelet
+		[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+
+		This node has joined the cluster:
+		* Certificate signing request was sent to apiserver and a response was received.
+		* The Kubelet was informed of the new secure connection details.
+
+		Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+		root@node2:~#exit
+
+
+
+
+	////////////////////////////////////////////////////////
+
+# 4. master에서 연결정보 확인
+   kubectl get node  # 모두 NotReady 상태임.
+  
+	user1@master:~# kubectl get node
+	NAME     STATUS     ROLES           AGE   VERSION
+	master    NotReady   control-plane   48m   v1.29.15
+	node1    NotReady   <none>          59s   v1.29.15
+	node2    NotReady   <none>          30s   v1.29.15
+
+       현재는 CNI가 설치되어 있지 않아 NotReady 상태임.
+ //////////////////////////////////////////////////
+--------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------
+14. Calico CNI 이용하여 노드 연결
+
+////////////////////////////////////////////////////////////////////
+/// 작업9:   Calico CNI 이용하여 노드 연결
+////////////////////////////////////////////////////////////////////
+
+ 1. 모든 노드(master, node1, node2 )에서 다음 이미지를 pull 받음
+    root 계정에서 실행한다.
+    
+    user1@master:~$ sudo -i
+    root@master:~# docker pull docker.io/calico/cni:v3.27.1
+    root@master:~# docker pull docker.io/calico/node:v3.27.1
+    root@master:~# docker pull docker.io/calico/kube-controllers:v3.27.1
+
+    user1@node1:~$ sudo -i
+    root@node1:~# docker pull docker.io/calico/cni:v3.27.1
+    root@node1:~# docker pull docker.io/calico/node:v3.27.1
+    root@node1:~# docker pull docker.io/calico/kube-controllers:v3.27.1
+
+    user1@node2:~$ sudo -i
+    root@node2:~# docker pull docker.io/calico/cni:v3.27.1
+    root@node2:~# docker pull docker.io/calico/node:v3.27.1
+    root@node2:~# docker pull docker.io/calico/kube-controllers:v3.27.1
+
+
+ 2. master 에서 Calio를 설치하고 확인한다.
+
+   wget https://raw.githubusercontent.com/projectcalico/calico/v3.27.1/manifests/calico.yaml
+   kubectl apply -f calico.yaml
+   kubectl get node  # 모두 ready 상태로 변경됨.
+
+	 ///////////////////////////
+             user1@master:~# wget https://raw.githubusercontent.com/projectcalico/calico/v3.27.1/manifests/calico.yaml
+             user1@master:~# kubectl apply -f calico.yaml
+	     user1@master:~# kubectl get node  # Ready 준비 시간 필요
+		NAME     STATUS   ROLES           AGE   VERSION
+		master   Ready    control-plane   88m   v1.29.15
+		node1    Ready    <none>          41m   v1.29.15
+		node2    Ready    <none>          40m   v1.29.15
+
+* 중요:
+  노드 중지는 master 부터 중지 , 노드 실행시 worker node 부터 실행하고 마지막에 master 를 실행하자.
+---------------------------------------------------------------------------------------------------------------------------------------- 최종완료. 
+
+	
