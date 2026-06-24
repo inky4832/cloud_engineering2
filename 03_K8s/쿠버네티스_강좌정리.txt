@@ -6126,12 +6126,62 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 	  
 	2) chart 생성 
 	
-	    helm create <name>   # 지정된 이름으로 디렉터리가 생성됨 
+	   문버: helm create <name>   # 지정된 이름으로 디렉터리가 생성됨 
 		
 		ex. helm create nginx-chart 
 		
-		   
+    3) 배포하기 
+
+	  문법: helm install <name> <chart> 	
+
+        ex. helm install 릴리스이름  chart이름
+		
+		   helm install  myapp  nginx-chart   
+		   helm install  myapp  .		   
   
-    
+      ==> templates/ 내의 리소스들이 모두 생성됨 .
+	  
+	4) 배포 목록 보기  
+ 
+      문법:   helm list  
+	         helm list --all  
+			 helm list -o yaml   
+	  
+         ex. helm list 
+		 
+		 
+	5) 배포(Release)된 상태 보기 
+
+     문법:   helm status <release>
+	        helm status <release> --revision <number>
 	 
+	    ex.  helm status myapp 
+		     helm status myapp   --revision 3 
+			 
+    6) 배포 이력 보기 
 	 
+	  문법:   helm history <release>
+	  
+	      ex.  helm history myapp 
+		  
+
+	7) 수정 ( 배포 버전 생성 )
+	  
+	   문법:  helm upgrade <release> <chart>    
+	         helm upgrade <release> <chart> -f  파일명.yaml 
+	    
+	      ex.  helm upgrade  myapp  nginx-chart  
+		  
+	8) 롤백 ( 특정 버전으로 돌아가기 ) -  새로운 버전이 생성되면서 롤백됨.
+	
+	  문법:  helm rollback <release> <revision>
+	  
+	      ex.  helm rollback  myapp  2
+		  
+	9) 배포 삭제 
+	
+	  문법:  helm uninstall <release-name>
+	    
+		 ex.  helm uninstall myapp
+		 
+		-----------------------------------------------------------------
