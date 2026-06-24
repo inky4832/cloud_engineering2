@@ -6185,3 +6185,74 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 		 ex.  helm uninstall myapp
 		 
 		-----------------------------------------------------------------
+	실습1> 
+	      1) helm 차트 생성 
+		  
+		      helm create nginx-chart 
+	
+	         실행결과:
+			 
+			    nginx-chart/
+				   templates/  
+				        *.yaml
+				   Chart.yaml
+				   values.yaml
+				   
+		  2) templates/ 수정하기 
+
+              - 기존 파일 모두 삭제하고 
+			  - 다음 파일 추가하자 
+			    deployment.yaml 
+			    service.yaml  
+				   
+				   
+		  3) 배포하기 		   
+			     
+			 helm install  myapp  nginx-chart   
+			     NAME: myapp
+				LAST DEPLOYED: Wed Jun 24 15:45:46 2026
+				NAMESPACE: default
+				STATUS: deployed
+				REVISION: 1
+				DESCRIPTION: Install complete
+				TEST SUITE: None
+				
+				
+			 helm list 
+			    NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                 APP VERSION
+			   myapp   default         1               2026-06-24 15:45:46.7124767 +0900 KST   deployed        nginx-chart-0.1.0     1.16.0    
+
+
+            helm status myapp
+				NAME: myapp
+				LAST DEPLOYED: Wed Jun 24 15:45:46 2026
+				NAMESPACE: default
+				STATUS: deployed
+				REVISION: 1
+				DESCRIPTION: Install complete
+				RESOURCES:
+				==> v1/Service
+				NAME                      TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+				nginx-clusterip-service   ClusterIP   10.96.18.45   <none>        80/TCP    83s
+
+				==> v1/Deployment
+				NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+				deploy-pod   3/3     3            3           83s
+
+				==> v1/Pod(related)
+				NAME                          READY   STATUS    RESTARTS   AGE
+				deploy-pod-6b64db89dc-5zglf   1/1     Running   0          82s
+				deploy-pod-6b64db89dc-qnf8n   1/1     Running   0          82s
+				deploy-pod-6b64db89dc-rk9t7   1/1     Running   0          82s
+
+			 helm history myapp
+			     REVISION        UPDATED                         STATUS          CHART                   APP VERSION     DESCRIPTION     
+1               Wed Jun 24 15:45:46 2026        deployed        nginx-chart-0.1.0       1.16.0          Install complete
+			 
+			 
+			 kubectl get pod,svc 
+			 
+		 4) 배포 취소 
+		 
+		    helm uninstall myapp
+		-----------------------------------------------------------------------------
