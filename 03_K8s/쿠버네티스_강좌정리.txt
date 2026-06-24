@@ -5637,3 +5637,111 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 		 - DB나 Service 연동될때까지 대기 
 
 -----------------------------------------------------------------------------
+
+  실습1> Init Container 생성 실습 
+  
+  
+      1) YAML 작성 
+	     # init-basic.yaml
+
+		apiVersion: v1
+		kind: Pod
+		metadata:
+		  name: init-basic-pod
+		  labels:
+			app: nginx
+			env: dev
+		spec:
+		  containers:
+		  - name: nginx-container
+			image: nginx:1.14.2
+			ports:
+			- containerPort: 80
+
+		  initContainers:
+		  - name: init-message
+			image: busybox:1.28
+			command: ['sh', '-c', "echo '1. init Container ' && sleep 5 &&  echo '2. init Container ' && sleep 3600"]
+		  
+		2) 실행 
+
+          kubectl apply -f init-basic.yaml
+		  
+		  kubectl get pod 
+		  
+		3) init Container 로그 확인 
+
+           kubectl logs init-basic-pod -c init-message		
+		      1. init Container 
+			  2. init Container 
+		4) 
+		   kubectl describe pod init-basic-pod
+		
+				 ..
+				 Events:
+				  Type    Reason     Age   From               Message
+				  ----    ------     ----  ----               -------
+				  Normal  Scheduled  80s   default-scheduler  Successfully assigned default/init-basic-pod to docker-desktop
+				  Normal  Pulled     79s   kubelet            Container image "busybox:1.28" already present on machine
+				  Normal  Created    79s   kubelet            Created container: init-message
+				  Normal  Started    79s   kubelet            Started container init-message
+				  Normal  Pulled     62s   kubelet            Container image "nginx:1.14.2" already present on machine
+				  Normal  Created    62s   kubelet            Created container: nginx-container
+				  Normal  Started    62s   kubelet            Started container nginx-container
+  
+ -----------------------------------------------------------------------------
+
+  실습2>   Volume 공유 
+  
+   
+     1) Pod와 Servic YAML 작성 
+  
+      # init-volume-basic.yaml
+
+		apiVersion: v1
+		kind: Pod
+		metadata:
+		  name: nginx-pod
+		  labels:
+			app: web
+		spec:
+		  containers:
+		  - image: nginx
+			name: nginx-container
+
+			volumeMounts:
+			- mountPath: /usr/share/nginx/html
+			  name: shared-volume
+
+		  volumes:
+		  - name: shared-volume
+			emptyDir: {}
+
+		--- 
+		apiVersion: v1
+		kind: Service
+		metadata:
+		  name: nginx-nodeport-service
+		spec:
+		  selector:
+			app: web
+		  ports:
+			- port: 80
+			  targetPort: 80
+			  nodePort: 30007
+		  type:
+			NodePort
+  
+       2) 실행 
+	   
+	      kubectl apply -f init-volume-basic.yaml
+  
+          http://localhost:30007
+  
+  
+  
+  
+  
+  
+  
+  
