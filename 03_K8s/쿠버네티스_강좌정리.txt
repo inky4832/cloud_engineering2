@@ -5947,10 +5947,26 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
   
 			 root> apt update && apt full-upgrade -y
 			 root > apt install inetutils-ping
-			 root> ping web-1.nginx
+			 root> ping web-1.nginx               # web-0 Pod에서 web-1 Pod 접근을 고정된 DNS 명으로 접근가능
 
 
+		4. 볼륨에 데이터 저장.
+		
+		    1) 첫번째 Pod 접속해서 index.html 작성 
+			
+			   kubectl exec -it web-0 -- bash
+			   root> echo "Hello StatefulSet web-0" >>  /usr/share/nginx/html/index.html 
+			   
+			   
+			2) 두 번째 Pod 접속해서 index.html 작성 
+			
+			   kubectl exec -it web-1 -- bash
+			   root> echo "Hello StatefulSet web-1" >>  /usr/share/nginx/html/index.html    
 
+            3) 세번째 Pod 접속해서 index.html 작성 
+			
+			   kubectl exec -it web-2 -- bash
+			   root> echo "Hello StatefulSet web-2" >>  /usr/share/nginx/html/index.html 
 
 
 
