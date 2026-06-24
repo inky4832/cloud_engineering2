@@ -5761,9 +5761,10 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
       1. 개념 
 	   
 	    - 상태값을 갖는 Deployment 역할.
-		  상태값(특징)? 
+	
+	  2. 특징
 		    - Pod 이름이 고정된 이름을 가짐.
-			   규칙: <StatefulSet명>-<순번>
+			   이름규칙: <StatefulSet명>-<순번>
 			      ex. web-0, web-1, web-2
 				  
 			- Pod 생성 순서가 보장됨.  ex.  web-0 생성 -----> web-1 생성 ---> 
@@ -5774,6 +5775,193 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 				StatefulSet : volumeMounts + volumeClaimTemplates 사용. 
 			     이름규칙: pvc이름-pod명  ex. www-nginx
 				 
-            - 네트워크은 고정된 이름의 DNS 제공. 
+            - 네트워크는 고정된 이름의 DNS 제공. 
+			     이름규칙: <pod명>.<Service명>.<namespace>.svc.cluster.local
+				 
+				 동일한 namespace 경우 접근: <pod명>.<Service명> 까지만 지정해서 사용 가능.
+				 
+			- 일반 서비스가 아닌 headless service를 사용해야 됨.
+			    clusterIP: None 지정해야됨.
+				
+	-----------------------------------------------------------------------------------
+	 3. 샘플 yaml 예>
+
+        apiVersion: v1
+		kind: Service
+		metadata:
+		  name: nginx (%%%) # Headless Service 명.
+		  labels:
+			app: nginx
+		spec:
+		  ports:
+		  - port: 80
+			name: web
+		  clusterIP: None    # Headless Service 용
+		  selector:
+			app: nginx
+			
+			
+		---
+		apiVersion: apps/v1
+		kind: StatefulSet
+		metadata:
+		  name: web			# StatefulSet 이름. 
+						     pod이름: <StatefulSet이름>-<순서> ex. web-0, web-1
+		spec:
+		  selector:
+			matchLabels:
+			  app: nginx (****)    # StatefulSet이 관리해야 되는 Pod 선택. (Pod 라벨과 반드시 동일)
 			  
+		  serviceName: "nginx" (%%%)     # Headless Service 명.
+		  replicas: 3 # by default is 1
+		  minReadySeconds: 10 # by default is 0
+		  
+		  
+		  template:
+			metadata:
+			  labels:
+				app: nginx (****)  # Pod 라벨 
+			spec:
+			  terminationGracePeriodSeconds: 10
+			  containers:
+			  - name: nginx
+				image: registry.k8s.io/nginx-slim:0.24
+				ports:
+				- containerPort: 80
+				  name: web
+				  
+				volumeMounts:
+				- name: www (^^^^)
+				  mountPath: /usr/share/nginx/html
+				  
+		  volumeClaimTemplates:  # Dynamic 프로비저닝 이용.
+		  - metadata:
+			  name: www (^^^^)
+			spec:
+			  accessModes: [ "ReadWriteOnce" ]
+			  storageClassName: "my-storage-class"
+			  resources:
+				requests:
+				  storage: 1Gi
+ -------------------------------------------------------------------------------------
+     실습1> StatefulSet 기본 
+	 
+	 
+	    1) headless-service  YAML 작성 
 		
+		  # headless-service.yaml
+
+				apiVersion: v1
+				kind: Service
+				metadata:
+				  name: nginx
+				  labels:
+					app: nginx
+				spec:
+				  ports:
+				  - port: 80
+					name: web
+				  clusterIP: None  # 반드시 clusterIP: None 지정해야됨.
+				  selector:
+					app: nginx
+	 
+	 
+	    2) statefulSet YAML 작성 
+		
+		      # statefulset.yaml
+				apiVersion: apps/v1
+				kind: StatefulSet
+				metadata:
+				  name: web
+				spec:
+				  selector:
+					matchLabels:
+					  app: nginx # has to match .spec.template.metadata.labels
+				  serviceName: "nginx"
+				  replicas: 3 # by default is 1
+				  minReadySeconds: 10 # by default is 0
+				  template:
+					metadata:
+					  labels:
+						app: nginx # has to match .spec.selector.matchLabels
+					spec:
+					  terminationGracePeriodSeconds: 10
+					  containers:
+					  - name: nginx
+						image: registry.k8s.io/nginx-slim:0.24
+						ports:
+						- containerPort: 80
+						  name: web
+						volumeMounts:
+						- name: www
+						  mountPath: /usr/share/nginx/html
+				  volumeClaimTemplates:
+				  - metadata:
+					  name: www
+					spec:
+					  accessModes: [ "ReadWriteOnce" ]
+					  resources:
+						requests:
+						  storage: 1Gi
+	 
+	    3) 실행 
+		
+		   kubectl apply -f headless-service.yaml
+
+
+           kubectl apply -f statefulset.yaml
+	 
+	 
+	    3) 확인 
+		 
+		   kubectl get svc 
+		     NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+			kubernetes               ClusterIP   10.96.0.1       <none>        443/TCP        2d3h
+			nginx                    ClusterIP   None            <none>        80/TCP         37s
+			
+		   kubectl get sts
+		      NAME   READY   AGE
+			  web    3/3     65s
+
+		   kubectl get pods   # pod명 이름 규칙 : <statefulset명>-<순서>
+		      NAME             READY   STATUS    RESTARTS   AGE
+				web-0            1/1     Running   0          98s
+				web-1            1/1     Running   0          58s
+				web-2            1/1     Running   0          38s
+				
+				
+           kubectl get pvc    # pod명 이름 규칙 : <PVC명>-<pod명>
+		     NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+			www-web-0   Bound    pvc-4589ee56-1c1b-4a33-9c47-57cde5978aa8   1Gi        RWO            hostpath       <unset>                 17h
+			www-web-1   Bound    pvc-3757bf8e-8ed0-45d9-9672-2da61ef99556   1Gi        RWO            hostpath       <unset>                 17h
+			www-web-2   Bound    pvc-28255b9b-39f3-4c64-a540-c335268a312c   1Gi        RWO            hostpath       <unset>                 100s
+				 
+	      
+		  #DNS 확인  ( web-0 접속해서 web-1 로 ping 요청 )
+			 이름규칙: <pod명>.<Service명>.<namespace>.svc.cluster.local
+			 동일한 namespace 경우 접근: <pod명>.<Service명> 까지만 지정해서 사용 가능.
+		     
+			 ex. web-1.nginx
+			 
+			 kubectl exec -it web-0 -- bash   # bash 안되면 sh 사용 
+  
+			 root> apt update && apt full-upgrade -y
+			 root > apt install inetutils-ping
+			 root> ping web-1.nginx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	 
