@@ -5906,9 +5906,10 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 	 
 	    3) 실행 
 		
+		   kubectl delete -f headless-service.yaml
 		   kubectl apply -f headless-service.yaml
 
-
+           kubectl delete -f statefulset.yaml
            kubectl apply -f statefulset.yaml
 	 
 	 
@@ -6050,5 +6051,29 @@ https://kubernetes.io/docs/concepts/workloads/pods/probes/#configure-probes
 				
 				kubectl delete pvc --all    # 한꺼번에 삭제
 				
+				
+		  3) PV 삭제 여부 
+				/////////////////////////////////////////////
+				  persistentVolumeReclaimPolicy: Recycle # Recycle은 deprecated 됨. 
+												   현재는  Retain, Delete 만 사용 가능 
+												   Retain: PVC삭제 시 PV 유지.
+												   Delete: PVC삭제 시 PV 같이 삭제.
+				
+				
+				/////////////////////////////////////////////
+				# ReclaimPolicy 확인 
+				
+				   kubectl describe pvc www-web-0 # 현재 사용중인 storageClass 조회 
+				   
+				      ...
+					  StorageClass:  hostpath
+			 
+				   kubectl describe storageClass hostpath
+			           ...
+					   "reclaimPolicy":"Delete"
+			 ----------------------------------------------------------
+			 
+			     kubectl get pv   # pvc 삭제할 때 pv도 같이 삭제됨.
 			------------------------------------------------------------------	
+--------------------------------------------------------------------------------------			
 				
