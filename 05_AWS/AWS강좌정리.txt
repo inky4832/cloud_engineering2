@@ -33,5 +33,44 @@ https://aws.amazon.com/ko/console/
 			ex. Amazon AWS, Google Cloud, MS Azure 
 		  
 	  나. 프라이빗 클라우드 
+	      - 일반회사에서 자체적으로 클라우드 환경을 구축해서 서비스함.
+		  
 	  다. 하이브리드 클라우드 
-	  
+	     - 프라이빗 + 퍼블릭 혼합 형태
+		 
+  ----------------------------------------------------------------
+   4) 클라우드 장점 
+     
+	 - 자본비용(IT 리소스 구입비용) 대신에 가변비용(클라우드)으로 대체  
+	 - 규모의 경제를 통해서 가격이 저렴해짐. 
+	 - IT 리소스 용량이 추정 불필요.( 과대/과소 추정된 서버 추정이 불필요 )
+	 - 속도 및 대응력 향상 ( 필요한 IT 리소스를 10분안에 구축 가능 )
+  ----------------------------------------------------------------
+  5) 클라우즈 주요 용어 
+
+     가.  고가용성 ( High Availability, HA )
+         - 개념:  (장애가 발생되면 장애상황을 해결하여) 서비스를 지속할 수 있는 능력 의미.
+		 - 목표:  빠른 복구가 최종 목표임. 
+		 - 필요한 기술
+		   a. 이중화(다중화, Reduncency )
+		      ==> 단일 장애 지점 제거 ( Single Point of Failure: SPOF ) 필수  
+		   b. 장애감지 ( health check )
+              ==> SpringBoot:  actuator 의존성, /health 엔드포인트 ( ex. /metrics, /beans, /info,..)
+			      K8s : Liveness Probe, Readiness Probe
+				  LoadBalancer : health check 
+		   c. 자동우회(failover)
+		     ==> LoadBalancer/K8s(Readiness Probe)의 상태가 unhealty인 경우 요청에서 제외하고
+			     healthy로 된 서비스에만 요청하도록 우회시킴.
+		     ==> DB를 백업 데이터베이스 사용 
+			      Primary DB     Standby DB
+		     ==> K8s의 Pod 재생성
+		   
+		   d. 확장성(Scalability: 트래픽이 증가/감소하면 자원을 늘리고 줄이는 능력 )
+		   
+		      => Autoscaling
+			 
+   
+	 나. 장애 내구성/내결함성 ( Fault Tolerance )
+	    - 개념: 고가용성과 겹치는 부분이 많음.  하지만 한 단계 업그레이드 된 개념.
+		       장애가 발생되면 서비스를 지속할 수 있는 능력 의미
+		- 목표: 무중단 서비스가 최종 목표임.
