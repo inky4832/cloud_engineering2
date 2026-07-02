@@ -1,0 +1,37 @@
+AWS 강좌정리
+
+https://aws.amazon.com/ko/console/
+
+1. 클라우드 컴퓨팅
+
+   1)개념
+    IT 리소스 ( 컴퓨팅, 스토리지, 네트워크등)를 사용한만큼만 비용을 지불해서 빌려쓰는 서비스.  
+    반대되는 개념이 온프레미스(on-premise, 사용자가 직접 IT리소스를 구입)임.
+	
+   2)종류
+   
+      가. IaaS ( Infrastructure as a Service )
+	     - IT 리소스의 주요자원인 네트워크, 스토리지, 서버등 포함한 자원을 빌려주는 서비스. 
+		   쉽게말해서 노트북을 빌려주는 서비스임.
+		 - AWS 관련 주요 서비스: EC2
+		 
+	  나. PaaS ( Platform as a Service )
+	     - OS와 런타임 환경을 빌려주는 서비스 
+		 - AWS 관련 주요 서비스: AWS Elastic Beanstalk, firebase 
+		 
+	  다. SaaS ( Software as a Service )
+	    - 어플리케이션을 빌려주는 서비스 
+		- 주요 서비스: 구글 docs, gmail, Slack
+		  
+	https://cloud.google.com/learn/paas-vs-iaas-vs-saas?hl=ko 참조.
+	
+   3) 구현 모델 
+
+      가. 퍼블릭 클라우드 
+		  - CSP(클라우드 서비스를 제공하는 회사)가 운영관리하고 
+		    일반 사용자가 서비스를 받는 형태.
+			ex. Amazon AWS, Google Cloud, MS Azure 
+		  
+	  나. 프라이빗 클라우드 
+	  다. 하이브리드 클라우드 
+	  
