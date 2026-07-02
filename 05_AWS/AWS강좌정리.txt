@@ -130,3 +130,83 @@ https://aws.amazon.com/ko/console/
 		     - Auto Scaling
 			 
 	---------------------------------------------------------------------------
+
+ 2. AWS 클라우드 기초
+ 
+    1) AWS 구조 
+	
+	       AWS Account(계정)
+		           |
+				   |
+				 리전(Region) :  AWS의 물리적인 위치 ex. 서울 ( ap-northeast-2 )
+				   |
+				   |
+				 가용영역(Availability Zone: AZ) ex. ap-northeast-2a, ap-northeast-2b,
+												   ap-northeast-2c, ap-northeast-2d
+				       |
+				     DC(데이터센터1)
+					 DC(데이터센터2)
+					 ...
+					 
+	2)리전 (Region)
+     -개념: AWS 서비스가 제공되는 서버의 물리적인 위치(*******)	
+		https://aws.amazon.com/ko/about-aws/global-infrastructure/
+		
+
+     - 서울 리전: ap-northeast-2 ,
+	   버지니아 리전: us-east-1 ,  글로벌 서비스를 제공하는 리전임.(****) 
+	                ex. 빌링, CloudFront(CDN: Content Delivery Network), 
+					    IAM ( 사용자관리: 사람 또는 시스템 ), Route53 (DNS )
+							
+	3)가용영역 ( Availability Zone: AZ )	    
+     - 개념: 리전의 하부단위.
+          
+	
+     -특징:
+      >   최소 3개이상 가용영역 구성됨.
+      >  하나의 AZ에는 여러 개의 데이터센터가 있음.
+	 
+	 - 서울 가용영역 4개 제공 
+	   ap-northeast-2a, ap-northeast-2b, ap-northeast-2c, ap-northeast-2d
+	   
+	4) AWS 서비스 종류
+	
+	   가. 글로벌 서비스
+	      -개념: 데이터 및 서비스를 전 세계의 모든 리전이 공유함.
+	       ex.빌링, CloudFront(CDN: Content Delivery Network), 
+		   IAM ( 사용자관리: 사람 또는 시스템 ), Route53 (DNS )
+		   
+		   
+	   나. 리전 서비스 
+	      -개념: 리전에서만 제공되는 서비스 
+		       특정 리전에서 생성된 리소스는 다른 리전에서 사용불가.
+		   ex. 거의 대부분
+		   
+    5) AWS 주요 서비스 
+	
+	   가. 컴퓨팅 서비스 
+		   - EC2 ( Amazon Elastic Compute Cloud )
+		   - Autu Scaling ( Amazon EC2 Auto Scaling )
+		   
+	   나. 네트워크 서비스 
+	       - VPC ( Virtual Private Cloud: AWS에서 사용하는 가상의 프라이빗 네트워크  )
+		   - ELB ( Elastic Load Balancer: 로드밸런서, ALB ( Application Load Balancer: HTTP와HTTPS )  ) )
+		   - CloudFront ( CDN )
+		   - Route53 ( 도메인 서비스 )
+	   
+	   다. 스토리지 서비스 
+		 - S3 ( Amazon Simple Storage Service )
+		 - EBS ( Amazon Elastic Block Store ): EBS Volume
+		 
+	   라. 데이터베이스 서비스
+	     - RDS ( Amazon Relational DataBase Service, 관계형 데이터베이스)
+		   ex. mysql, oracle, ....
+		 
+         - 수업제외:
+           DynamoDB     ( NoSQL 데이터베이스 ex. MongoDB 역할 )
+           ElasticCache ( 캐시 서비스, ex. Redis 역할 ) 		   
+	   
+	   마. 가상화 서비스 
+	     - ECR ( Elastic Container Registry. ex. docker hub 역할 )
+		 - ECS ( Elastic Container Service.  ex. docker 역할 )
+		 - EKS ( Elastic Kubernetes Service.  ex. k8s 역할 )
