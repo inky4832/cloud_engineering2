@@ -111,4 +111,22 @@ https://aws.amazon.com/ko/console/
 			> Monitoring: 실시간 모니터링 필수
 		  
 	
-	  라.
+	  라. 프로비저닝( Provisioning)
+	  
+	    -개념: 필요한 IT리소스를 준비하고 할당하는 과정을 의미.
+		-종류 3가지 
+		
+		  a. 수동  프로비저닝
+		     - 사용자가 직접 생성.
+			  (ex. 사용자가 AWS에 로그인해서 버튼클릭하면서 리소스 사용방법 의미)
+			 
+		  b. 자동  프로비저닝
+		    - 사용자가 만든 코드로 생성 (IaC: Infrastructure as Code )
+			  ex. AWS의 CloudFormation
+			      Terraform
+				  Ansible
+			
+		  c. 동적  프로비저닝
+		     - Auto Scaling
+			 
+	---------------------------------------------------------------------------
