@@ -68,9 +68,33 @@ https://aws.amazon.com/ko/console/
 		   d. 확장성(Scalability: 트래픽이 증가/감소하면 자원을 늘리고 줄이는 능력 )
 		   
 		      => Autoscaling
-			 
+			
+			e. 무중단배포 ( zero/low downtime development )
+			   - Rolling Update: v2 생성하고 v1 삭제, 반복처리해서 최종적으로 v2만 남도록 함.
+			   
+			   - Blue/Green: 2개의 서버가 필요하고 트래픽을 한번에 변경.
+			         Blue: v1 ( 현재 서비스중인 버전 )
+					 Green: v2 ( 새로운 버전 )
+					 금융권에서 주로사용. 안정적임.  비용이 많이듬.
+			    
+			   -Canary : 새 버전을 일부 사용자에게만 먼저 배포.
+ 			   
+			
    
 	 나. 장애 내구성/내결함성 ( Fault Tolerance )
 	    - 개념: 고가용성과 겹치는 부분이 많음.  하지만 한 단계 업그레이드 된 개념.
 		       장애가 발생되면 서비스를 지속할 수 있는 능력 의미
 		- 목표: 무중단 서비스가 최종 목표임.
+		- 필요한 기술
+		    a. 고가용성 기술
+			b. 격리(isolation) 
+			   ==> AWS의 가용역역(AZ)
+			   ==> S/W의 격리 기술: circuit breaker ( 장애전파방지)	
+								  MSA의 circuit breaker( Resilience4j 의존성 )
+								  
+		    c. 점진적 기능 감소 ( 전체서비스가 죽는것 대신에 일부기능를 제한)
+			d. 자동복구
+		    e. 모니터링 ( 프로메테우스(metric 수집)/그라파나(시각화) : 오픈소스,
+			             AWS의 CloudWatch ) 
+						 
+	----------------------------------------------------------------------------
