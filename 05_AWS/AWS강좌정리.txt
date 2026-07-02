@@ -65,7 +65,7 @@ https://aws.amazon.com/ko/console/
 			      Primary DB     Standby DB
 		     ==> K8s의 Pod 재생성
 		   
-		   d. 확장성(Scalability: 트래픽이 증가/감소하면 자원을 늘리고 줄이는 능력 )
+		   d. 확장성(Scalability:   )
 		   
 		      => Autoscaling
 			
@@ -98,3 +98,17 @@ https://aws.amazon.com/ko/console/
 			             AWS의 CloudWatch ) 
 						 
 	----------------------------------------------------------------------------
+	
+	   다. 확장성(Scalability)/ 탄력성( Elasticity )
+	   
+	      -개념: 트래픽이 증가/감소하면 자원을 늘리고 줄이는 능력
+		       ( 수요에 따라서 컴퓨팅 파워를 늘리고 줄이는 능력 )
+			   
+		  -설계조건 
+		    > stateless: 상태를 저장하면 안됨. (***********)
+			> fast startup: 빠른 서버 생성 및 감소 
+			> Automation: 자동화 필수
+			> Monitoring: 실시간 모니터링 필수
+		  
+	
+	  라.
