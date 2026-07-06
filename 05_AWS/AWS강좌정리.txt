@@ -46,7 +46,7 @@ https://aws.amazon.com/ko/console/
 	 - IT 리소스 용량이 추정 불필요.( 과대/과소 추정된 서버 추정이 불필요 )
 	 - 속도 및 대응력 향상 ( 필요한 IT 리소스를 10분안에 구축 가능 )
   ----------------------------------------------------------------
-  5) 클라우즈 주요 용어 
+  5) 클라우드 주요 용어 
 
      가.  고가용성 ( High Availability, HA )
          - 개념:  (장애가 발생되면 장애상황을 해결하여) 서비스를 지속할 수 있는 능력 의미.
@@ -186,7 +186,7 @@ https://aws.amazon.com/ko/console/
 	
 	   가. 컴퓨팅 서비스 
 		   - EC2 ( Amazon Elastic Compute Cloud )
-		   - Autu Scaling ( Amazon EC2 Auto Scaling )
+		   - Auto Scaling ( Amazon EC2 Auto Scaling )
 		   
 	   나. 네트워크 서비스 
 	       - VPC ( Virtual Private Cloud: AWS에서 사용하는 가상의 프라이빗 네트워크  )
@@ -210,3 +210,93 @@ https://aws.amazon.com/ko/console/
 	     - ECR ( Elastic Container Registry. ex. docker hub 역할 )
 		 - ECS ( Elastic Container Service.  ex. docker 역할 )
 		 - EKS ( Elastic Kubernetes Service.  ex. k8s 역할 )
+		 
+------------------------------------------------------------------------------------
+3. EC2  ( 10.25.0.0/16)
+
+  1) EC2에 아파치 설치 
+   sudo -s
+   apt update && apt install apache2 -y
+   systemctl start apache2
+   systemctl status apache2 
+   systemctl enable apache2
+   
+   웹브라우저 요청 
+   
+     http://퍼블릭IP:80
+	 
+ 2) AMI 생성 
+ 
+ 
+ 3) Elastic IP 사용 
+   -실무에서 사용 안됨.
+ 
+ 4) userdata 사용
+ --------------------------------------
+#!/bin/bash
+apt update -y
+apt install apache2 -y
+systemctl start apache2
+systemctl status apache2
+systemctl enable apache2
+echo "<h1>Hello $(hostname  -f)</h1>"  >  /var/www/html/index.html
+
+---------------------------------------------------------------
+ 5) MobaXterm + EC2 키페어 이용해서 SSH 접근
+ 
+ 
+---------------------------------------------------------------
+ 6) auto scaling 그룹
+ 
+   가. template 작성 
+   나. auto scaling 그룹
+ 
+ 
+   http://demo-my-alb-inky4832-1662824808.ap-northeast-2.elb.amazonaws.com
+ 
+ 
+  7) ALB 적용 
+ 
+   *실습후 리소스 반드시 삭제할것
+    가. template 삭제하기 
+	나. 로드밸런서 삭제하기
+	나. auto scaling group 삭제하기
+	다. 대상그룹 삭제하기 
+	다. EC2 인스턴스 종료(삭제)하기
+	
+------------------------------------------------------------------------------------
+4. VPC   ( 10.25.0.0/16)
+
+
+  1) CIDR 표기법 
+  
+     문법:  A.B.C.D/E 
+	 
+  2) CIDR 표기법 해석 
+  
+    예1>    13.25.82.0/24
+	
+	가. 10진수를 모두 2진수로 변경하여 표기한다.
+	
+	       13      25       82       0
+	   00001101.00011001.01010010.00000000
+	   
+	   
+	나. CIDR 슬래시 뒤에 있는 숫자를 이용해서 2진수로 자른다.
+	
+	   00001101.00011001.01010010  /  00000000
+	 
+	다.  잘린 2진수의 왼쪽값은 그대로 고정하고 , 잘린 2진수의 오른쪽 값에서 표현할 수 있는
+	     최소값과 최대값을 구한다.
+		 
+      최소값:   00001101.00011001.01010010  / 00000000
+	  
+	  최대값:   00001101.00011001.01010010  / 11111111
+	  
+	라. 2진수로 표현된 최소값과 최대값을 10진수로 표현한다.
+	
+	  최소값:   13.25.82.0
+	  
+	  최대값:   13.25.82.255
+	  
+	  결론: 13.25.82.0/24 표기법에서 사용가능한 IP 범위:  13.25.82.0 ~ 13.25.82.255
