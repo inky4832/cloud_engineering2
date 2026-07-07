@@ -359,3 +359,45 @@ echo "<h1>Hello $(hostname  -f)</h1>"  >  /var/www/html/index.html
 	   
 	   사용가능한 실제주소:   25.212.157.1 ~ 25.212.157.126.   총 126개 IP 사용가능.
 --------------------------------------------------------------------------------
+   예3> 27.5.13.192/26
+ https://cidr.xyz/  CIDR 자동연산 사이트
+ 
+ --------------------------
+  3) 개념
+  4) 특징 
+    - VPC는 Region 단위임.
+	- 하나의 Region에 여러 VPC 생성가능.
+	- 하나의 가용영역에 하나의 subnet이 존재함.
+ 
+ 
+ 
+   퍼블릭 :  demo-my-server-inky4832
+			키페어: demo-my-server-inky4832
+   프라이빗:  bootcamp-inky4832-server 
+           키페어: bootcamp-inky4832-server
+ 
+ 
+	 외부
+	  |
+	  | 1) MobaXterm +  demo-my-server.pem
+	  |
+	 
+	 퍼블릭서브넷                                         프라이빗서브넷
+							 2) 접속: ssh
+							bootcamp-inky4832-server.pem
+	 -demo-my-server   ------------------------------->  bootcamp-server 
+		
+		
+      chmod 400 bootcamp-inky4832-server.pem
+	  
+	  #ssh -i  bootcamp-inky4832-server.pem    ubuntu@bootcamp-server의PrivateIP
+	 
+      ssh -i  bootcamp-inky4832-server.pem    ubuntu@10.25.2.232
+ 
+ 
+ 
+  --------------------------------\
+   삭제 
+   1.NAT Network 삭제
+   2.EC2 삭제
+   3.VPC 삭제
