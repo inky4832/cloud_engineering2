@@ -1,0 +1,703 @@
+==========================================
+12.3  [실습1]  EC2에 간단한 API 서버 설정하기
+# Node 설치하기
+==============================================
+$ sudo  su
+$ apt-get update && /
+apt-get install -y ca-certificates curl gnupg && /
+mkdir -p /etc/apt/keyrings && /
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && /
+NODE_MAJOR=20 && /
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list && /
+apt-get update && /
+apt-get install nodejs -y
+$ node -v
+
+==========================================================
+# Express 서버 설치하기
+
+$ mkdir my-server
+$ cd my-server
+$ npm init                         # 의존성 관리 파일 생성
+$ npm i express               # express 라이브러리 설치
+==========================================================
+
+# API 로직 작성
+$ vi app.js
+-------------------------------------------------------------------------------------------------------
+
+const express = require('express');
+const app = express();
+const port = 80;
+
+app.get('/boards', (req, res) => {
+  res.send([
+    { id: 1, title: '1번  게시글', content: '1번 게시글의 내용입니다.' },
+    { id: 2, title: '2번  게시글', content: '2번 게시글의 내용입니다.' },
+    { id: 3, title: '3번  게시글', content: '3번 게시글의 내용입니다.' }
+  ]);
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+
+-------------------------------------------------------------------------------------------------------
+# pm2 설치하기 ( Node 기반의 서비스 )
+
+$ npm  i  -g  pm2
+
+# API 서버 실행시키기
+$ pm2 start app.js
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+==========================================
+12.3  [실습2]  EC2에 부하 테스트 툴 설정하기
+-------------------------------------------------------------------------------------------------------
+# k6 설치
+
+$ sudo gpg -k && /
+sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69 && /
+echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list && /
+sudo apt-get update && /
+sudo apt-get install k6
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+==========================================
+12.3  [실습3] 부하 테스트 실습하기
+-------------------------------------------------------------------------------------------------------
+1.  k6 스크립트 작성-1
+
+// script.js
+
+import http from 'k6/http';
+import { sleep } from 'k6';
+
+export const options = {
+  // 부하를 생성하는 단계(stages)를 설정
+  stages: [
+    // 10분에 걸쳐 vus(virtual users, 가상 유저수)가 6000에 도달하도록 설정
+    { duration: '10m', target: 6000 }
+  ],
+};
+
+export default function () {
+  // API 주소로 GET 요청
+  http.get('http://<타겟 EC2 퍼블릭IP 주소>/boards');
+  // 1초 휴식
+  sleep(1);
+}
+
+-------------------------------------------------------------------------------------------------------
+1.  k6 스크립트 작성-2
+
+// script.js
+
+import http from 'k6/http';
+import { sleep } from 'k6';
+
+export const options = {
+stages: [
+	{ duration: '2m', target: 1000 },
+	{ duration: '2m', target: 2000 },
+	{ duration: '2m', target: 3000 },
+        { duration: '2m', target: 4000 },
+	//{ duration: '2m', target: 5000 },
+	{ duration: '4m', target: 0 }
+  ],
+};
+
+export default function () {
+http.get('http://<타겟 EC2 퍼블릭IP 주소>/boards');
+sleep(1);
+}
+
+-------------------------------------------------------------------------------------------------------
+2.   k6 스크립트 실행
+
+$ K6_WEB_DASHBOARD=true k6 run script.js
+-------------------------------------------------------------------------------------------------------
+
+3.  k6  웹 대시보드 열기
+
+http://{k6가 실행되고 있는 EC2 퍼블릭 IP 주소}:5665
+ ex. http://43.203.213.111:5665/
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+==========================================
+12.4  [실습4]  EC2에  SpringBoot 백엔드 서버 설정하기
+
+  1. EC2 인스턴스 생성하기
+ 2.  RDS 용 보안그룹 생성
+ 3.  RDS 생성하기
+ 4.  RDS 접속하기 
+ 5.   ELB 설정하기
+ 6. EC2에 백엔드 서버 (Spring Boot) 설정하기
+       - JDK 설치하기
+
+         sudo apt update
+         sudo apt install  -y  openjdk-21-jdk
+         java -version
+
+    - Spring Boot 프로젝트 clone 하기
+       
+         # git   clone    https://github.com/inky4832/load-testing-backend-server.git
+         git   clone    https://github.com/inky4832/load-testing-backend-server2_Prometheus_grafana.git
+
+   - RDS 정보 입력하기
+
+         $     vi   load-testing-backend-server/src/main/resources/application.yml
+
+      
+   - SpringBoot 실행하기
+  
+        $ cd  load-testing-backend-server
+        $ chmod +x gradlew
+        $ ./gradlew clean build -x test 
+        $ cd build/libs 
+        $  sudo nohup  java -jar load-testing-backend-server-0.0.1-SNAPSHOT.jar   &
+
+        $  sudo lsof -i :80      # SprintBoot 로드되는 시간이 약간 있음. 기다릴것
+
+   - 서버에 퍼블릭 IP로 요청하기 
+
+        http://3.38.250.27/health
+
+  - 서버에 ELB로 요청하기 
+
+       http://backend-alb-11-1631372611.ap-northeast-2.elb.amazonaws.com/health
+   
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+==========================================
+12.4  [실습5]  k6 이용하여 부하 테스트 진행하기 
+
+    1 .   100 만 건의  더미 데이터 만들기
+ 
+/********************************************************************
+ * 1. 재귀 CTE 최대 반복 횟수 설정
+ *    (생성할 데이터 개수보다 크게 설정)
+ ********************************************************************/
+SET SESSION cte_max_recursion_depth = 1000000;
+
+
+/********************************************************************
+ * 2. boards 테이블에 100만 건의 더미 데이터 생성
+ ********************************************************************/
+INSERT INTO boards (content, created_at, title)
+
+WITH RECURSIVE cte(n) AS
+(
+    /* 시작값 */
+    SELECT 1
+
+    UNION ALL
+
+    /* 2 ~ 1,000,000 생성 */
+    SELECT n + 1
+    FROM cte
+    WHERE n < 1000000
+)
+
+SELECT
+
+    /* Content0000001 형태 생성 */
+    CONCAT('Content', LPAD(n, 7, '0')),
+
+    /* 최근 10년 이내의 랜덤 날짜/시간 */
+    TIMESTAMP(
+        DATE_SUB(
+            NOW(),
+            INTERVAL FLOOR(RAND() * 3650) DAY
+        )
+        + INTERVAL FLOOR(RAND() * 86400) SECOND
+    ),
+
+    /* Title0000001 형태 생성 */
+    CONCAT('Title', LPAD(n, 7, '0'))
+
+FROM cte;
+
+
+/********************************************************************
+ * 3. 생성된 데이터 개수 확인
+ ********************************************************************/
+SELECT COUNT(*) AS total_count
+FROM boards;
+
+
+/********************************************************************
+ * 4. 생성된 데이터 일부 확인
+ ********************************************************************/
+SELECT *
+FROM boards
+ORDER BY id
+LIMIT 10;
+
+-----------------------------------------------------------------------------------------
+
+2 .    K6 스크립트 작성 (  script.js ) 
+
+
+import http from 'k6/http';
+import { sleep } from 'k6';
+
+export const options = {
+  // 부하를 생성하는 단계(stages)를 설정
+  stages: [
+    // 10분에 걸쳐 vus(virtual users, 가상 유저수)가 50에 도달하도록 설정
+    { duration: '10m', target: 50 }
+  ],
+};
+
+export default function () {
+  let random = Math.random();
+  // 100명 중 5명의 비율로 게시글을 작성
+  if (random < 0.05) {
+    const data = { title: '제목', content: '내용' };
+    http.post('http://{ELB 주소}/boards', JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    
+  // 100명 중 95명의 비율로 게시글을 조회
+  } else {
+      http.get('http://{ELB 주소}/boards');
+  }
+  
+  // 1초 휴식
+  sleep(1);
+}
+
+-----------------------------------------------------------------------------------------
+3 .   부하 테스트 시작하기 
+
+ $  K6_WEB_DASHBOARD=true  k6  run script.js
+
+
+-----------------------------------------------------------------------------------------
+4 .    K6  웹 대시보드 요청
+  
+   http://{k6가 실행되고 있는 EC2 IP 주소}:5665
+
+     ex. http://43.203.213.111:5665
+
+-----------------------------------------------------------------------------------------
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+==========================================
+12.4  [실습6] Memory 수집을 위한 Cloudwatch Agent 설치하기
+
+       1.  IAM Role 생성하기
+       2.  EC2 인스턴스에 IAM Role 연결하기 
+          3.   EC2 인스턴스로 접속해서 Cloudwatch Agent 설치하기 
+
+        # Ubuntu x86-64 Cloudwatch Agent 다운로드
+          $  wget  https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+
+        # 다운받은 패키지 설치
+         $ sudo dpkg     -i       -E       ./amazon-cloudwatch-agent.deb
+ 
+         4.   Cloudwatch Agent  설정 파일 생성하기 
+
+       $  sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+ 
+         ================================================================
+= Welcome to the Amazon CloudWatch Agent Configuration Manager =
+=                                                              =
+= CloudWatch Agent allows you to collect metrics and logs from =
+= your host and send them to CloudWatch. Additional CloudWatch =
+= charges may apply.                                           =
+================================================================
+
+# 사용하고 있는 운영체제는 무엇입니까? 
+On which OS are you planning to use the agent?
+1. linux
+2. windows
+3. darwin
+default choice: [1]:
+1
+
+# EC2 인스턴스 환경인지? 아니면 온프레미스 환경인지? 
+Trying to fetch the default region based on ec2 metadata...
+I! imds retry client will retry 1 timesAre you using EC2 or On-Premises hosts?
+1. EC2
+2. On-Premises
+default choice: [1]:
+1
+
+# 리눅스에서 어떤 user가 Cloudwatch Agent를 사용할 건지? 
+Which user are you planning to run the agent?
+1. cwagent
+2. root
+3. others
+default choice: [1]:
+2
+
+# StatsD 데몬(애플리케이션 지표를 수집)을 사용할 건지? 
+Do you want to turn on StatsD daemon?
+1. yes
+2. no
+default choice: [1]:
+2
+
+# CollectD라는 시스템 메트릭 모니터링 도구를 사용할 건지?
+Do you want to monitor metrics from CollectD? WARNING: CollectD must be installed or the Agent will fail to start
+1. yes
+2. no
+default choice: [1]:
+2
+
+# 컴퓨터(host)의 메트릭(CPU, 메모리 등)을 모니터링 할 건지? 
+Do you want to monitor any host metrics? e.g. CPU, memory, etc.
+1. yes
+2. no
+default choice: [1]:
+1
+
+# 코어별로 CPU 메트릭을 모니터링 할 건지? 
+Do you want to monitor cpu metrics per core?
+1. yes
+2. no
+default choice: [1]:
+1
+
+# 모든 메트릭에 EC2 Dimension(이미지 ID, 인스턴스 ID, 인스턴스 타입, 오토스케일링 그룹 이름)의 정보를 추가해서 수집할 건지?
+Do you want to add ec2 dimensions (ImageId, InstanceId, InstanceType, AutoScalingGroupName) into all of your metrics if the info is available?
+1. yes
+2. no
+default choice: [1]:
+1
+
+# EC2 Dimension(InstanceId)를 기준으로 집계를 할 건지?
+Do you want to aggregate ec2 dimensions (InstanceId)?
+1. yes
+2. no
+default choice: [1]:
+1
+
+# 메트릭을 몇 초 간격으로 수집을 할 건지? 
+Would you like to collect your metrics at high resolution (sub-minute resolution)? This enables sub-minute resolution for all metrics, but you can customize for specific metrics in the output json file.
+1. 1s
+2. 10s
+3. 30s
+4. 60s
+default choice: [4]:
+4
+
+# 기본 메트릭 구성을 어떻게 설정할 건지? 
+# Basic : 메모리 사용량(mem_used_percent), 디스크 사용량(disk_used_percent))
+Which default metrics config do you want?
+1. Basic
+2. Standard
+3. Advanced
+4. None
+default choice: [1]:
+1
+
+Current config as follows:
+{
+        "agent": {
+                "metrics_collection_interval": 60,
+                "run_as_user": "root"
+        },
+        "metrics": {
+                "aggregation_dimensions": [
+                        [
+                                "InstanceId"
+                        ]
+                ],
+                "append_dimensions": {
+                        "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
+                        "ImageId": "${aws:ImageId}",
+                        "InstanceId": "${aws:InstanceId}",
+                        "InstanceType": "${aws:InstanceType}"
+                },
+                "metrics_collected": {
+                        "disk": {
+                                "measurement": [
+                                        "used_percent"
+                                ],
+                                "metrics_collection_interval": 60,
+                                "resources": [
+                                        "*"
+                                ]
+                        },
+                        "mem": {
+                                "measurement": [
+                                        "mem_used_percent"
+                                ],
+                                "metrics_collection_interval": 60
+                        }
+                }
+        }
+}
+
+# 위의 구성에 만족하는 지?
+Are you satisfied with the above config? Note: it can be manually customized after the wizard completes to add additional items.
+1. yes
+2. no
+default choice: [1]:
+1
+
+# 합치고 싶은 CloudWatch Agent의 설정 파일이 있는 지? 
+Do you have any existing CloudWatch Log Agent (http://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AgentReference.html) configuration file to import for migration?
+1. yes
+2. no
+default choice: [2]:
+2
+
+# 로그 파일을 모니터링 할 건지?
+Do you want to monitor any log files?
+1. yes
+2. no
+default choice: [1]:
+2
+
+# CloudWatch Agent가 X-ray(AWS의 분산 추적 시스템)의 정보를 수집하게 할 건지?
+Do you want the CloudWatch agent to also retrieve X-ray traces?
+1. yes
+2. no
+default choice: [1]:
+2
+
+Existing config JSON identified and copied to:  /opt/aws/amazon-cloudwatch-agent/etc/backup-configs
+Saved config file to /opt/aws/amazon-cloudwatch-agent/bin/config.json successfully.
+Current config as follows:
+{
+        "agent": {
+                "metrics_collection_interval": 60,
+                "run_as_user": "root"
+        },
+        "metrics": {
+                "aggregation_dimensions": [
+                        [
+                                "InstanceId"
+                        ]
+                ],
+                "append_dimensions": {
+                        "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
+                        "ImageId": "${aws:ImageId}",
+                        "InstanceId": "${aws:InstanceId}",
+                        "InstanceType": "${aws:InstanceType}"
+                },
+                "metrics_collected": {
+                        "disk": {
+                                "measurement": [
+                                        "used_percent"
+                                ],
+                                "metrics_collection_interval": 60,
+                                "resources": [
+                                        "*"
+                                ]
+                        },
+                        "mem": {
+                                "measurement": [
+                                        "mem_used_percent"
+                                ],
+                                "metrics_collection_interval": 60
+                        }
+                }
+        }
+}
+Please check the above content of the config.
+The config file is also located at /opt/aws/amazon-cloudwatch-agent/bin/config.json.
+Edit it manually if needed.
+
+# 설정 정보를 AWS의 SSM parameter store(AWS의 값 저장소)에 저장할 건지? 
+Do you want to store the config in the SSM parameter store?
+1. yes
+2. no
+default choice: [1]:
+2
+
+Program exits now.
+
+---------------------------------------------------------------------------------------
+
+       4. Cloudwatch Agent  실행하기
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+
+         5. Cloudwatch Agent  잘 실행되고 있는지 확인하기
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
+
+         6.   CloudWatch로 가서  metrics이 잘 수집되고 있는지 확인하기 
+
+
+        7.   세부 모니터링 설정하기
+
+        8.   RDS  모니터링 설정하기
+ 
+        9.   각 서버의 CPU, 메모리를 한 번에 볼 수 있도록 설정하기 
+
+
+        10.   부하 테스트를  통해서 병목 지점 진단하기
+
+           $ K6_WEB_DASHBOARD=true  k6  run script.js
+
+        11.   CloudWatch 대시보드 열기
+              - 사용자 지정 시간: 15분  ( 해당 기간의 메트릭을 조회 )
+              - 새로고침:  10초      ( 10초마다 메트릭을 자동으로 갱신함 )
+
+        12.   병목 지점 진단하기 
+
+
+-----------------------------------------------------------------------------------------
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+==========================================
+12.6  [실습7]  DB 병목 지점 해결하기
+
+
+     1.   인덱스를 활용해서 RDS 성능 개선하기
+
+               CREATE INDEX idx_created_at ON boards (created_at);
+                SHOW INDEX FROM boards;
+
+
+     2. 부하 테스트를  통해서 병목 지점 진단하기
+
+           $ K6_WEB_DASHBOARD=true  k6  run script.js
+
+
+     3.  이전 결과 비교하기
+
+
+-----------------------------------------------------------------------------------------
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+==========================================
+12.8  Prometheus/Grafana 연동하기
+
+     1.   SpringBoot에 Prometheus  의존성 추가
+
+         dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+}
+
+  2.   application.yml  
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+
+
+3.   Prometheus 설치
+
+
+sudo apt update
+sudo apt install  -y  prometheus
+
+prometheus   --version
+systemctl status prometheus
+
+   4.   Prometheus 설정 ( Job 추가 )
+
+sudo     vi /etc/prometheus/prometheus.yml
+-----------------------------------
+# 추가
+scrape_configs:
+  - job_name: 'springboot-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['SpringBoot서버IP:80']
+
+
+5.   Prometheus  재시작
+
+sudo systemctl restart prometheus
+
+sudo systemctl status prometheus
+
+
+   6.   보안그룹에서 9090  인바운드 규칙 허용 
+
+    7. Prometheus  UI 확인
+
+http://Prometheus서버IP:9090
+  
+ ex.  http://3.38.250.27:9090
+
+       8.  Status > Targets    
+
+   
+       9.  promql 샘플 예
+
+up
+jvm_memory_used_bytes		#현재 JVM이 사용 중인 메모리(Byte)
+http_server_requests_seconds_count                  # 누적 HTTP 요청 개수
+rate(http_server_requests_seconds_count[1m])    #최근 1분 동안 초당 처리한 HTTP 요청 수(RPS)
+
+
+     10.  Grafana 설치
+
+# 저장소 추가 
+sudo apt-get install -y software-properties-common wget
+
+sudo mkdir -p /etc/apt/keyrings
+
+
+# Grafana GPG Key 추가
+wget -q -O - https://apt.grafana.com/gpg.key | \
+sudo gpg --dearmor -o /etc/apt/keyrings/grafana.gpg
+
+# Repository 추가
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | \
+sudo tee /etc/apt/sources.list.d/grafana.list
+
+#  패키지 목록 업데이트
+sudo apt update
+
+# Grafana 설치
+sudo apt install grafana   -y
+
+
+# 실행
+sudo systemctl enable grafana-server
+
+sudo systemctl start grafana-server
+
+sudo systemctl status grafana-server
+
+
+11.  보안그룹에 3000 인바운드 규칙 허용 
+
+
+12.  Grafana  UI 확인 
+   http://Grafan서버IP:3000
+  
+ ex.  http://3.38.250.27:3000
+
+  admin/admin
