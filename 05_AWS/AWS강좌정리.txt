@@ -386,18 +386,193 @@ echo "<h1>Hello $(hostname  -f)</h1>"  >  /var/www/html/index.html
 							 2) 접속: ssh
 							bootcamp-inky4832-server.pem
 	 -demo-my-server   ------------------------------->  bootcamp-server 
-		
+	 (bastion-host)	                                      (bootcamp-server)
+	 
+		NAT 게이트웨이  <--------------------------------- 3) curl google.com 
+			|
+		    | 4)
+		  IGW 
+			|  5)
+		  외부 
+					   
+					  43.203.233.140
 		
       chmod 400 bootcamp-inky4832-server.pem
 	  
 	  #ssh -i  bootcamp-inky4832-server.pem    ubuntu@bootcamp-server의PrivateIP
 	 
-      ssh -i  bootcamp-inky4832-server.pem    ubuntu@10.25.2.232
+      ssh -i  bootcamp-inky4832-server.pem    ubuntu@10.25.2.232 # 가용영역 a의 프라이빗 EC2 
  
+       ssh -i  bootcamp-inky4832-server.pem    ubuntu@10.25.4.6  # 가용영역 b의 프라이빗 EC2 
  
+	
+	 # 로드밸런서 요청 
+	  http://bootcamp-inky4832-server-elb-855284217.ap-northeast-2.elb.amazonaws.com/health
  
   --------------------------------\
    삭제 
-   1.NAT Network 삭제
-   2.EC2 삭제
-   3.VPC 삭제
+   0 ALB 삭제 및 대상그룹 삭제
+   1 EC2 삭제
+   2 RDS 삭제하기
+	 ==> 반드시 자동백업 보존과 스냅샵 생성 체크하면 안됨 ( 비용 과금됨 )
+   3 NAT Network 삭제
+   4 Elastic IP 해제
+   5.VPC 삭제
+   
+ ---------------------------------------------------------------
+   
+   1) 도메인 이름 
+   
+      www.example.com 
+	  
+	  
+	  com : TLD ( Top Level Domain )
+	  example : SLD ( Second Level Domain)
+	  
+	  www :  subdomain 
+	  
+	  
+   2) 아키텍처 
+   
+     가. 사용자가 웹브라우저에서 요청
+	  
+	     http://www.example.com
+		 
+		 
+	 나. 자신 PC내의 DNS Resolver(ex. 통신사 ) 에 요청함.
+	 
+	 
+	 다. DNS Resolver --->  Root Name Server 
+	 
+	       
+		                 www.example.com 요청  
+            DNS Resolver ----------> Root Name Server 
+	                     <-----------
+						          .com에 해당하는 정보를 가진 서버 목록들을 반환.
+								  
+								  
+	라. DNS Resolver --->  .com에 해당하는 서버 ( TLD 서버 )
+	
+	   
+	                 www.example.com 요청  
+            DNS Resolver ---------->  TLD  Server 
+	                     <-----------
+						      Authoritative 서버목록
+							  
+							ns-1450 ~
+							ns-1942
+							..
+							..
+	
+	마. DNS Resolver ---> Authoritative 서버에 요청 
+	
+	
+	               www.example.com 요청  
+            DNS Resolver ---------->  Authoritative  Server (ns-1450~)
+	                     <-----------
+					  IP/DNS 
+	
+	
+	바. 웹브라우저에서 IP 이용해서 요청
+	
+-----------------------------------------------------------------------------
+
+  inky4832.click
+  
+  http://s3.inky4832.click.s3-website.ap-northeast-2.amazonaws.com
+  CNAME
+  http://s3.inky4832.click/
+  
+  
+  http://web-ec2-alb-inky4832-608789005.ap-northeast-2.elb.amazonaws.com
+  
+  A
+  http://alb.inky4832.click/
+  
+ ---------------------------------------
+ 
+     web-ec2-inky4832-A  퍼블릭 IP : 13.125.243.239, Primary   <=== 상태확인은 Primary만 생성함(*****)
+						 프라이빗 IP:  10-25-1-43
+						 
+	 web-ec2-inky4832-B  퍼블릭 IP : 43.203.221.156, Secondary
+	                     프라이빗 IP:  10.25.1.252
+						 
+	 http://test2.inky4832.click/  $ Hello ip-10-25-1-43.ap-northeast-2.compute.internal
+	 
+	 Primary 에 해당되는  web-ec2-inky4832-A  EC2를 중지한다.
+	 
+	 http://test2.inky4832.click/  web-ec2-inky4832-B  10.25.1.252 출력됨 
+	 
+	 ----------------------------------------------------------
+	 
+	 CloudFront 실습 1
+	 
+	                                                           AWS 
+						
+						http://alb.inky4832.click/			        			  
+	     웹브라우저 ---------------------------      >ALB --->   EC2-A  43
+		                                                          Apache2안의 access.log 
+																  
+												               EC2-B  252
+	 
+	  CloudFront 실습 2- CloudFront 생성
+	 
+	                                                           AWS 
+						
+		          http://d1plo06714jrem.cloudfront.net		        			  
+	     웹브라우저 ------------------- CloudFront ---->ALB --->   EC2-A  43
+		                                                          Apache2안의 access.log 
+																  
+												               EC2-B  252
+															   
+--------------------------------
+   삭제 
+   0  ALB 삭제 및 대상그룹 삭제
+   1. CloudFront 비활성화 및 삭제
+   2. S3 버킷 비우기 ( 영구 삭제 입력 )
+   3. S3 삭제하기 ( 본인 버킷 입력 )
+   4. EC2 삭제														   
+   
+---------------------------------------------------------
+
+   * https 프로세스 
+										     1)인증기관(도메인존재여부(DV:Domain Validation)	
+													   도메인존재여부+사업자번호(OV:Organization Vaidataion)
+													   도메인존재여부+사업자번호+회사전화번호+대표자(EV: Extended Validation)
+											 2)인증서(CA) 생성함
+			
+	클라이언트					서버( inky4832.click 쇼핑몰 ) 3) 공개키 + 개인키 (비대칭키)
+	         ---------------------->
+			 4) https://inky4832.click
+			 
+			 <-------------------------
+			 5) 인증서(CA) + 공개키 + 도메인(inky4832.click)+..
+			 
+			 
+    6) 인증서검사 
+	   도메인검사
+	   공개키
+	   
+	7) 대칭키 생성 (ex. k123)
+	
+	8) 서버가 제공해준 공개키를
+	  이용해서 k123 대칭키를
+	  암호화함 ( ex. 123k )
+	  
+	9) 서버에 전달 --------------------->  		     10)123k 복호화 (개인키이용)==> k123
+					 123k(서버가 제공해준 공개키 
+					      이용해서 암호화된 클라이언트가
+						  생성한 대칭키(k123)
+					      						  
+	11) k123 이용해서        -----------------------------> 12) k123 이용해서 복호화( 홍길동 얻음)
+      "홍길동"암호화 (ex. hong )		 hong 
+	  
+					<------------------------------------ 13) k123 이용해서        
+															"안녕하세요"암호화 (ex. hello )
+															
+					<----------------------------------
+							  hello
+	
+	14) k123 이용해서
+	   hello 복호화
+	   ("안녕하세요")
