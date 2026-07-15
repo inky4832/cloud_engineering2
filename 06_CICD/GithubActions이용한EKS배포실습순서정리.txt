@@ -33,15 +33,166 @@
   
      08_ECR_EKS_개요_제공파일.pdf 의 31 페이지 참조.
 	 
-	   AKIA2S2Y4ACPKMWV2GX3
-	   3FlyVG4eKwWURIZ4LhBqeT9fCZsn93mmbDIT+NJW
+
 	   
    4) aws cli에 액세스키 등록
    
       08_ECR_EKS_개요_제공파일.pdf 의 34 페이지 참조.
 	  
 	  C:\Users\User>aws configure
-		AWS Access Key ID [****************GPCZ]: AKIA2S2Y4ACPKMWV2GX3
-		AWS Secret Access Key [****************fnqh]: 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
+		AWS Access Key ID [****************GPCZ]: 
+		AWS Secret Access Key [****************fnqh]: 
 		Default region name [ap-northeast-2]:
 		Default output format [json]:
+		
+   5) ECR에 SpringBoot 프로젝트 도커이미지 push하기 
+   
+      가.제공된 app_monolithic3_https_GithubActions 프로젝트를 인텔리제이에서 오픈한다.
+	  나.자바소스만 우선 확인함.
+	  다.자바소스를 도커이미지로 만들어서 ECR에 push함.
+	  
+	  라. ECR에 가서 PUSH 명령어 확인하기 
+	    aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 061039804626.dkr.ecr.ap-northeast-2.amazonaws.com
+		docker build -t my-ecr-inky4832 .	
+		docker tag my-ecr-inky4832:latest 061039804626.dkr.ecr.ap-northeast-2.amazonaws.com/my-ecr-inky4832:1.0
+		docker push 061039804626.dkr.ecr.ap-northeast-2.amazonaws.com/my-ecr-inky4832:1.0
+		
+	
+	  PS C:\cloud_engineering\aws\app_monolithic3_https_GithubActions> 
+	  
+	  ECR에서 도커이미지 확인함.
+	 -----------------------------------------------------------------------
+	 
+3. EKS 생성하기 
+
+   09_ECR_EKS_수동_및_CICD_배포_제공파일.pdf 의 25 페이지 참조.
+   
+  1) 서브넷 자동할당IP 설정 활성화
+  
+      VPC > 서브넷 > 작업 >  서브넷 설정 편집 > 자동 할당 IP 설정 > 활성화 체크하기 
+	  
+
+  2)  EKS 클러스터의IAM 역할생성하기
+  
+    IAM > 역할  > 역할생성 > AWS 서비스 >  EKS > EKS Cluster 선택
+	
+	역할이름:  my-cluster-role-inky4832
+	
+
+   3) EKS 클러스터생성 
+   
+      사용자지정구성 선택,  EKS 자율모드 비활성화 
+	  
+	  클러스터이름: my-cluster-inky4832
+	  
+	  클러스터 IAM 역할: my-cluster-role-inky4832
+	  
+	  VPC 선택.
+	  
+	  이후는 기본설정으로 설정하고 생성버튼 클릭한다.
+	  
+   4) EKS  워커노드그룹추가하기	  
+   
+      EKS 클러스터 선택 > 컴퓨팅  > 노드그룹 추가 
+	  
+	  이름: my-nodes-inky4832
+	  
+	  새역할 생성 > 역할이름: my-node-group-role-inky4832
+	  
+------------------------------------------------------------
+4. 개발자가 kubectl 이용해서 EKS와 연동하기 
+
+    1) 현재 kubectl이 어떤 클러스터와 연동되어 있는지 확인하기 
+	
+	    kubectl config get-contexts 
+		
+		kubectl config delete-context arn:aws:eks:ap-northeast-2:727646470302:cluster/kube-practice-11
+		
+		kubectl config use-context arn:aws:eks:ap-northeast-2:727646470302:cluster/kube-practice-11
+		
+		
+   2) kubectl에 EKS 클러스터 추가하기 
+   
+     09_ECR_EKS_수동_및_CICD_배포_제공파일.pdf 의 53 페이지 참조.
+	 
+	   # aws eks  --rgeion ap-northeast-2 update-kubeconfig  --name 
+
+		aws eks   --region  ap-northeast-2  update-kubeconfig   --name   my-cluster-inky4832
+		
+------------------------------------------------------------
+5. Ingress Controller 설치
+
+   09_ECR_EKS_수동_및_CICD_배포_제공파일.pdf 의 59 페이지 참조.
+   
+   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/aws/deploy.yaml
+   
+   설치가 끝나면 자동으로 Network Load Balancer가 자동 생성됨.
+   
+ ------------------------------------------------------------
+6.  Network Load Balancer DNS 를  Route 53 도메인과 매핑.
+
+    09_ECR_EKS_수동_및_CICD_배포_제공파일.pdf 의 63 페이지 참조.
+
+
+   NLB: a208f25efdef44128b47e4b1a87fbdc6-1c6d8ec78013da95.elb.ap-northeast-2.amazonaws.com
+   
+   Route 53:  app.inky4832.click 
+
+
+ ------------------------------------------------------------
+7.   https 통신을위한인증서작업( Cert-manager 생성)
+
+   09_ECR_EKS_수동_및_CICD_배포_제공파일.pdf 의 71 페이지 참조.
+   
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.0/cert-manager.crds.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.0/cert-manager.yaml
+
+----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+8. YAML 파일 수정하기 
+
+   1) redis_https_AWS.yaml ( 수정사항 없음)
+
+   2 )db_secret_https_AWS.yaml ( RDS 엔드포인트 수정하기 )
+
+
+    3)https_Cert_AWS.yaml ( 이메일 및 4개의 값 수정 )
+
+   4)ingress_https_AWS.yaml ( host 포함 3개 수정 )
+
+
+   5)deploy_https_AWS.yaml ( image 수정하기 )
+
+--------------------------------------------------------------------------------------------------------
+9. Github Actions yaml 파일 수정하기 
+
+   .github/workflows/deploy_cicd_k8s.yml
+
+   1) Github에 저장소 생성 
+   
+      github-action-spring
+	  
+	  
+	  echo "# github-action-spring" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/inky4832/github-action-spring.git
+git push -u origin main
+
+
+
+   2) Github에 secrets 등록 
+   
+     github-action-spring 저장소 > settings  > Secret and variables > Actions > Repository secrets
+   
+      AWS_KEY: 
+	  AWS_SECRET:
+   
+             aws-access-key-id: ${{ secrets.AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+
+
+
+  3) .github/workflows/deploy_cicd_k8s.yml 수정하기 
