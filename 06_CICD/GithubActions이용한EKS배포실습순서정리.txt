@@ -1,0 +1,47 @@
+
+1. RDS 설치 
+
+   가. 보안그룹 생성
+      이름: my-db-inky4832
+	  
+	  인바운드규칙: 3306
+	  
+   나. RDS 생성 
+   
+      RDS 식별자: my-database-inky4832
+	  관리자: admin
+	  비번: password
+	  
+	  퍼블릭엑세스: 예 선택
+	  
+	  보안그룹:  my-db-inky4832 선택
+	  
+	  데이터베이스명: testdb
+	  
+2. ECR 설치 
+
+  1) 로컬저장소 생성
+    리포지토리 이름: my-ecr-inky4832
+	
+  2) 윈도우 aws-cli 설치 
+  
+     08_ECR_EKS_개요_제공파일.pdf 의 30 페이지 참조.
+	 https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+	 
+	 
+  3) 현재 계정의 액세스키 얻기
+  
+     08_ECR_EKS_개요_제공파일.pdf 의 31 페이지 참조.
+	 
+	   AKIA2S2Y4ACPKMWV2GX3
+	   3FlyVG4eKwWURIZ4LhBqeT9fCZsn93mmbDIT+NJW
+	   
+   4) aws cli에 액세스키 등록
+   
+      08_ECR_EKS_개요_제공파일.pdf 의 34 페이지 참조.
+	  
+	  C:\Users\User>aws configure
+		AWS Access Key ID [****************GPCZ]: AKIA2S2Y4ACPKMWV2GX3
+		AWS Secret Access Key [****************fnqh]: 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
+		Default region name [ap-northeast-2]:
+		Default output format [json]:
