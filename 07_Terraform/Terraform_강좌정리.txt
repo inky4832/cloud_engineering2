@@ -10,3 +10,40 @@ Terraform_강좌정리
    - HCL(HashiCorp Language) 사용.
    
    https://developer.hashicorp.com/terraform/docs
+   
+   
+/////////////////////////////////////
+2. 환경설정
+/////////////////////////////////////   
+
+   1. Terraform CLI 설치( Go 언어로 개발 )
+   
+      - Terraform을 실행하기 위한 도구. 
+	  - Terraform을 실행하기 위한 GUI 제공 안됨.
+	 
+     1) 윈도우 zip 파일 다운로드 및 압축해제
+	 
+	  https://developer.hashicorp.com/terraform/install
+	  
+	 2) terraform.exe 파일을 PATH에 추가 
+	 
+	   PATH=C:\cloud_engineering\terraform_study\terraform_1.15.8_windows_386;%PATH%
+	   
+	   
+	 3) CMD에서 명령어 확인
+	 
+	    terraform version
+	
+
+    4) Terraform 주요 명령어 
+
+       - terraform init  : Terraform 프로젝트 초기화
+						   Provider 다운(AWS Provider ), .terraform 디렉터리 생성, lock file파일
+						   
+	   - terraform validate : Terraform 코드(HCL) 문법검사 
+	   - terraform fmt       : Terraform 코드(HCL)를 표준 형식으로 만듬.
+	   - terraform plan      : Terraform 코드(HCL)와 AWS Infra 비교하여 변경사항을 미리 확인.
+	   - terraform apply     : Terraform 계획을 실제 AWS에 적용하여 Infra 구축.
+	   - terraform destroy   : Terraform이 관리하는 모든 리소스를 삭제.
+	   
+	   
