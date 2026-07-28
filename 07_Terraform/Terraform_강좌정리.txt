@@ -46,4 +46,154 @@ Terraform_강좌정리
 	   - terraform apply     : Terraform 계획을 실제 AWS에 적용하여 Infra 구축.
 	   - terraform destroy   : Terraform이 관리하는 모든 리소스를 삭제.
 	   
+------------------------------------------------------------------------------------
+
+   2. AWS CLI 설치 
+
+      ==> AWS에서 Access Key 생성하고 이 Key를 이용해서 접속이 가능함.
+    
+	   1) AWS CLI 다운로드 설치 
+	  
+	     https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+
+       2) AWS에서 액세스 키 생성 
 	   
+		  IAM > 보안 자격 증명 > 액세스 키 만들기 
+	
+	   
+	   3) 로컬에서 액세스키 설정 
+	   
+		C:\cloud_engineering\terraform_study>aws configure
+		AWS Access Key ID [****************BJO7]: 
+		AWS Secret Access Key [****************XXHO]: 
+		Default region name [ap-northeast-2]: 
+		Default output format [json]: 
+		
+	 
+	   4) AWS 인증상태 확인 
+	   
+	     aws sts get-caller-identity
+		 
+		 C:\cloud_engineering\terraform_study>aws sts get-caller-identity
+		{                                                                                                                          
+			"UserId": "AIDA2S2Y4ACPBPQFFYBOB",
+			"Account": "727646470302",
+			"Arn": "arn:aws:iam::727646470302:user/a-student-11"
+		}
+
+		 
+	3. VSC 설치 
+
+    4. VSC Terraform Extension 설치 
+
+        => HashiCorp Terraform	
+	
+/////////////////////////////////////
+3. HCL ( HashiCorp Language) 문법 정리 
+/////////////////////////////////////  
+
+  1. 데이터 종류 
+  
+    https://developer.hashicorp.com/terraform/language/expressions/types
+
+     1) Primitive types
+	    
+		가. string
+		   ex.  "hello"
+		나. number
+		   ex.  100,   3.14
+		다. bool 
+		   ex. true/false 
+	 
+	 
+	 2) Collection types (  complex types, structural types )
+
+        라. list ( 순서있고 중복 허용 가능 )
+		   ex.   ["us-west-1a", "us-west-1c"]
+		   
+		마. set   ( 순서없고 중복 불가)
+		https://developer.hashicorp.com/terraform/language/expressions/types#sets 참고해서 사용하자.
+
+		바. map 
+		 ex. {name = "Mabel", age = 52}
+		      또는
+			  {name : "Mabel", age : 52}
+		
+	3) Special vaue 
+	
+	   사. null
+	   
+	--------------------------------------------
+	  실습1:  데이터 종류 
+	  
+	    
+	     1. main.tf  작성 
+		 ##################################################
+			# 문자열/숫자/리스트/맵  작성하기
+			##################################################
+
+			locals {
+			  
+			  # 문자열 값
+			  project_name = "terraform-practice"
+
+			  # 숫자 값
+			  instance_count = 2
+
+			  # Boolean 값
+			  enable_monitoring = true
+
+			  # List
+			  availability_zones = [
+				"ap-northeast-2a",
+				"ap-northeast-2c"
+			  ]
+
+			  # Map
+			  common_tags = {
+				Project     = "terraform-practice"
+				Environment = "dev"
+				ManagedBy   = "Terraform"
+			  }
+
+			  common_tags2 = {
+				Project2 : "terraform-practice2"
+				Environment2 : "dev2"
+				ManagedBy2 : "Terraform2"
+			  }
+
+			}
+
+
+        2. 실행 
+		
+		   terraform init
+		   terraform validate
+		   terraform console
+		   > local.project_name
+			"terraform-practice"
+			> local.instance_count
+			2
+			> local.enable_monitoring
+			true
+			> local.availability_zones
+			[
+			  "ap-northeast-2a",
+			  "ap-northeast-2c",
+			]
+			> local.availability_zones[0]
+			"ap-northeast-2a"
+			> local.availability_zones[1]
+			"ap-northeast-2c"
+			> local.common_tags
+			{
+			  "Environment" = "dev"
+			  "ManagedBy" = "Terraform"
+			  "Project" = "terraform-practice"
+			}
+			> local.common_tags["Project"]
+			"terraform-practice"
+			> local.common_tags2["Environment2"]
+			"dev2"
+		   
