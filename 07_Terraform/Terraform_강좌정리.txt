@@ -294,3 +294,69 @@ Terraform_강좌정리
 	     terraform apply   <== output 자동으로 출력됨 
 		 terraform output  
 		 terraform output 이름   
+		 
+		 
+	실습3- output 실습 
+	
+	  1) outputs.tf 
+	  
+	     
+		##################################################
+		# Output으로 값 확인
+		##################################################
+
+		output "project_name" {
+		  value = local.project_name
+		}
+
+		output "resource_name" {
+		  value = local.resource_name
+		}
+
+		output "first_availability_zone" {
+		  value = local.availability_zones[0]
+		}
+
+		output "environment_tag" {
+		  value = local.common_tags["Environment"]
+		  sensitive = true
+		}
+
+     2) 실행 
+	 
+	    terraform init
+		terraform apply
+
+		Changes to Outputs:
+		  + environment_tag         = (sensitive value)
+		  + first_availability_zone = "ap-northeast-2a"
+		  + project_name            = "terraform"
+		  + resource_name           = "terraform-dev-vpc"
+
+		You can apply this plan to save these new output values to the Terraform state, without changing any real
+		infrastructure.
+
+		Do you want to perform these actions?
+		  Terraform will perform the actions described above.
+		  Only 'yes' will be accepted to approve.
+
+		  Enter a value: yes
+
+
+		Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+
+		Outputs:
+
+		environment_tag = <sensitive>
+		first_availability_zone = "ap-northeast-2a"
+		project_name = "terraform"
+		resource_name = "terraform-dev-vpc"
+
+		C:\cloud_engineering\terraform_study\01_basic\01_HCL3_output>terraform output
+		environment_tag = <sensitive>
+		first_availability_zone = "ap-northeast-2a"
+		project_name = "terraform"
+		resource_name = "terraform-dev-vpc"
+
+		C:\cloud_engineering\terraform_study\01_basic\01_HCL3_output>terraform output project_name
+		"terraform"
