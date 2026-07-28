@@ -360,3 +360,36 @@ Terraform_강좌정리
 
 		C:\cloud_engineering\terraform_study\01_basic\01_HCL3_output>terraform output project_name
 		"terraform"
+		
+		
+-----------------------------------------------------------
+  4. 변수 (variable )
+  
+    1) 변수 종류
+	
+	 가. input variable
+	    - 외부에서 주입 받는 값을 저장하는 변수. 변경 가능 (***************)
+	 나. local variable
+	    - 내부에서 사용하기 위해 만든 계산된 값을 저장하는 변수. 변경 불가능 ( readonly )
+	 다. output value
+	     -외부로 출력할 때 사용하는 변수
+	
+	
+	2) local variable
+	
+	  -개념 
+	   내부에서 사용하기 위해 만든 계산된 값을 저장하는 변수. 변경 불가능 ( readonly )
+	   
+	  -문법 
+	  
+	     locals {
+		 
+			변수명=값 
+		    변수명=값 
+		 }
+		 
+	  -참조방법 
+	  
+	     local.변수명 
+		 
+		 
