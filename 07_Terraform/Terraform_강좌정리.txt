@@ -197,3 +197,100 @@ Terraform_강좌정리
 			> local.common_tags2["Environment2"]
 			"dev2"
 		   
+-----------------------------------------------------------
+  2. 보간법 ( interpolation )		   
+  
+     https://developer.hashicorp.com/terraform/language/expressions/strings#interpolation
+	 
+	 1)개념 
+	  - 문자열 안에 임의의 변수값 설정하는 기능. 
+	  - 자바의 백틱(back-tick) 역할 
+	  
+	 2)문법 
+	 
+	   ${변수명} 이용 
+	   
+	  ex. "Hello, ${var.name}!"
+
+  -----------------------------------------
+    실습2 - 보간법 
+	
+	  1) main.tf 작성 
+	  
+	    ##################################################
+		# 문자열 조합하기
+		##################################################
+
+		locals {
+		  
+		  # 문자열
+		  project_name = "terraform"
+
+		  # 실행 환경
+		  environment = "dev"
+
+		  # 숫자
+		  instance_count = 2
+
+		  # Boolean
+		  enable_monitoring = true
+
+		  # List
+		  availability_zones = [
+			"ap-northeast-2a",
+			"ap-northeast-2c"
+		  ]
+
+		  # Map
+		  common_tags = {
+			Project     = local.project_name
+			Environment = local.environment
+			ManagedBy   = "Terraform"
+		  }
+
+		  # 문자열 조합
+		  resource_name = "${local.project_name}-${local.environment}-vpc"
+		}
+		
+		 2) 실행 
+		 
+		  terraform init
+		  terraform console
+			> local.common_tags
+			{
+			  "Environment" = "dev"
+			  "ManagedBy" = "Terraform"
+			  "Project" = "terraform"
+			}
+			> local.resource_name
+			"terraform-dev-vpc"
+			
+-----------------------------------------------------------
+  3. output values 
+  
+    https://developer.hashicorp.com/terraform/tutorials/configuration-language/outputs
+  
+  
+    1) 개념 
+	  - Terraform의 리소스를 생성한 후 생성 결과를 확인할 수 있는 방법임.
+	  
+	2) 기본구조 
+	 
+	   - 파일명: outputs.tf 
+	
+	   문법:
+	   
+	      output "이름"{
+		  
+		     description="설명"
+			 value="값"
+			 sensitive=true|false 
+		  
+		  }
+	     
+	 3) 명령어 실행 
+	 
+	     terraform init
+	     terraform apply   <== output 자동으로 출력됨 
+		 terraform output  
+		 terraform output 이름   
