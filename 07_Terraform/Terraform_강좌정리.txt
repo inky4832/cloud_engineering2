@@ -1,0 +1,12 @@
+Terraform_강좌정리
+
+/////////////////////////////////////
+1. Terraform 개요
+/////////////////////////////////////
+
+  1. 개념 
+   - IaC 도구 (Infrastructure as Code)
+   - HashiCorp 에서 만듬.
+   - HCL(HashiCorp Language) 사용.
+   
+   https://developer.hashicorp.com/terraform/docs
