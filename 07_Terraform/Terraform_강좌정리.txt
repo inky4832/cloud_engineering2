@@ -441,6 +441,143 @@ ansible
 
 
   		  
-				   
+/////////////////////////////////////
+4. AWS Provider 
+///////////////////////////////////// 				   
 		  
 		  
+   1.개념 
+
+      로컬                                              AWS ( Google Cloud, Azure , ... )
+	   
+	     
+								  Resources 생성(create)/삭제(destroy)/수정(update)
+	 terraform의    AWS Provider--------------------> AWS API
+	  main.tf     ---------------------------------> EC2 생성 
+	  ex. EC2 
+
+                  <-----------------------------------
+				      Resources 조회 ( data source 이용 )
+			     
+      
+	https://developer.hashicorp.com/terraform/language/block/provider
+	
+	 https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+
+
+
+  		  
+/////////////////////////////////////
+5. AWS Resource 
+///////////////////////////////////// 
+
+   1. 개념 
+    - Terraform 활용하여 AWS에서 생성 및 관리하기를 원하는 infra 객체.
+	- ex.
+	      VPC,Subnet,RouteTable,SecurityGroup
+		  EC2,RDS,S3,.....
+		  
+   2. 문법 
+   
+   
+     https://developer.hashicorp.com/terraform/language/resources 
+	 
+	 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
+	 
+	 
+	 resource  "리소스타입" "리소스이름" {
+	 
+		  property=value   <==== Argument라고 부름 (***************************)
+	 
+	 }
+	 
+	 ex. EC2 인스턴스 리소스라고 가정하면 
+	 
+	    resource  "aws_instance"  "web"{
+		
+		    # Argument 
+			// Argument 
+			/* Argument */
+		
+		}
+	 
+	 
+	 "aws_instance":  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance 에서 참조가능
+	 
+	 "web" : 임의로 지정 가능한 이름.  참조할 때 사용.  ex. aws_instance.web 
+	 
+	 argument 종류 확인 :https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance#argument-reference
+					   argument는 Resource 타입에 따라서 달라짐.
+					   
+						참조: aws_instance.web.ami
+					
+	
+	
+	attribute:  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance#attribute-reference
+	
+	            Resource 생성 후에 해당 Resource의 속성임.
+	 
+				참조: "리소스타입"."리소스이름".attribute
+				
+				ex. aws_instance.web.id 
+	 
+    ---------------------------------------
+    실행 
+          terraform init 
+		  terraform vaidate
+		  terraform plan 
+		  
+		  terraform apply  # yes 입력 필요 
+		  #terraform apply -auto-approve # yes 자동입력
+		  
+		  
+		  terraform destroy 
+
+	 
+/////////////////////////////////////
+6. AWS Resource 참조 
+///////////////////////////////////// 
+	 
+	 
+	 1)개념 
+	 Resource의 Attribute를 다른 Resource의 Argument로 사용할 수 있음 .
+	 
+	 
+	 ex. 
+	 
+	   resource "aws_vpc" "web"{
+	   
+	      //argument
+		  cidr_block = "10.50.0.0/16"
+		  ...
+	   }
+	   생성된 후 속성(attribue) ex. id , tags_all, ..
+	   
+	   -------------------------------------------
+	   resouce "aws_subnet" "public"{
+	     //argument
+	      vpc_id=aws_vpc.web.id
+		  ...
+	   }
+	   생성된 후 속성(attribue) ex. id , tags_all, ..
+	   
+	   
+	2)의존성 
+	
+	  가. 암시적 의존성 (Implicit dependency)
+	    - 개념 
+		 Terraform이 의존성을 자동으로 인식하는 방법임.
+		 Resource 참조값을 이용해서 확인.
+		-권장하는 방법 	
+		
+	  
+	  나. 명시적 의존성 (explicit dependency)
+	  
+	    -개념 
+		Terraform이 코드만으로 Resource 의존성을 판단할 수 없는 경우에 사용 
+		
+		-문법
+		
+		     depends_on=[...]
+	
+--------------------------------------------------------------------------------------	
