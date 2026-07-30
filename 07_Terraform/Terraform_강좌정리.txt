@@ -735,8 +735,22 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
         lookup({a="ay", b="bee"}, "a", "what?") ==> ay,   일치하는 key값 없으면 default반환
 
 
-
-
+    4. encodig 함수 
 	
+	  jsonencode({"hello"="world"}) ==> "{"hello"="world"}" ,  JOSN ==> 문자열 
+
+	   jsondecode("{\"hello\": \"world\"}") ==> {"hello"="world"},  문자열 ==> JSON 
 	   
+	   base64encode("Hello World") ==>  SGVsbG8gV29ybGQ= 
+	   base64decode("SGVsbG8gV29ybGQ=") ==>  Hello World
+	   
+	   
+	5. file 함수 
 	
+	  file("${path.module}/hello.txt") ==> Hello World,  지정된 경로의 파일내용을 문자열로 읽음.
+	  
+	  fileexists("${path.module}/hello.txt") => true , file 존재여부 확인 
+	  
+	  basename("foo/bar/baz.txt") ==> baz.txt,  지정된 경로의 가장 마지막 파일(디렉터리) 반환 
+	  
+	  dirname("foo/bar/baz.txt") ==> foo/bar, ,  지정된 경로의 가장 마지막 파일(디렉터리)제외한 나머지 반환 
