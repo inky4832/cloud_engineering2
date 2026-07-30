@@ -677,4 +677,47 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 		      replace_triggered_by =[ aws_subnet.public-inky4832.id]
 	      }
 	   
-	------------------------------------------------------------------------
+	------------------------------------------------------------------------			 
+/////////////////////////////////////
+9. 빌트인 함수 (내장함수)
+/////////////////////////////////////	
+
+    https://developer.hashicorp.com/terraform/language/functions
+	
+	1. numeric 함수 
+	
+	   max(12, 54, 3) => 54
+	   min(12, 54, 3) => 3 
+	   ceil(5.1) => 6, 소수점 올림 
+	   floor(4.9) => 4, 소수점 버림 
+	   pow(3, 2) ==> 8 , 거듭제곱 
+	   abs(-12.4) => 12.4, 절대값 
+	   
+	2. string 함수 
+
+	   lower("HELLO")
+	   upper("hello")
+	   replace("1 + 2 + 3", "+", "-")
+       format("%s, %s", "Ander","Ford")
+
+
+       join("-", ["foo", "bar", "baz"]) ==> "foo-bar-baz"
+	   split(",", "foo,bar,baz") ==> ["foo","bar","baz",]
+	   
+	   startswith("hello world", "hello") => true 
+	   endswith("hello world", "world") => true 
+	   substr("hello world", 1, 4)
+	   
+	   
+	   trim("   hello! world.!  ", "! ") <== 특정문자 삭제 
+	   trimspace("  hello\n\n    ")   <== 공백문자 삭제 
+
+
+
+
+
+
+
+	
+	   
+	
