@@ -711,9 +711,28 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 	   
 	   trim("   hello! world.!  ", "! ") <== 특정문자 삭제 
 	   trimspace("  hello\n\n    ")   <== 공백문자 삭제 
+       length("hello") ==> 5
 
-
-
+    3. collection 함수 
+	  
+	    contains(["a", "b", "c"], "a") ==> true 
+		length(["a", "b"]) ==> 2
+		concat(["a", ""], ["b", "c"]) ==> ["a","","b","c"]
+		distinct(["a", "b", "a", "c", "d", "b"]) <== 중복제거
+		
+		flatten([["a", "b"], [], ["c"]]) => ["a", "b", "c"],  2차원을 1차원으로 축소.
+		
+		keys({a=1, c=2, d=3}) ==> ["a","b","c"],  map에서 key만 추출 
+		values({a=3, c=2, d=1})  ==> [3,2,1],  map에서 value만 추출 
+		
+		sum([10, 13, 6, 4.5]) ==> 33.5,  컬렉션 총합
+		
+		sort(["e", "d", "a", "x"]) <== 오름차순 정렬 
+		slice(["a", "b", "c", "d"], 1, 3)
+		reverse([1, 2, 3])
+		
+		merge({a="b", c="d"}, {e="f", c="z"}) ==> {a="b", e="f", c="z"}, map계열 병합 
+        lookup({a="ay", b="bee"}, "a", "what?") ==> ay,   일치하는 key값 없으면 default반환
 
 
 
