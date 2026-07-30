@@ -754,3 +754,30 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 	  basename("foo/bar/baz.txt") ==> baz.txt,  지정된 경로의 가장 마지막 파일(디렉터리) 반환 
 	  
 	  dirname("foo/bar/baz.txt") ==> foo/bar, ,  지정된 경로의 가장 마지막 파일(디렉터리)제외한 나머지 반환 
+	  
+	
+	6.  date and time 함수 
+	
+	      timestamp() ==> 2018-05-13T07:44:12Z 
+		  formatdate("MMM DD, YYYY", "2018-01-02T23:12:01Z") ==>  Jan 02, 2018,  Timestamp를 지정된 format으로 출력
+		  timeadd("2024-08-16T12:45:05Z", "10m") ==> "2024-08-16T12:55:05Z",  지정된 시간을 더함.
+	      timeadd("2024-08-16T12:45:05Z", "-10m") ==> "2024-08-16T12:35:05Z",  지정된 시간을 뺌
+		   
+	7.  type 변환 함수 
+	
+		tolist(["a", "b", "c"])
+		toset(["a", "b", "c"])
+		tomap({"a" = 1, "b" = 2})
+		
+		tostring(1) ==> "1"
+		tostring(true) ==> "true"
+		
+		tonumber("1") ==> 1
+		parseint("100", 10)  ==> 100
+		
+		try([문장1,문장2,...]) <=== 지정된 문장을 실행해서 오류가 없는 문장의 실행결과를 반환함.
+		
+		can(tonumber("1"))=> true,   표현식이 오류없이 실행가능한지를 체크.
+		can(tonumber("aaa"))=> false 
+		
+------------------------------------------------------------------------
