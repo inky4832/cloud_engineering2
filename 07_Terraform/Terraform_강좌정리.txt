@@ -1041,7 +1041,9 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
    2. 구조 
    
      폴더 
-	   |         # Root Module ( terraform init, terraform apply )
+	   |         # Root Module ( terraform init, terraform apply
+		           Child Module에서 사용하는 값들은 Root Module 에서 제공됨 
+		)
 	    main.tf
 		variables.tf
 		ouputs.tf 
@@ -1066,3 +1068,64 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
       module "ec2" {
 			source = "./modules/ec2"
 	  }
+	
+/////////////////////////////////////
+14. Terraform CI/CD
+/////////////////////////////////////	
+
+   1. GitHub 저장소 생성 
+   
+      저장소명: terraform-cicd-inky4832
+	  
+	  
+   2. Github actions에서 AWS 접근하기 위한 인증설정 
+   
+      가. 액세스키 이용
+	   
+	  
+			1) AWS에서 액세스 키 생성 
+			   계정 > 보안 자격 증명 > AWS 외부에서 실행되는 애플리케이션 선택
+			   
+			   
+			   
+			   
+	  
+	        2) github에서 secrect 설정 
+			
+			   저장소 > settings > Secret and variable  > Actions > Repository Secrets 
+	  
+				AWS_ACCESS_KEY_ID: 
+				AWS_SECRET_ACCESS_KEY
+				
+				사용: terraform.yml
+				
+				        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+		   3) AWS s3 버킷  생성 
+
+		     이전 실습에서 사용했던 01-backend-create 실행 
+
+			terraform_state_bucket_name = "terraform-state-inky4832-mlb87ylg"
+
+
+          4) backend.tf 수정 
+
+           terraform {
+				  backend "s3" {
+					bucket = "terraform-state-inky4832-mlb87ylg"
+	
+	
+
+		   3) github에 push 
+		   
+		      git init 
+			  git add .
+			  git commit -m "first commit"
+			   git branch -M main
+		      git remote add origin https://github.com/inky4832/terraform-cicd-inky4832.git
+			 git push -u origin main
+			 
+	  나. OIDC
