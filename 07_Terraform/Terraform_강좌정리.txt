@@ -1020,3 +1020,49 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 		5. terraform plan 
 		
 		  No changes. Your infrastructure matches the configuration. ( 정상 )
+		  
+		  
+		6. EC2가 terraform이 관리하는지 확인 
+		
+		   terraform destroy
+		   
+		   terraform apply  # 다시 생성 
+-------------------------------------------------------------------
+		
+/////////////////////////////////////
+13. module  
+/////////////////////////////////////	
+
+ https://developer.hashicorp.com/terraform/language/modules
+ 
+   1. 개념 
+   - 관련된 리소스를 하나의 재사용 가능한 단위로 묶음. ( 자바의 패키지, 윈도우의 폴더 개념과 비슷 )
+   
+   2. 구조 
+   
+     폴더 
+	   |         # Root Module ( terraform init, terraform apply )
+	    main.tf
+		variables.tf
+		ouputs.tf 
+	   |
+	   modules/  # Child Module
+	      vpc/
+		    main.tf
+			variables.tf
+			outputs.tf 
+			
+		  ec2/
+		    main.tf
+			variables.tf
+			outputs.tf 
+			
+   3. Root Module에서 Child Module 접근 방법 		
+   
+      module "vpc" {
+			source = "./modules/vpc"
+	  }
+
+      module "ec2" {
+			source = "./modules/ec2"
+	  }
