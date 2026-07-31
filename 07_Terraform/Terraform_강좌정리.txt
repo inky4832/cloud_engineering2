@@ -895,6 +895,59 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 		   
 		6. 자원 삭제 
  
-          1) 버킷 비우기   		
-			
+          1) 버킷 비우기   
+          2) terraform destroy 로 리소스 삭제 	
+
+             02-main-infra 경로 
+             01-backend-create 경로 
+             
+	---------------------------------------------------------------------------------------		 
+------------------------------------------------------------------------
+/////////////////////////////////////
+11. 기존 AWS 인프라와 Terraform 연동
+/////////////////////////////////////				
 		
+   1. AWS 구축 방법 
+
+    1) greenfield
+    - 아무것도 없는 상태에서 새로운 인프라를 처음부터 구축하는 방법. 
+
+    2) brownfield	
+	- 이미 존재하는 인프라를 사용하면서 필요한 부분만 Terraform으로 관리구축하는 방법.
+	- data source 방법이 필수  + filter 기능 
+	
+		SQL 검색:  where age = 20 and gender ='남'
+		          where age = 20 or gender ='남' 
+	
+	      data "" "" {
+		  
+		    filter {
+			
+				name="조건"
+				values=[ "검색값","검색값1"]  # OR 조건 
+			
+			}
+			# AND 조건 
+			filter {
+			
+				name="조건"
+				values=[ "검색값",...]
+			
+			}
+	  
+	---------------------------------------------------
+	실습
+	     1) 기존 AWS 리소스가 존재한다고 가정. ( VPC )
+		 
+			-현재 생성된 VPC 는 다음과 같음.
+			 terraform-vpc-inky4832
+             demo-vpc-inky4832
+
+		 
+	     2) Terraform으로 관리하는 EC2 생성 
+		 
+		   https://developer.hashicorp.com/terraform/language/data-sources#complete-example
+		
+/////////////////////////////////////
+12. 기존 AWS 인프라를 Terraform으로 관리 
+/////////////////////////////////////	
