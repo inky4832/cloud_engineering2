@@ -878,7 +878,7 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 				  }
 				}
 				
-		  2) local --> remote
+		  2) local --> remote 이관
 		  
 		     terraform init  -migrate-state  
 			 
@@ -893,6 +893,8 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 		   02-main-infra/main.tf 수정 후  terraform apply 실행.
 		   
 		   
-		   
+		6. 자원 삭제 
+ 
+          1) 버킷 비우기   		
 			
 		
