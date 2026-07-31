@@ -951,3 +951,72 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 /////////////////////////////////////
 12. 기존 AWS 인프라를 Terraform으로 관리 
 /////////////////////////////////////	
+
+    https://developer.hashicorp.com/terraform/cli/import/usage
+	
+    1. 개념 
+	 - 기존 AWS 리소스를  AWS리소스의 상태를 관리하는 State에 포함시키는 방법.
+	 
+	2. 문법 
+
+        terraform import  이용. 	
+		
+   ----------------------------------------
+    실습 
+	
+	   1. 기존 Resource 생성 
+	      - AWS Console에 가서 EC2 생성 .
+		  
+		  이름: my-ec2-inky4832
+		  
+	 
+	   2. main.tf  작성 
+	     - 처음에는 다음과 같이 비워둠.
+		 
+		 # main.tf 
+		 resource "aws_instance" "my_ec2" {
+
+		 }
+
+	   3. terraform import 실행 
+	   
+	     terraform init 
+		 
+	     terraform import aws_instance.my_ec2   i-06df68f54970509d0
+		 
+		실행결과:
+		
+		   - main.tf 의 resouce 블럭은 현재 비어있음.
+		   -terraform.tfstate 생성되고, 이 파일안에 실제 AWS Resouce 상태가 저장됨. ( ex. EC2 )
+		   -AWS에서는 실제 EC2가 있음. 
+		   
+		   
+		4. 비어있는 main.tf 의 resouce 블럭값을 설정해야 됨.
+		
+		   terraform state show aws_instance.my_ec2
+		   
+		    # main.tf 수정 
+			resource "aws_instance" "my_ec2" {
+
+			  ami = "ami-0e4ab31f1847c850c"
+
+			  instance_type = "t3.micro"
+
+			  subnet_id = "subnet-0e3a746dc23c879cb"
+
+			  vpc_security_group_ids = [
+
+				"sg-0c336dbf6cc7c76d0"
+
+			  ]
+
+			  tags = {
+
+				Name = "my-ec2-inky4832"
+
+			  }
+			}
+			
+		5. terraform plan 
+		
+		  No changes. Your infrastructure matches the configuration. ( 정상 )
