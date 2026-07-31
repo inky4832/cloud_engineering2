@@ -781,3 +781,118 @@ https://developer.hashicorp.com/terraform/language/block/resource#lifecycle
 		can(tonumber("aaa"))=> false 
 		
 ------------------------------------------------------------------------
+/////////////////////////////////////
+10. Terraform Backend
+/////////////////////////////////////	
+  https://developer.hashicorp.com/terraform/language/backend
+  
+   1. 개념 
+   
+    - 기본적으로 Terraform은 인프라의 현재 상태를 State라는 데이터로 관리함.
+	 ( 이 파일안에 Terraform이 생성한 AWS 리소스와 Terraform 코드의 연결정보등이 저장됨 )
+	 
+	    Terraform Code(main.tf) <-------------> terraform.tfstate <-------------------> AWS 리소스 
+	
+	- Terraform Backend는 State파일을 어디에 저장하고 어떤 방식으로 관리할지를 결정하는 설정임.(****)
+	
+	
+   2. 종류 
+   
+    1) Local Backend
+	   - 기본 
+	   - 문법 
+	   
+	     terraform {
+			  backend "local" {
+				path = "terraform.tfstate"
+			  }
+			}
+
+	      
+	2) Remote Backend
+	  - 원격인 AWS S3에 저장 
+	  - 문법 
+	   
+	     terraform {
+		  backend "s3" {
+			bucket = "" 
+			key    = ""
+			region = ""
+			profile= ""
+		  }
+		}
+		
+	---------------------------------------------
+	 실습 
+	 
+	     1. S3 버킷 생성 ( terraform 이용 )
+		   01-backend-create 실행 
+		      
+		   terraform init 
+		   terraform validate  
+		   terraform plan 
+		   terraform apply -auto-approve 	
+
+		 ==> Remote Backend 용 버킷 생성 
+            ( terraform.tfstate 저장)	
+
+			terraform_state_bucket_name = "terraform-state-inky4832-mlb87ylg"
+		   
+		   
+		2. Resource 생성    
+		   
+			02-main-infra 실행 
+			   
+		  terraform init 
+		   terraform validate  
+		   terraform plan 
+		   terraform apply -auto-approve 	
+		   
+		 ==> 실습용 S3 버킷 생성   
+		 
+		 terraform apply 하면 로컬에 terraform.tfstate 파일이 생성되고, 이 파일안에 AWS S3 리소스 정보가 저장됨.
+		 
+		 ----------------------------------------------------------------------------------------------
+		
+		3. terraform.tfstate 파일 백업
+		
+		4. local backend 를 remote backend로 변경.
+		
+		   local backend                                        remote backend   (S3) 
+		  ----													-----------------------
+		  terraform.tfstate  -----------------------------------> terraform.tfstate
+		  
+		  1) backend.tf 작성 
+		  
+		       ##################################################
+				# Terraform S3 Backend
+				##################################################
+
+				terraform {
+				  backend "s3" {
+					bucket       = "terraform-state-inky4832-mlb87ylg"  # 자신의 bucket명으로 변경한다.
+					key          = "backend-lab/terraform.tfstate"
+					region       = "ap-northeast-2"
+					encrypt      = true
+					use_lockfile = true
+				  }
+				}
+				
+		  2) local --> remote
+		  
+		     terraform init  -migrate-state  
+			 
+			 
+			실행결과:
+			  로컬에 있던 terraform.tfstate 파일 내용이 비어있음.
+			  원격 S3에  terraform.tfstate 파일 업로드됨. 
+			  
+		
+		5. Remote backend 동작확인
+		
+		   02-main-infra/main.tf 수정 후  terraform apply 실행.
+		   
+		   
+		   
+			
+		
